@@ -1,6 +1,17 @@
 #include "math.h"
+#include <iostream>
+#include <iomanip>
 
 namespace math {
+
+void printMat4(float* mat) {
+    std::cout << std::fixed << std::setprecision(2);
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            std::cout << mat[j * 4 + i] << ' ';
+        } std::cout << '\n';
+    } std::cout << '\n';
+}
 
 void euler2TF(float* T, float* e, float *p) {
 	float cx = cos(e[0]);
@@ -17,8 +28,7 @@ void euler2TF(float* T, float* e, float *p) {
 }
 
 void perspective(float* P, float& fov, float& aspect, float& znear, float &zfar) {
-    float fovRad = DEG2RAD(fov);
-    float tanHalfFov = tan(fovRad / 2.0f);
+    float tanHalfFov = tan(DEG2RAD(fov) / 2.0f);
     float zrange = znear - zfar;
 
     P[0] = 1 / (aspect * tanHalfFov);  P[4] = 0.0f;             P[8]  = 0.0f;                     P[12] = 0.0f;
@@ -26,5 +36,17 @@ void perspective(float* P, float& fov, float& aspect, float& znear, float &zfar)
     P[2] = 0.0f;                       P[6] = 0.0f;             P[10] = (zfar + znear) / zrange;  P[14] = (2.0f * zfar * znear) / zrange;
     P[3] = 0.0f;                       P[7] = 0.0f;             P[11] = -1.0f;                    P[15] = 0.0f;
 }
+
+void matmul4(float* res, float* mat1, float* mat2) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            res[i + j * 4] = 0.0f;
+            for (int k = 0; k < 4; k++) {
+                res[i + j * 4] += mat1[i + k * 4] * mat2[k + j * 4];
+            }
+        }
+    }
+}
+
 
 }

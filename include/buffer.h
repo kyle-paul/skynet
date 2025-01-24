@@ -68,13 +68,13 @@ private:
 class VertexBuffer
 {
 public:
-	VertexBuffer(float* vertices, uint32_t& size);
+	VertexBuffer(float* vertices, uint32_t size);
 	~VertexBuffer();
 
 	void bind() const;
 	void unbind() const;
 
-	void setData(const void* data, uint32_t& size);
+	void setData(const void* data, uint32_t size);
 	void setLayout(const BufferLayout& layout);
 
 	const BufferLayout& getLayout() const;
@@ -90,7 +90,7 @@ private:
 class IndexBuffer
 {
 public:
-	IndexBuffer(uint32_t *indices, uint32_t& count);
+	IndexBuffer(uint32_t *indices, uint32_t count);
 	~IndexBuffer();
 
 	void bind() const;

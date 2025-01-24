@@ -47,12 +47,9 @@ void VertexArray::addIB(const ref<IndexBuffer>& ib) {
     ib->bind(); this->ib = ib;
 }
 
-ref<VertexArray> VertexArray::create() {
-	return cref<VertexArray>();
-}
 
 
-VertexBuffer::VertexBuffer(float* vertices, uint32_t& size) : size(size) {
+VertexBuffer::VertexBuffer(float* vertices, uint32_t size) : size(size) {
 	glCreateBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
@@ -70,7 +67,7 @@ void VertexBuffer::unbind() const {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VertexBuffer::setData(const void* data, uint32_t& size) {
+void VertexBuffer::setData(const void* data, uint32_t size) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 }
@@ -83,13 +80,9 @@ const BufferLayout& VertexBuffer::getLayout() const {
 	return this->layout;
 }
 
-ref<VertexBuffer> VertexBuffer::create(float* vertices, uint32_t& size) {
-	return cref<VertexBuffer>(vertices, size);
-}
 
 
-
-IndexBuffer::IndexBuffer(uint32_t *indices, uint32_t& count) : count(count) {
+IndexBuffer::IndexBuffer(uint32_t *indices, uint32_t count) : count(count) {
 	glCreateBuffers(1, &ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
@@ -105,8 +98,4 @@ void IndexBuffer::bind() const {
 
 void IndexBuffer::unbind() const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-ref<IndexBuffer> IndexBuffer::create(uint32_t* indices, uint32_t& count) {
-	return cref<IndexBuffer>(indices, count);
 }

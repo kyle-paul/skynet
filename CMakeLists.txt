@@ -11,6 +11,7 @@ add_executable(${PROJECT_NAME}
 	src/camera.cpp
 	src/shader.cpp
 	src/buffer.cpp
+	src/mesh.cpp
 
 	vendor/glad/src/glad.c
 )
@@ -18,6 +19,7 @@ add_executable(${PROJECT_NAME}
 include_directories(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 	libs/glfw-build/install/include
+	libs/glm-build/install/include
 	vendor/glad/include
 )
 
@@ -26,8 +28,10 @@ if (POLICY CMP0072)
 endif()
 
 list(APPEND CMAKE_PREFIX_PATH libs/glfw-build/install/lib/cmake/glfw3)
+list(APPEND CMAKE_PREFIX_PATH libs/glm-build/install/share/glm)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} glfw ${OPENGL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} glfw glm::glm ${OPENGL_LIBRARIES})

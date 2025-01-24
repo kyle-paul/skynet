@@ -32,10 +32,11 @@ int main() {
     {
         Scene scene; scene.init();
         while (!glfwWindowShouldClose(window)) {
-            scene.render();
             glClear(GL_COLOR_BUFFER_BIT);
-            glfwSwapBuffers(window);
+            glClearColor(0, 0, 0, 0);
+            scene.render();
             glfwPollEvents();
+            glfwSwapBuffers(window);
         }
     }
 

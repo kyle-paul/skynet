@@ -1,25 +1,24 @@
 #include "mesh.h"
 
-loader = Mesh::Loader::scratch;
+Mesh::Loader Mesh::loader = Mesh::Loader::scratch;
 
 Mesh::Mesh(const std::string &path) {
 	switch(loader) {
-		case(Load::scratch) : {
+		case(Loader::scratch) : {
 			this->readfile(path);
 			break;
 		}
 	}
-	ASSERT(false, "Have yet to implement other loader methods");
 
 	va = cref<VertexArray>();
 	vb = cref<VertexBuffer>(verts.data(), verts.size() * sizeof(float));
 	vb->setLayout({
         { ShaderDataType::Float3, "a_position", true},
-        { ShaderDataType::Float3, "a_normals",  true},
+        { ShaderDataType::Float3, "a_normal",  true},
         { ShaderDataType::Float2, "a_texcoord", false},
     }); va->addVB(vb);
     ib = cref<IndexBuffer>(faces.data(), faces.size());
-    va->setIB(ib);
+    va->addIB(ib);
 }
 
 Mesh::~Mesh() {
@@ -33,20 +32,20 @@ std::vector<std::string> Mesh::split(
     size_t pos = 0;
     std::string token;
     std::string tempLine = line;
-    while ((pos = tempLine.find(delimiter)) != std::string::npos) {
+    while ((pos = tempLine.find(del)) != std::string::npos) {
         token = tempLine.substr(0, pos);
         res.push_back(token);
-        tempLine.erase(0, pos + delimiter.size());
+        tempLine.erase(0, pos + del.size());
     }
     res.push_back(tempLine);
     return res;
 }
 
 
-void mesh::readfile(const std::string& path) {
-	std::ifstream file(filepath.c_str());
+void Mesh::readfile(const std::string& path) {
+	std::ifstream file(path.c_str());
     if (!file.is_open()) {
-        ERROR("Failed to open file: {0}", filepath);
+        ERROR("Failed to open file: {0}", path);
     }
 
     std::string line;
@@ -110,4 +109,10 @@ void mesh::readfile(const std::string& path) {
             }
         }
     }
+}
+
+
+void Mesh::render() {
+    va->bind();
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
 }

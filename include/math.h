@@ -8,7 +8,9 @@
 
 namespace math {
 
-void euler2TF(float* res, float* e, float* p);
+void euler2TF(float* T, float* e, float* p);
 void perspective(float* P, float& fov, float& aspect, float& znear, float &zfar);
+void matmul4(float* res, float* mat1, float* mat2);
+void printMat4(float* mat);
 
 }

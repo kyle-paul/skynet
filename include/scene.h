@@ -17,5 +17,8 @@ public:
 private:
 	Camera camera;
 	ref<Shader> shader;
-	
+	ref<Mesh> cube;
+
+	ref<VertexArray> va;
+	ref<VertexBuffer> vb;
 };

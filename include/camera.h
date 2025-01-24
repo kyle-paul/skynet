@@ -7,10 +7,12 @@ public:
 	~Camera();
 
 	void updateView();
-	void updateProjection();
+    void updateProjection();
+	void updateProjView();
 
-	inline float* getView() { return T; }
+	inline float* getView() { return V; }
 	inline float* getProjection() { return P; }
+    inline float* getProjView() { return C; }
 
 private:
 	float fov    = 45.0f;
@@ -26,6 +28,7 @@ private:
     float oy[3]  = {0.0f, 1.0f, 0.0f};
     float oz[3]  = {0.0f, 0.0f, 1.0f};
 
-    float T[16];
+    float V[16];
     float P[16];
+    float C[16];
 };

@@ -20,15 +20,15 @@ public:
 
 private:
 	void readfile(const std::string &path);
-	void split(const std::string &line, const std::string &del, 
-		       std::vector<std::string> &res);
+	std::vector<std::string> split(const std::string &line,
+		const std::string &del, std::vector<std::string> &res);
 
 private:
 	static Loader loader;
 	std::vector<float> verts;
     std::vector<uint32_t> faces;
         
-	Ref<VertexArray>  va;
-	Ref<VertexBuffer> vb;
-	Ref<IndexBuffer>  ib;
+	ref<VertexArray>  va;
+	ref<VertexBuffer> vb;
+	ref<IndexBuffer>  ib;
 };
