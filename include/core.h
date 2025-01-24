@@ -17,7 +17,7 @@
 
 #define ERROR(fmt, ...) \
     fprintf(stderr, RED "%s" RESET "\n", std::format(fmt, __VA_ARGS__).c_str()); \
-    exit(1)
+    exit(1);
 
 #define INFO(fmt, ...) \
     fprintf(stdout, BLUE "%s" RESET "\n", std::format(fmt, __VA_ARGS__).c_str());

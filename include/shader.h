@@ -22,9 +22,6 @@ public:
     void setMat3(const std::string& name, const float* value);
     void setMat4(const std::string& name, const float* value);
 
-    static ref<Shader> create(const std::string& name, const std::string& path);
-    static ref<Shader> create(const std::string& name, const std::string& vertsrc, const std::string& fragsrc);
-
 private:
     std::string readfile(const std::string& path);
     std::unordered_map<GLenum, std::string> preprocess(const std::string& source);

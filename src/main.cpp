@@ -2,14 +2,12 @@
 #include <GLFW/glfw3.h>
 
 #include "core.h"
-#include "camera.h"
-#include "shader.h"
-#include "buffer.h"
-#include "mesh.h"
+#include "scene.h"
 
-
-void renderScene() {
-    
+void OpenGLOptions() {
+    glFrontFace(GL_CCW);
+    glCullFace(GL_BACK);
+    glEnable(GL_DEPTH_TEST);
 }
 
 int main() {
@@ -25,16 +23,20 @@ int main() {
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to initialize GLAD\n";
+        ASSERT(false, "Failed to initialize GLAD\n");
         return -1;
     }
 
-    while (!glfwWindowShouldClose(window))
+    OpenGLOptions();
+
     {
-        renderScene();
-        glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        Scene scene; scene.init();
+        while (!glfwWindowShouldClose(window)) {
+            scene.render();
+            glClear(GL_COLOR_BUFFER_BIT);
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
     }
 
     glfwTerminate();

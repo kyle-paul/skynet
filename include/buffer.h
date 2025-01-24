@@ -80,8 +80,6 @@ public:
 	const BufferLayout& getLayout() const;
     const uint32_t getSize() const;
 
-	static ref<VertexBuffer> create(float *vertices, uint32_t& size);
-
 private:
 	uint32_t vbo;
     uint32_t size;
@@ -98,9 +96,7 @@ public:
 	void bind() const;
 	void unbind() const;
 
-	inline uint32_t getCount() const { return count; }
-	
-	static ref<IndexBuffer> create(uint32_t *indices, uint32_t& count);
+	inline uint32_t getCount() const { return count; }	
 
 private:
     uint32_t ibo;

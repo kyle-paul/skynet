@@ -1,11 +1,34 @@
 #pragma once
+#include "core.h"
+#include "buffer.h"
 
-class Mesh 
+class Mesh
 {
 public:
-	Mesh();
+	enum class Loader {
+		scratch = 0,
+		assimp  = 1,
+		tinyobj = 2,
+	};
+
+public:
+	Mesh(const std::string &path);
 	~Mesh();
 	
-	void init(const std::string &path);
+	void load(const std::string &path);
 	void render();
+
+private:
+	void readfile(const std::string &path);
+	void split(const std::string &line, const std::string &del, 
+		       std::vector<std::string> &res);
+
+private:
+	static Loader loader;
+	std::vector<float> verts;
+    std::vector<uint32_t> faces;
+        
+	Ref<VertexArray>  va;
+	Ref<VertexBuffer> vb;
+	Ref<IndexBuffer>  ib;
 };

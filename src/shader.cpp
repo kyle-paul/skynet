@@ -2,8 +2,8 @@
 
 Shader::Shader(const std::string& name, const std::string& path) {
 	std::string source = readfile(path);
-    auto shaderSources = preprocess(source);
-    compile(shaderSources);   
+    auto shaderSources = preprocess(source);    
+    this->compile(shaderSources);
 }
 
 Shader::Shader(const std::string &name, const std::string& vertsrc, const std::string& fragsrc)
@@ -12,7 +12,7 @@ Shader::Shader(const std::string &name, const std::string& vertsrc, const std::s
     std::unordered_map<GLenum, std::string> sources;
     sources[GL_VERTEX_SHADER] = vertsrc;
     sources[GL_FRAGMENT_SHADER] = fragsrc;
-    compile(sources);   
+    this->compile(sources);   
 }
 
 Shader::~Shader() {
@@ -37,7 +37,7 @@ std::string Shader::readfile(const std::string& path) {
         fin.read(&result[0], result.size());
         fin.close();
     }
-    ERROR("Could not open file path: {0}", path);
+    else { ERROR("Could not open file path: {0}", path); }
     return result;
 }
 
@@ -61,17 +61,15 @@ std::unordered_map<GLenum, std::string> Shader::preprocess(const std::string &so
     return shaderSources;
 }
 
-void Shader::compile(const std::unordered_map<GLenum, std::string> &shaderSources)
-{
-    GLuint program = glCreateProgram();    
+void Shader::compile(const std::unordered_map<GLenum, std::string> &shaderSources) {
+
+    GLuint program = glCreateProgram();
     ASSERT(shaderSources.size() <= 2, "Only support 2 shaders for now");
 
     std::array<GLenum, 2> glShaderIDs; 
     int glShaderIDIndex = 0;
 
-    
-    for (auto &kv : shaderSources)
-    {
+    for (auto &kv : shaderSources) {
         GLenum type = kv.first;
         const std::string& source = kv.second;
         GLuint shader = glCreateShader(type);
@@ -82,8 +80,8 @@ void Shader::compile(const std::unordered_map<GLenum, std::string> &shaderSource
 
         GLint isCompiled = 0;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
-        if (isCompiled == GL_FALSE)
-        {
+
+        if (isCompiled == GL_FALSE) {
             GLint maxLength = 0;
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 
@@ -93,7 +91,7 @@ void Shader::compile(const std::unordered_map<GLenum, std::string> &shaderSource
 
             ERROR("{0}", infoLog.data());
             WARN("Shader failed at {0}", glShaderIDIndex);
-            ASSERT(false, "Shader compilation failure at!");
+            ASSERT(false, "Shader compilation failure!");
             exit(-1);
         }
         glAttachShader(program, shader);
@@ -106,18 +104,15 @@ void Shader::compile(const std::unordered_map<GLenum, std::string> &shaderSource
     GLint isLinked = 0;
     glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
     
-    if (isLinked == GL_FALSE)
-    {
+    if (isLinked == GL_FALSE) {
         GLint maxLength = 0;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
         std::vector<GLchar> infoLog(maxLength);
         glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
-
         
         glDeleteProgram(program);
-        for (auto id : glShaderIDs) 
-        {
+        for (auto id : glShaderIDs) {
             glDeleteShader(id);
         }
 
@@ -126,8 +121,7 @@ void Shader::compile(const std::unordered_map<GLenum, std::string> &shaderSource
         return;
     }
 
-    for (auto id : glShaderIDs)
-    {
+    for (auto id : glShaderIDs) {
         glDetachShader(program, id);
     }
 }

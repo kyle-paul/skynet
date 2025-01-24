@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(${PROJECT_NAME}
 	src/main.cpp
+	src/scene.cpp
 	src/math.cpp
 	src/camera.cpp
 	src/shader.cpp

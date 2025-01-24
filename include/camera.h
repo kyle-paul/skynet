@@ -9,8 +9,8 @@ public:
 	void updateView();
 	void updateProjection();
 
-	const float* getView() const;
-	const float* getProjection() const;
+	inline float* getView() { return T; }
+	inline float* getProjection() { return P; }
 
 private:
 	float fov    = 45.0f;
@@ -25,4 +25,7 @@ private:
     float ox[3]  = {1.0f, 0.0f, 0.0f};
     float oy[3]  = {0.0f, 1.0f, 0.0f};
     float oz[3]  = {0.0f, 0.0f, 1.0f};
+
+    float T[16];
+    float P[16];
 };
