@@ -17,11 +17,14 @@ public:
 	
 	void load(const std::string &path);
 	void render();
+	void info();
 
 private:
-	void readfile(const std::string &path);
+	void readfile(const std::string& path);
+	void assRead(const std::string& path);
+
 	std::vector<std::string> split(const std::string &line,
-		const std::string &del, std::vector<std::string> &res);
+			const std::string &del, std::vector<std::string> &res);
 
 private:
 	static Loader loader;

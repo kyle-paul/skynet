@@ -11,7 +11,7 @@ out vec3 v_normal;
 out vec2 v_texcoord;
 
 void main() {
-    gl_Position = projview * vec4(a_position, 1.0);
+    gl_Position = projview * model * vec4(a_position, 1.0);
     v_normal = a_normal;
     v_texcoord = a_texcoord;
 }
@@ -24,7 +24,11 @@ uniform vec3 color;
 
 in vec3 v_normal;
 in vec2 v_texcoord;
+uniform vec3 light;
 
 void main() {
-    render = vec4(1.0, 1.0, 1.0, 1.0);
+    vec3 norm = normalize(v_normal);
+    float diffuse = max(dot(norm, normalize(light)), 0.6);
+    vec3 color = color * diffuse;
+    render = vec4(color, 1.0);
 }

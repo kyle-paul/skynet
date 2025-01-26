@@ -1,17 +1,5 @@
 #include "shader.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtx/euler_angles.hpp>
-#include <glm/gtx/compatibility.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <iostream>
-
-
-
 Shader::Shader(const std::string& name, const std::string& path) {
 	std::string source = readfile(path);
     auto shaderSources = preprocess(source);    
@@ -178,3 +166,4 @@ void Shader::setMat3(const std::string& name, const float* value) {
 void Shader::setMat4(const std::string& name, const float* value) {
     GLint location = glGetUniformLocation(shaderID, name.c_str());
     glUniformMatrix4fv(location, 1, GL_FALSE, value);
+}

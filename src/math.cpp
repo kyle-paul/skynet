@@ -8,9 +8,42 @@ void printMat4(float* mat) {
     std::cout << std::fixed << std::setprecision(2);
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << mat[j * 4 + i] << ' ';
+            std::cout << mat[i * 4 + j] << ' ';
         } std::cout << '\n';
     } std::cout << '\n';
+}
+
+void transpose(float* mat) {
+    float temp;
+    for (int i = 0; i < 4; i++) {
+        for (int j = i + 1; j < 4; j++) {
+            temp = mat[i + j * 4];
+            mat[i + j * 4] = mat[j + i * 4];
+            mat[j + i * 4] = temp;
+        }
+    }
+}
+
+const float* identity() {
+    static float mat[16] = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    }; return mat;
+}
+
+void quat2TF(float* T, float* q, float* p) {
+    float x = q[0], y = q[1], z = q[2], w = q[3];
+    float x2 = x + x, y2 = y + y, z2 = z + z;
+    float xx = x * x2, xy = x * y2, xz = x * z2;
+    float yy = y * y2, yz = y * z2, zz = z * z2;
+    float wx = w * x2, wy = w * y2, wz = w * z2;
+
+    T[0] = 1.0f - (yy + zz);  T[4] = xy - wz;          T[8]  = xz + wy;          T[12] = p[0];
+    T[1] = xy + wz;           T[5] = 1.0f - (xx + zz); T[9]  = yz - wx;          T[13] = p[1];
+    T[2] = xz - wy;           T[6] = yz + wx;          T[10] = 1.0f - (xx + yy); T[14] = p[2];
+    T[3] = 0.0f;              T[7] = 0.0f;             T[11] = 0.0f;             T[15] = 1.0f;
 }
 
 void euler2TF(float* T, float* e, float *p) {
@@ -48,5 +81,15 @@ void matmul4(float* res, float* mat1, float* mat2) {
     }
 }
 
+void matmul3(float* res, float* mat1, float *mat2) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            res[i + j * 3] = 0.0f;
+            for (int k = 0; k < 3; k++) {
+                res[i + j * 3] += mat1[i + k * 3] * mat2[k + j * 3];
+            }
+        }
+    }
+}
 
 }

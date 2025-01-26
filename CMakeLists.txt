@@ -20,6 +20,7 @@ include_directories(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 	libs/glfw-build/install/include
 	libs/glm-build/install/include
+	libs/assimp-build/install/include
 	vendor/glad/include
 )
 
@@ -29,9 +30,11 @@ endif()
 
 list(APPEND CMAKE_PREFIX_PATH libs/glfw-build/install/lib/cmake/glfw3)
 list(APPEND CMAKE_PREFIX_PATH libs/glm-build/install/share/glm)
+list(APPEND CMAKE_PREFIX_PATH libs/assimp-build/install/lib/cmake/assimp-5.4)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} glfw glm::glm ${OPENGL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} glfw glm::glm assimp::assimp ${OPENGL_LIBRARIES})

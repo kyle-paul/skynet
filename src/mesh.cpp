@@ -1,13 +1,20 @@
 #include "mesh.h"
 
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <assimp/Importer.hpp>
+
+
 Mesh::Loader Mesh::loader = Mesh::Loader::scratch;
 
 Mesh::Mesh(const std::string &path) {
 	switch(loader) {
 		case(Loader::scratch) : {
-			this->readfile(path);
-			break;
+			this->readfile(path); break;
 		}
+        case(Loader::assimp) : {
+            this->assRead(path); break;
+        }
 	}
 
 	va = cref<VertexArray>();
@@ -112,7 +119,60 @@ void Mesh::readfile(const std::string& path) {
 }
 
 
+void Mesh::assRead(const std::string& path) {
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(path,
+        aiProcess_Triangulate | aiProcess_GenSmoothNormals |
+        aiProcess_JoinIdenticalVertices | aiProcess_FlipUVs);
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+        ERROR("Failed to load mesh: {0}", importer.GetErrorString());
+    }
+
+    for (size_t i = 0; i < scene->mNumMeshes; ++i) {
+        const aiMesh* mesh = scene->mMeshes[i];
+        for (size_t j = 0; j < mesh->mNumVertices; ++j) {
+            verts.push_back(mesh->mVertices[j].x);
+            verts.push_back(mesh->mVertices[j].y);
+            verts.push_back(mesh->mVertices[j].z);
+
+            verts.push_back(mesh->mNormals[j].x);
+            verts.push_back(mesh->mNormals[j].y);
+            verts.push_back(mesh->mNormals[j].z);
+
+            if (mesh->mTextureCoords[0]) {
+                verts.push_back(mesh->mTextureCoords[0][j].x);
+                verts.push_back(mesh->mTextureCoords[0][j].y);
+            } else {
+                verts.push_back(0.0f);
+                verts.push_back(0.0f);
+            }
+        }   
+
+        for (size_t j = 0; j < mesh->mNumFaces; ++j) {
+            const aiFace& face = mesh->mFaces[j];
+            for (size_t k = 0; k < face.mNumIndices; ++k) {
+                faces.push_back(face.mIndices[k]);
+            }
+        }
+    }
+}
+
 void Mesh::render() {
     va->bind();
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, va->getIB()->getCount(), GL_UNSIGNED_INT, nullptr);
+}
+
+void Mesh::info() {
+    for (int i=0; i<verts.size(); i++) {
+        std::cout << verts[i] << ' ';
+        if ((i+1) % 8==0)
+            std::cout << '\n';
+    }
+
+    for (int i=0; i < faces.size(); i++) {
+        std::cout << faces[i] << ' ';
+        if ((i+1) % 3==0) 
+            std::cout << '\n';
+    }
 }

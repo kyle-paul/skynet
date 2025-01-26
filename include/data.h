@@ -1,0 +1,8 @@
+#pragma once
+
+struct MouseConfig {
+    float lastx = 0.0f, lasty = 0.0f;
+    float dx = 0.0f, dy = 0.0f;
+    float zoom = 0.0f;
+    bool first = true;
+};

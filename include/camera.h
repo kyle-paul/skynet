@@ -14,7 +14,7 @@ public:
 	inline float* getProjection() { return P; }
     inline float* getProjView() { return C; }
 
-private:
+public:
 	float fov    = 45.0f;
     float aspect = 1200.0f / 800.0f;
     float znear  = 0.1f;
