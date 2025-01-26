@@ -11,7 +11,7 @@ Camera::~Camera() {
 }
 
 void Camera::updateView() {
-	math::euler2TF(V, e, p);
+	math::euler2T(V, e, p);
 }
 
 

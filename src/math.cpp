@@ -4,36 +4,7 @@
 
 namespace math {
 
-void printMat4(float* mat) {
-    std::cout << std::fixed << std::setprecision(2);
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            std::cout << mat[i * 4 + j] << ' ';
-        } std::cout << '\n';
-    } std::cout << '\n';
-}
-
-void transpose(float* mat) {
-    float temp;
-    for (int i = 0; i < 4; i++) {
-        for (int j = i + 1; j < 4; j++) {
-            temp = mat[i + j * 4];
-            mat[i + j * 4] = mat[j + i * 4];
-            mat[j + i * 4] = temp;
-        }
-    }
-}
-
-const float* identity() {
-    static float mat[16] = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    }; return mat;
-}
-
-void quat2TF(float* T, float* q, float* p) {
+void quat2T(float* T, float* q, float* p) {
     float x = q[0], y = q[1], z = q[2], w = q[3];
     float x2 = x + x, y2 = y + y, z2 = z + z;
     float xx = x * x2, xy = x * y2, xz = x * z2;
@@ -46,7 +17,19 @@ void quat2TF(float* T, float* q, float* p) {
     T[3] = 0.0f;              T[7] = 0.0f;             T[11] = 0.0f;             T[15] = 1.0f;
 }
 
-void euler2TF(float* T, float* e, float *p) {
+void quat2R(float* R, float* q) {
+    float x = q[0], y = q[1], z = q[2], w = q[3];
+    float x2 = x + x, y2 = y + y, z2 = z + z;
+    float xx = x * x2, xy = x * y2, xz = x * z2;
+    float yy = y * y2, yz = y * z2, zz = z * z2;
+    float wx = w * x2, wy = w * y2, wz = w * z2;
+
+    R[0] = 1.0f - (yy + zz);  R[3] = xy - wz;           R[6] = xz + wy;
+    R[1] = xy + wz;           R[4] = 1.0f - (xx + zz);  R[7] = yz - wx;
+    R[2] = xz - wy;           R[5] = yz + wx;           R[8] = 1.0f - (xx + yy);
+}
+
+void euler2T(float* T, float* e, float *p) {
 	float cx = cos(e[0]);
     float cy = cos(e[1]);
     float cz = cos(e[2]);
@@ -70,26 +53,64 @@ void perspective(float* P, float& fov, float& aspect, float& znear, float &zfar)
     P[3] = 0.0f;                       P[7] = 0.0f;             P[11] = -1.0f;                    P[15] = 0.0f;
 }
 
-void matmul4(float* res, float* mat1, float* mat2) {
+void matmul4(float* res, float* m1, float* m2) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             res[i + j * 4] = 0.0f;
             for (int k = 0; k < 4; k++) {
-                res[i + j * 4] += mat1[i + k * 4] * mat2[k + j * 4];
+                res[i + j * 4] += m1[i + k * 4] * m2[k + j * 4];
             }
         }
     }
 }
 
-void matmul3(float* res, float* mat1, float *mat2) {
+void matmul3(float* res, float* m1, float* m2) {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             res[i + j * 3] = 0.0f;
             for (int k = 0; k < 3; k++) {
-                res[i + j * 3] += mat1[i + k * 3] * mat2[k + j * 3];
+                res[i + j * 3] += m1[i + k * 3] * m2[k + j * 3];
             }
         }
     }
+}
+
+void printMat4(float* m) {
+    std::cout << std::fixed << std::setprecision(2);
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            std::cout << m[i * 4 + j] << ' ';
+        } std::cout << '\n';
+    } std::cout << '\n';
+}
+
+void printMat3(float* m) {
+    std::cout << std::fixed << std::setprecision(2);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            std::cout << m[i * 3 + j] << ' ';
+        } std::cout << '\n';
+    } std::cout << '\n';
+}
+
+void transpose(float* m) {
+    float temp;
+    for (int i = 0; i < 4; i++) {
+        for (int j = i + 1; j < 4; j++) {
+            temp = m[i + j * 4];
+            m[i + j * 4] = m[j + i * 4];
+            m[j + i * 4] = temp;
+        }
+    }
+}
+
+const float* identity() {
+    static float m[16] = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    }; return m;
 }
 
 }

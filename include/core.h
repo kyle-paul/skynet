@@ -6,31 +6,32 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <thread>
 #include <unordered_map>
 
 
-#define RED    "\033[1;31m"
-#define GREEN  "\033[1;32m"
-#define YELLOW "\033[1;33m"
-#define BLUE   "\033[1;34m"
-#define RESET  "\033[0m"
+#define LOG_RED    "\033[1;31m"
+#define LOG_GREEN  "\033[1;32m"
+#define LOG_YELLOW "\033[1;33m"
+#define LOG_BLUE   "\033[1;34m"
+#define LOG_RESET  "\033[0m"
 
 #define ERROR(fmt, ...) \
-    fprintf(stderr, RED "%s" RESET "\n", std::format(fmt, __VA_ARGS__).c_str()); \
+    fprintf(stderr, LOG_RED "%s" LOG_RESET "\n", std::format(fmt, __VA_ARGS__).c_str()); \
     exit(1);
 
 #define INFO(fmt, ...) \
-    fprintf(stdout, BLUE "%s" RESET "\n", std::format(fmt, __VA_ARGS__).c_str());
+    fprintf(stdout, LOG_BLUE "%s" LOG_RESET "\n", std::format(fmt, __VA_ARGS__).c_str());
 
 #define WARN(fmt, ...) \
-    fprintf(stdout, YELLOW "%s" RESET "\n", std::format(fmt, __VA_ARGS__).c_str());
+    fprintf(stdout, LOG_YELLOW "%s" LOG_RESET "\n", std::format(fmt, __VA_ARGS__).c_str());
 
 #define SUCCESS(fmt, ...) \
-    fprintf(stdout, GREEN "%s" RESET "\n", std::format(fmt, __VA_ARGS__).c_str());
+    fprintf(stdout, LOG_GREEN "%s" LOG_RESET "\n", std::format(fmt, __VA_ARGS__).c_str());
 
 #define ASSERT(condition, error_msg) \
     if (!(condition)) { \
-        fprintf(stderr, RED "FAILED: %s" RESET "\n", std::format(error_msg).c_str()); \
+        fprintf(stderr, LOG_RED "FAILED: %s" LOG_RESET "\n", std::format(error_msg).c_str()); \
         exit(1); }
 
 

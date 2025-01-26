@@ -6,3 +6,6 @@ struct MouseConfig {
     float zoom = 0.0f;
     bool first = true;
 };
+
+enum class Rot { Xaxis, Yaxis, Zaxis, Waxis };
+enum class Frame { World, Body };

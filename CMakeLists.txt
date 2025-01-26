@@ -11,7 +11,9 @@ add_executable(${PROJECT_NAME}
 	src/camera.cpp
 	src/shader.cpp
 	src/buffer.cpp
+	src/link.cpp
 	src/mesh.cpp
+	src/transformable.cpp
 
 	vendor/glad/src/glad.c
 )

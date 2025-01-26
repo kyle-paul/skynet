@@ -1,8 +1,9 @@
 #pragma once
 #include "core.h"
 #include "buffer.h"
+#include "transformable.h"
 
-class Mesh
+class Mesh : public Transformable
 {
 public:
 	enum class Loader {
@@ -12,11 +13,12 @@ public:
 	};
 
 public:
-	Mesh(const std::string &path);
+	Mesh(const std::string &path, const float (&color)[3]);
 	~Mesh();
 	
 	void load(const std::string &path);
-	void render();
+	void render(const ref<Shader> &shader);
+	void initGL();
 	void info();
 
 private:
@@ -34,4 +36,6 @@ private:
 	ref<VertexArray>  va;
 	ref<VertexBuffer> vb;
 	ref<IndexBuffer>  ib;
+
+	float color[3];
 };

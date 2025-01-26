@@ -5,15 +5,9 @@
 #include "scene.h"
 
 void OpenGLOptions() {
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-
+    glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 MouseConfig msc;
