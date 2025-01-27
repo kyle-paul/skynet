@@ -15,8 +15,17 @@ add_executable(${PROJECT_NAME}
 	src/mesh.cpp
 	src/transformable.cpp
 	src/xml.cpp
+	src/gui.cpp
+	src/frame.cpp
 
 	vendor/glad/src/glad.c
+	vendor/imgui/imgui.cpp
+    vendor/imgui/imgui_demo.cpp
+	vendor/imgui/imgui_draw.cpp
+	vendor/imgui/imgui_tables.cpp
+	vendor/imgui/imgui_widgets.cpp
+    vendor/imgui/backends/imgui_impl_opengl3.cpp
+    vendor/imgui/backends/imgui_impl_glfw.cpp
 )
 
 include_directories(${PROJECT_NAME}
@@ -25,6 +34,8 @@ include_directories(${PROJECT_NAME}
 	libs/glm-build/install/include
 	libs/assimp-build/install/include
 	libs/tinyxml2-build/install/include
+	vendor/imgui
+	vendor/imgui/backends
 	vendor/glad/include
 )
 

@@ -13,7 +13,6 @@
 	</asset>
 
 	<worldbody nbody="12">
-
 		<!-- config link 0 -->
 		<body name="link0">
 			<inertial mass="0.629769" pos="-0.041018 -0.00014 0.049974"

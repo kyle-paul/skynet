@@ -34,4 +34,5 @@ protected:
 	};
 
 	friend class Scene;
+	friend class Interface;
 };

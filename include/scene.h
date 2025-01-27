@@ -29,5 +29,7 @@ private:
 	std::unordered_map<std::string, std::vector<std::string>> graph;
 
 	float light[3] = { -30.0f, -50.0f, 50.0f };
-	float color[3] = {1.0f, 1.0f, 1.0f};
+	float bgcol[4] = { 0.15f, 0.15f, 0.15f, 1.0f};
+
+	friend class Interface;
 };

@@ -1,9 +1,6 @@
 #include "scene.h"
 #include "math.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 Scene::Scene() { }
 Scene::~Scene() { }
 
@@ -64,7 +61,6 @@ void Scene::render() {
 }
 
 void Scene::forward(const std::string &cur, const std::string &par) {
-
 	float T[16];
 	if (par != "null") {
 		math::matmul4(T, links[par]->getWorldTransform(), links[cur]->getTransform());
@@ -84,9 +80,14 @@ void Scene::inverse() {
 }
 
 void Scene::updateCamera(MouseConfig* msc) {
-	this->camera.e[1] += 0.01f * msc->dx;
-    this->camera.e[0] += 0.01f * msc->dy;
-    this->camera.p[2] += -0.1f * msc->zoom;
-
-    msc->dx = 0.0f; msc->dy = 0.0f; msc->zoom = 0.0f;
+	if (!msc->first_left) {
+		this->camera.e[1] += 0.01f * msc->dx;
+		this->camera.e[0] += 0.01f * msc->dy;		 
+	} 
+	else if (!msc->first_right) {
+		this->camera.p[0] -= 0.001f * msc->dx;
+		this->camera.p[1] += 0.001f * msc->dy;
+	}
+	this->camera.p[2] += -0.1f * msc->zoom;
+	msc->dx = 0.0f; msc->dy = 0.0f; msc->zoom = 0.0f;
 }

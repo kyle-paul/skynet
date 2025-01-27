@@ -14,7 +14,6 @@ void Camera::updateView() {
 	math::euler2T(V, e, p);
 }
 
-
 void Camera::updateProjection() {
 	math::perspective(P, fov, aspect, znear, zfar);
 }

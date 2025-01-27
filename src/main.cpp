@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "core.h"
-#include "scene.h"
+#include "gui.h"
 
 void OpenGLOptions() {
     glFrontFace(GL_CCW);
@@ -17,9 +17,9 @@ void MsMoveCb(GLFWwindow* window, double xpos, double ypos) {
                         glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
 
     if (shiftPressed && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        if (msc.first) {
+        if (msc.first_left) {
             msc.lastx = xpos; msc.lasty = ypos;
-            msc.first = false;
+            msc.first_left = false;
         }
 
         msc.dx = xpos - msc.lastx; msc.dy = ypos - msc.lasty;
@@ -27,7 +27,20 @@ void MsMoveCb(GLFWwindow* window, double xpos, double ypos) {
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
-        msc.first = true;
+        msc.first_left = true;
+    }
+
+    if (shiftPressed && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+        if (msc.first_right) {
+            msc.lastx = xpos; msc.lasty = ypos;
+            msc.first_right = false;
+        }
+
+        msc.dx = xpos - msc.lastx; msc.dy = ypos - msc.lasty;
+        msc.lastx = xpos; msc.lasty = ypos;
+    }
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE) {
+        msc.first_right = true;
     }
 }
 
@@ -56,14 +69,14 @@ int main() {
         return -1;
     }
 
+    OpenGLOptions();
+
     {
-        OpenGLOptions();
         Scene scene; scene.init();
+        Interface gui = Interface(window);
         while (!glfwWindowShouldClose(window)) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glClearColor(0, 0, 0, 1);
             scene.updateCamera(&msc);
-            scene.render();
+            gui.render(&scene);
             glfwPollEvents();
             glfwSwapBuffers(window);
         }
