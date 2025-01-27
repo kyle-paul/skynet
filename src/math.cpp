@@ -18,15 +18,16 @@ void quat2T(float* T, float* q, float* p) {
 }
 
 void quat2R(float* R, float* q) {
-    float x = q[0], y = q[1], z = q[2], w = q[3];
+    float x = q[1], y = q[2], z = q[3], w = q[0];
     float x2 = x + x, y2 = y + y, z2 = z + z;
     float xx = x * x2, xy = x * y2, xz = x * z2;
     float yy = y * y2, yz = y * z2, zz = z * z2;
     float wx = w * x2, wy = w * y2, wz = w * z2;
 
-    R[0] = 1.0f - (yy + zz);  R[3] = xy - wz;           R[6] = xz + wy;
-    R[1] = xy + wz;           R[4] = 1.0f - (xx + zz);  R[7] = yz - wx;
-    R[2] = xz - wy;           R[5] = yz + wx;           R[8] = 1.0f - (xx + yy);
+    R[0] = 1.0f - (yy + zz);  R[4] = xy - wz;           R[8] = xz + wy;            R[12] = 0.0f;
+    R[1] = xy + wz;           R[5] = 1.0f - (xx + zz);  R[9] = yz - wx;            R[13] = 0.0f;
+    R[2] = xz - wy;           R[6] = yz + wx;           R[10] = 1.0f - (xx + yy);  R[14] = 0.0f;
+    R[3] = 0.0f;              R[7] = 0.0f;              R[11] = 0.0f;              R[15] = 1.0f;
 }
 
 void euler2T(float* T, float* e, float *p) {
@@ -75,11 +76,25 @@ void matmul3(float* res, float* m1, float* m2) {
     }
 }
 
+void normVec4(float* v) {
+    float norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2] + v[3]*v[3]);
+    if (norm < MINVAL) {
+        v[0] = 1; v[1] = 0;
+        v[2] = 0; v[3] = 0;
+    } else {
+        float normInv = 1/norm;
+        v[0] *= normInv;
+        v[1] *= normInv;
+        v[2] *= normInv;
+        v[3] *= normInv;
+    }
+}
+
 void printMat4(float* m) {
     std::cout << std::fixed << std::setprecision(2);
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << m[i * 4 + j] << ' ';
+            std::cout << m[j * 4 + i] << ' ';
         } std::cout << '\n';
     } std::cout << '\n';
 }
@@ -88,9 +103,19 @@ void printMat3(float* m) {
     std::cout << std::fixed << std::setprecision(2);
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            std::cout << m[i * 3 + j] << ' ';
+            std::cout << m[j * 3 + i] << ' ';
         } std::cout << '\n';
     } std::cout << '\n';
+}
+
+void printVec4(float* v) {
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << v[0] << ' ' << v[1] << ' ' << v[2] << ' ' << v[3] << '\n';
+}
+
+void printVec3(float* v) {
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << v[0] << ' ' << v[1] << ' ' << v[2] << '\n';
 }
 
 void transpose(float* m) {
@@ -111,6 +136,15 @@ const float* identity() {
         0.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f
     }; return m;
+}
+
+void vizgraph(std::unordered_map<std::string, std::vector<std::string>> &graph) {
+    for (auto &[name, vec] : graph) {
+        std::cout << name << ": {";
+        for (auto &v : graph[name]) {
+            std::cout << v << ' ';
+        } std::cout << "} \n";
+    }
 }
 
 }

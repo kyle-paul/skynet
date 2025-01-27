@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}
 	src/link.cpp
 	src/mesh.cpp
 	src/transformable.cpp
+	src/xml.cpp
 
 	vendor/glad/src/glad.c
 )
@@ -23,6 +24,7 @@ include_directories(${PROJECT_NAME}
 	libs/glfw-build/install/include
 	libs/glm-build/install/include
 	libs/assimp-build/install/include
+	libs/tinyxml2-build/install/include
 	vendor/glad/include
 )
 
@@ -33,10 +35,12 @@ endif()
 list(APPEND CMAKE_PREFIX_PATH libs/glfw-build/install/lib/cmake/glfw3)
 list(APPEND CMAKE_PREFIX_PATH libs/glm-build/install/share/glm)
 list(APPEND CMAKE_PREFIX_PATH libs/assimp-build/install/lib/cmake/assimp-5.4)
+list(APPEND CMAKE_PREFIX_PATH libs/tinyxml2-build/install/lib/cmake/tinyxml2)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(assimp CONFIG REQUIRED)
+find_package(tinyxml2 CONFIG REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} glfw glm::glm assimp::assimp ${OPENGL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} glfw glm::glm assimp::assimp tinyxml2::tinyxml2 ${OPENGL_LIBRARIES})

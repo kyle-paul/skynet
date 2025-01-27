@@ -7,7 +7,9 @@
 
 Mesh::Loader Mesh::loader = Mesh::Loader::scratch;
 
-Mesh::Mesh(const std::string &path, const float (&color)[3]) : color{color[0], color[1], color[2]} {
+Mesh::Mesh(const std::string &path, const float (&color)[4]) 
+    : color{color[0], color[1], color[2], color[3]}
+{
 	switch(loader) {
 		case(Loader::scratch) : {
 			this->readfile(path); break;
@@ -161,7 +163,7 @@ void Mesh::assRead(const std::string& path) {
 }
 
 void Mesh::render(const ref<Shader> &shader) {
-    shader->setFloat3("color", this->color); va->bind();
+    shader->setFloat4("color", this->color); va->bind();
     glDrawElements(GL_TRIANGLES, va->getIB()->getCount(), GL_UNSIGNED_INT, nullptr);
 }
 

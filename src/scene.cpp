@@ -24,98 +24,6 @@ void loadMesh(const std::string &name, const MeshData &data, std::unordered_map<
 
 void Scene::multiMesh() {
 
-	links["link_0"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/link0_0.obj",  LIGHTWHITE},
-		{"assets/mesh/panda/assets/link0_1.obj",  BLACK},
-		{"assets/mesh/panda/assets/link0_2.obj",  LIGHTWHITE},
-		{"assets/mesh/panda/assets/link0_3.obj",  BLACK},
-		{"assets/mesh/panda/assets/link0_4.obj",  LIGHTWHITE},
-		{"assets/mesh/panda/assets/link0_5.obj",  BLACK},
-		{"assets/mesh/panda/assets/link0_6.obj",  WHITE},
-		{"assets/mesh/panda/assets/link0_7.obj",  WHITE},
-		{"assets/mesh/panda/assets/link0_8.obj",  BLACK},
-		{"assets/mesh/panda/assets/link0_9.obj",  LIGHTWHITE},
-		{"assets/mesh/panda/assets/link0_10.obj", WHITE}
-	});
-
-	links["link_1"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/link1.obj", WHITE}
-	});
-
-	links["link_2"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/link2.obj", WHITE}
-	});
-
-	links["link_3"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/link3_0.obj", WHITE},
-	    {"assets/mesh/panda/assets/link3_0.obj", WHITE},
-	    {"assets/mesh/panda/assets/link3_2.obj", WHITE},
-	    {"assets/mesh/panda/assets/link3_3.obj", BLACK}
-	});
-
-	
-	links["link_4"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/link4_0.obj", WHITE},
-		{"assets/mesh/panda/assets/link4_1.obj", WHITE},
-		{"assets/mesh/panda/assets/link4_2.obj", BLACK},
-		{"assets/mesh/panda/assets/link4_3.obj", WHITE}
-	});
-
-	links["link_5"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/link5_0.obj", BLACK},
-		{"assets/mesh/panda/assets/link5_1.obj", WHITE},
-		{"assets/mesh/panda/assets/link5_2.obj", WHITE}
-	});
-
-	links["link_6"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/link6_0.obj", LIGHTWHITE},
-	    {"assets/mesh/panda/assets/link6_1.obj", WHITE},
-	    {"assets/mesh/panda/assets/link6_2.obj", BLACK},
-	    {"assets/mesh/panda/assets/link6_3.obj", WHITE},
-	    {"assets/mesh/panda/assets/link6_4.obj", WHITE},
-	    {"assets/mesh/panda/assets/link6_5.obj", WHITE},
-	    {"assets/mesh/panda/assets/link6_6.obj", WHITE},
-	    {"assets/mesh/panda/assets/link6_7.obj", LIGHTBLUE},
-	    {"assets/mesh/panda/assets/link6_8.obj", LIGHTBLUE},
-	    {"assets/mesh/panda/assets/link6_9.obj", BLACK},
-	    {"assets/mesh/panda/assets/link6_10.obj", BLACK},
-	    {"assets/mesh/panda/assets/link6_11.obj", WHITE},
-	    {"assets/mesh/panda/assets/link6_12.obj", GREEN},
-	    {"assets/mesh/panda/assets/link6_13.obj", WHITE},
-	    {"assets/mesh/panda/assets/link6_14.obj", BLACK},
-	    {"assets/mesh/panda/assets/link6_15.obj", BLACK},
-	    {"assets/mesh/panda/assets/link6_16.obj", WHITE}
-	});
-
-	links["link_7"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/link7_0.obj", WHITE},
-	    {"assets/mesh/panda/assets/link7_1.obj", BLACK},
-	    {"assets/mesh/panda/assets/link7_2.obj", BLACK},
-	    {"assets/mesh/panda/assets/link7_3.obj", BLACK},
-	    {"assets/mesh/panda/assets/link7_4.obj", BLACK},
-	    {"assets/mesh/panda/assets/link7_5.obj", BLACK},
-	    {"assets/mesh/panda/assets/link7_6.obj", BLACK},
-	    {"assets/mesh/panda/assets/link7_7.obj", WHITE},
-	});
-
-	links["hand"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/hand_0.obj", LIGHTWHITE},
-        {"assets/mesh/panda/assets/hand_1.obj", BLACK},
-        {"assets/mesh/panda/assets/hand_2.obj", BLACK},
-        {"assets/mesh/panda/assets/hand_3.obj", WHITE},
-        {"assets/mesh/panda/assets/hand_4.obj", LIGHTWHITE}
-	});
-
-	links["finger_left"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/finger_0.obj", LIGHTWHITE},
-		{"assets/mesh/panda/assets/finger_1.obj", BLACK}
-	});
-
-	links["finger_right"] = cref<Link>(std::initializer_list<MeshData>{
-		{"assets/mesh/panda/assets/finger_0.obj", LIGHTWHITE},
-		{"assets/mesh/panda/assets/finger_1.obj", BLACK}
-	});
-
 	std::vector<std::thread> threads;
 
 	for (auto &[name, link] : this->links) {
@@ -139,6 +47,7 @@ void Scene::multiMesh() {
 
 void Scene::init() {
 	shader = cref<Shader>("scene", "assets/glsl/scene.glsl");
+	xml::parseXML("/home/paul/dev/graphics/assets/mesh/robots/panda/panda.xml", graph, links);
 	this->multiMesh();
 }
 
@@ -150,8 +59,28 @@ void Scene::render() {
 	shader->setMat4("projview", projview);
 	shader->setMat4("model", math::identity());
 	shader->setFloat3("light", light);
-	links["link_0"]->render(shader);
+	this->forward("link0", "null");
 	shader->unbind();
+}
+
+void Scene::forward(const std::string &cur, const std::string &par) {
+
+	float T[16];
+	if (par != "null") {
+		math::matmul4(T, links[par]->getWorldTransform(), links[cur]->getTransform());
+		links[cur]->setTransform(T);
+		links[cur]->render(shader);
+	} else {
+		links[cur]->render(shader);
+	}
+
+	for (auto &next : graph[cur]) {
+		this->forward(next, cur);
+	}
+}
+
+void Scene::inverse() {
+	
 }
 
 void Scene::updateCamera(MouseConfig* msc) {

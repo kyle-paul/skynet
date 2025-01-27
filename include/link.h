@@ -5,10 +5,10 @@
 
 struct MeshData {
     std::string path;
-    float color[3];
+    float color[4];
 
-    MeshData(const std::string& p, const float c[3]) : path(p) {
-        std::copy(c, c + 3, color);
+    MeshData(const std::string& p, const float c[4]) : path(p) {
+        std::copy(c, c + 4, color);
     }
 };
 
@@ -23,10 +23,10 @@ struct Inertial {
     }
 };
 
-class Link : Transformable
+class Link : public Transformable
 {
 public:
-	Link(std::initializer_list<MeshData> data);
+	Link(float p[3], float q[4], std::vector<MeshData> &data);
 	~Link();
 
 	void render(const ref<Shader> &shader);

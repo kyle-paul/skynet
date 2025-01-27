@@ -20,7 +20,7 @@ void main() {
 #version 330 core
 layout(location=0) out vec4 render;
 
-uniform vec3 color;
+uniform vec4 color;
 
 in vec3 v_normal;
 in vec2 v_texcoord;
@@ -29,6 +29,5 @@ uniform vec3 light;
 void main() {
     vec3 norm = normalize(v_normal);
     float diffuse = max(dot(norm, normalize(light)), 0.6);
-    vec3 color = color * diffuse;
-    render = vec4(color, 1.0);
+    render = color * diffuse;
 }

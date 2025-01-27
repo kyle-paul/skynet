@@ -1,5 +1,15 @@
 #include "transformable.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <iomanip>
+
+
+
 void Transformable::updateRotatation(const Rot &type)
 {
     const float cs_ = cos(DEG2RAD(theta));
@@ -48,8 +58,8 @@ void Transformable::updateRotatation(const Rot &type)
 void Transformable::updateTransform() {
     float T_[16];   
 	T_[0] = s[0];  T_[4] = 0.0f;  T_[8] = 0.0f;   T_[12] = p[0];
-    T_[1] = 0.0f;  T_[5] = s[2];  T_[9] = 0.0f;   T_[13] = p[1];
-    T_[2] = 0.0f;  T_[6] = 0.0f;  T_[10] = s[3];  T_[14] = p[2];
+    T_[1] = 0.0f;  T_[5] = s[1];  T_[9] = 0.0f;   T_[13] = p[1];
+    T_[2] = 0.0f;  T_[6] = 0.0f;  T_[10] = s[2];  T_[14] = p[2];
     T_[3] = 0.0f;  T_[7] = 0.0f;  T_[11] = 0.0f;  T_[15] = 1.0f;
 
     math::quat2R(R, q);

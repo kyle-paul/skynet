@@ -3,7 +3,7 @@
 #include "buffer.h"
 #include "transformable.h"
 
-class Mesh : public Transformable
+class Mesh
 {
 public:
 	enum class Loader {
@@ -13,7 +13,7 @@ public:
 	};
 
 public:
-	Mesh(const std::string &path, const float (&color)[3]);
+	Mesh(const std::string &path, const float (&color)[4]);
 	~Mesh();
 	
 	void load(const std::string &path);
@@ -37,5 +37,5 @@ private:
 	ref<VertexBuffer> vb;
 	ref<IndexBuffer>  ib;
 
-	float color[3];
+	float color[4];
 };
