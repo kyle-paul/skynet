@@ -49,7 +49,7 @@ void Scene::init() {
 }
 
 void Scene::render() {
-	camera.updateProjView(); 
+	camera.updateProjView();
 	float* projview = camera.getProjView();
 
 	shader->bind();
@@ -93,5 +93,6 @@ void Scene::updateCamera(MouseConfig* msc) {
 		this->camera.p[1] += 0.001f * msc->dy;
 	}
 	this->camera.p[2] += -0.1f * msc->zoom;
+	this->camera.aspect = msc->aspect;
 	msc->dx = 0.0f; msc->dy = 0.0f; msc->zoom = 0.0f;
 }

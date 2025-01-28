@@ -13,6 +13,7 @@ void OpenGLOptions() {
 MouseConfig msc;
 
 void MsMoveCb(GLFWwindow* window, double xpos, double ypos) {
+    if (!msc.viewport_hover) return;
     bool shiftPressed = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || 
                         glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
 
@@ -45,7 +46,13 @@ void MsMoveCb(GLFWwindow* window, double xpos, double ypos) {
 }
 
 void MsScrollCb(GLFWwindow* window, double xoffset, double yoffset) {
+    if (!msc.viewport_hover) return;
     msc.zoom = yoffset;
+}
+
+void WinSizeCb(GLFWwindow* window, int width, int height) {
+    msc.aspect = static_cast<float>(width) / static_cast<float>(height);
+    glViewport(0, 0, width, height);
 }
 
 
@@ -75,6 +82,7 @@ int main() {
         Scene scene; scene.init();
         Interface gui = Interface(window);
         while (!glfwWindowShouldClose(window)) {
+            msc.viewport_hover = gui.viewport_hover;
             scene.updateCamera(&msc);
             gui.render(&scene);
             glfwPollEvents();

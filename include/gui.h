@@ -18,6 +18,10 @@ public:
     void begin();
     void end();
 
+public:
+    bool viewport_hover = false;
+    uint32_t viewport_width, viewport_height;
+
 private:
     ref<FrameBuffer> framebuffer = cref<FrameBuffer>();
 };

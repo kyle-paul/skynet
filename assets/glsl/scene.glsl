@@ -14,6 +14,9 @@ void main() {
     gl_Position = projview * model * vec4(a_position, 1.0);
     v_normal = a_normal;
     v_texcoord = a_texcoord;
+
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    v_normal = normalMatrix * a_normal;
 }
 
 #type fragment

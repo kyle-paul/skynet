@@ -6,6 +6,8 @@ struct MouseConfig {
     float zoom = 0.0f;
     bool first_left = true;
     bool first_right = true;
+    bool viewport_hover = false;
+    float aspect = 1200.0f / 800.0f;
 };
 
 enum class Rot { Xaxis, Yaxis, Zaxis, Waxis };

@@ -135,6 +135,15 @@ void Interface::render(Scene *scene) {
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
         ImGui::Begin("Viewport");
+        this->viewport_hover = ImGui::IsWindowHovered() ? true : false;
+        ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+        if (viewportSize.x > 0 && viewportSize.y > 0) {
+            uint32_t newWidth = (uint32_t)viewportSize.x;
+            uint32_t newHeight = (uint32_t)viewportSize.y;
+            if (framebuffer->width != newWidth || framebuffer->height != newHeight) {
+                framebuffer->resize(newWidth, newHeight);
+            }
+        }
         ImGui::Image(
             (ImTextureID)(intptr_t)framebuffer->color, 
             ImVec2(framebuffer->width, framebuffer->height), ImVec2(0, 1), ImVec2(1, 0));

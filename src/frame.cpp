@@ -36,3 +36,14 @@ void FrameBuffer::bind() const {
 void FrameBuffer::unbind() const {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+void FrameBuffer::resize(uint32_t &newWidth, uint32_t &newHeight) {
+    this->width = newWidth;
+    this->height = newHeight;
+
+    glDeleteFramebuffers(1, &fbo);
+    glDeleteTextures(1, &color);
+    glDeleteTextures(1, &depth);
+
+    this->init();
+}

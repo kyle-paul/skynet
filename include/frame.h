@@ -13,6 +13,8 @@ public:
     void bind() const;
     void unbind() const;
 
+    void resize(uint32_t &newWidth, uint32_t &newHeight);
+
 private:
     uint32_t fbo, color, depth;
 
