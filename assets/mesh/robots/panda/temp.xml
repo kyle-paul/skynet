@@ -1,0 +1,33 @@
+<vortex model="panda">
+	<default>
+		<default class="visual">
+	    	<geom type="mesh"/>
+	    </default>
+	</default>
+	<asset>
+		<material name="white" 		rgba="1 1 1 1"/>
+	    <material name="off_white"  rgba="0.901961 0.921569 0.929412 1"/>
+	    <material name="black" 		rgba="0.25 0.25 0.25 1"/>
+	    <material name="green" 		rgba="0 1 0 1"/>
+	    <material name="light_blue" rgba="0.039216 0.541176 0.780392 1"/>
+	</asset>
+
+	<worldbody nbody="12">
+		<!-- config link 0 -->
+		<body name="link0">
+			<inertial mass="0.629769" pos="-0.041018 -0.00014 0.049974"
+	                  fullinertia="0.00315 0.00388 0.004285 8.2904e-7 0.00015 8.2299e-6"/>
+	        <geom mesh="link0_0"  material="off_white"   class="visual"/>
+	     	<geom mesh="link0_1"  material="black"       class="visual"/>
+	      	<geom mesh="link0_2"  material="off_white"   class="visual"/>
+	      	<geom mesh="link0_3"  material="black"       class="visual"/>
+	      	<geom mesh="link0_4"  material="off_white"   class="visual"/>
+	      	<geom mesh="link0_5"  material="black"       class="visual"/>
+	      	<geom mesh="link0_6"  material="white"       class="visual"/>
+	      	<geom mesh="link0_7"  material="white"       class="visual"/>
+	      	<geom mesh="link0_8"  material="black"       class="visual"/>
+	      	<geom mesh="link0_9"  material="off_white"   class="visual"/>
+	      	<geom mesh="link0_10" material="white"       class="visual"/>
+	    </body>
+	</worldbody>
+</vortex>

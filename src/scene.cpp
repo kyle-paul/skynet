@@ -1,6 +1,8 @@
 #include "scene.h"
 #include "math.h"
 
+#include "imgui.h"
+
 Scene::Scene() { }
 Scene::~Scene() { }
 
@@ -43,7 +45,7 @@ void Scene::multiMesh() {
 }
 
 void Scene::init() {
-	shader = cref<Shader>("scene", "assets/glsl/scene.glsl");
+	shader = cref<Shader>("scene", "/home/paul/dev/graphics/assets/glsl/scene.glsl");
 	xml::parseXML("/home/paul/dev/graphics/assets/mesh/robots/panda/panda.xml", graph, links);
 	this->multiMesh();
 }

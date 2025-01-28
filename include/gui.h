@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "scene.h"
 #include "frame.h"
+#include "guizmo.h"
 #include <GLFW/glfw3.h>
 
 class Interface
@@ -24,4 +25,5 @@ public:
 
 private:
     ref<FrameBuffer> framebuffer = cref<FrameBuffer>();
+    Guizmo guizmo;
 };

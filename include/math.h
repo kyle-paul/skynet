@@ -1,6 +1,6 @@
 #pragma once
 #include "core.h"
-#include <cmath>
+#include "imgui.h"
 
 #define PI 3.14159265358979323846
 #define RAD2DEG(rad) ((rad) * (180.0 / PI))
@@ -17,6 +17,8 @@ void perspective(float* P, float& fov, float& aspect, float& znear, float &zfar)
 
 void matmul4(float* res, float* m1, float* m2);
 void matmul3(float* res, float* m1, float* m2);
+void invert4(float* res, float* m);
+ImVec4 mulmatvec4(float* m, const ImVec4& v);
 void normVec3(float* v);
 void normVec4(float* v);
 

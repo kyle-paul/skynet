@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
 	src/xml.cpp
 	src/gui.cpp
 	src/frame.cpp
+	src/guizmo.cpp
 
 	vendor/glad/src/glad.c
 	vendor/imgui/imgui.cpp

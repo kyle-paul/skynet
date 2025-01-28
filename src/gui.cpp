@@ -13,7 +13,7 @@ Interface::Interface(GLFWwindow *window) {
     }
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.Fonts->AddFontFromFileTTF("assets/gui/fonts/Arial.ttf", 14.0f);
+    io.Fonts->AddFontFromFileTTF("/home/paul/dev/graphics/assets/gui/fonts/Arial.ttf", 14.0f);
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
@@ -132,10 +132,12 @@ void Interface::render(Scene *scene) {
         glClearColor(scene->bgcol[0], scene->bgcol[1], scene->bgcol[2], scene->bgcol[3]);
         scene->render();
         framebuffer->unbind();
-
+        
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
         ImGui::Begin("Viewport");
+        
         this->viewport_hover = ImGui::IsWindowHovered() ? true : false;
+        ImVec2 viewportPos = ImGui::GetCursorScreenPos();
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
         if (viewportSize.x > 0 && viewportSize.y > 0) {
             uint32_t newWidth = (uint32_t)viewportSize.x;
@@ -144,13 +146,20 @@ void Interface::render(Scene *scene) {
                 framebuffer->resize(newWidth, newHeight);
             }
         }
+
         ImGui::Image(
             (ImTextureID)(intptr_t)framebuffer->color, 
             ImVec2(framebuffer->width, framebuffer->height), ImVec2(0, 1), ImVec2(1, 0));
+
+        guizmo.config.drawlist = ImGui::GetWindowDrawList();
+        guizmo.config.x = viewportPos.x + 20.0f;
+        guizmo.config.y = viewportPos.y + viewportSize.y - 120.0f;
+        guizmo.render(scene->camera.getProjView(), scene->camera.getProjection(), 0.5f);
+
         ImGui::End();
         ImGui::PopStyleVar();
     }
-
+    
     {
         ImGui::Begin("General setting");
         
