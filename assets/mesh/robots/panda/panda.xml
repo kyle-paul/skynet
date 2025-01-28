@@ -31,12 +31,14 @@
 
 	      	<!-- config link-1 -->
 	      	<body name="link1" pos="0 0 0.333">
+				<joint name="joint1"/>
 		        <inertial mass="4.970684" pos="0.003875 0.002081 -0.04762"
 		                  fullinertia="0.70337 0.70661 0.0091170 -0.00013900 0.0067720 0.019169"/>
 		        <geom mesh="link1" material="white" class="visual"/>
 
 		        <!-- config link-2 -->
 		        <body name="link2" quat="1 -1 0 0">
+					<joint name="joint2" range="-1.7628 1.7628"/>
 		         	<inertial mass="0.646926" pos="-0.003141 -0.02872 0.003495"
 		                      fullinertia="0.0079620 2.8110e-2 2.5995e-2 -3.925e-3 1.0254e-2 7.04e-4"/>
 		         	<geom mesh="link2"   material="white" class="visual"/>
@@ -53,6 +55,7 @@
 
 			            <!-- Config link-4 -->
 			            <body name="link4" pos="0.0825 0 0" quat="1 1 0 0">
+							<joint name="joint4" range="-3.0718 -0.0698"/>
 			             	<inertial mass="3.587895" pos="-5.317e-2 1.04419e-1 2.7454e-2"
 			                		  fullinertia="2.5853e-2 1.9552e-2 2.8323e-2 7.796e-3 -1.332e-3 8.641e-3"/>			              
 			              	<geom mesh="link4_0" material="white" class="visual"/>
@@ -62,6 +65,7 @@
 
 			              	<!-- Config link-5 -->
 			              	<body name="link5" pos="-0.0825 0.384 0" quat="1 -1 0 0">
+								<joint name="joint5"/>
 				                <inertial mass="1.225946" pos="-1.1953e-2 4.1065e-2 -3.8437e-2"
 				                          fullinertia="3.5549e-2 2.9474e-2 8.627e-3 -2.117e-3 -4.037e-3 2.29e-4"/>
 				                <geom mesh="link5_0" material="black" class="visual"/>
@@ -70,6 +74,7 @@
 
 				                <!-- Config link-6 -->
 				                <body name="link6" quat="1 1 0 0">
+									<joint name="joint6" range="-0.0175 3.7525"/>
 					                <inertial mass="1.666555" pos="6.0149e-2 -1.4117e-2 -1.0517e-2"
 					                          fullinertia="1.964e-3 4.354e-3 5.433e-3 1.09e-4 -1.158e-3 3.41e-4"/>
 					                <geom mesh="link6_0"  material="off_white"  class="visual"/>
@@ -92,6 +97,7 @@
 
 					                <!-- Config link-7 -->
 					                <body name="link7" pos="0.088 0 0" quat="1 1 0 0">
+										<joint name="joint7"/>
 					                    <inertial mass="7.35522e-01" pos="1.0517e-2 -4.252e-3 6.1597e-2"
 					                              fullinertia="1.2516e-2 1.0027e-2 4.815e-3 -4.28e-4 -1.196e-3 -7.41e-4"/>
 					                    <geom mesh="link7_0" material="white" class="visual"/>
@@ -127,14 +133,6 @@
 						                        <geom mesh="finger_0" material="off_white" class="visual"/>
 						                        <geom mesh="finger_1" material="black"     class="visual"/>
 						                    </body>
-						                </body>
-
-						                <body name="link8" pos="0.088 0 0" quat="1 1 0 0">
-						                    <inertial mass="7.35522e-01" pos="1.0517e-2 -4.252e-3 6.1597e-2"
-						                              fullinertia="1.2516e-2 1.0027e-2 4.815e-3 -4.28e-4 -1.196e-3 -7.41e-4"/>
-						                    <geom mesh="link7_0" material="white" class="visual"/>
-						                    <geom mesh="link7_1" material="black" class="visual"/>
-						                    <geom mesh="link7_2" material="black" class="visual"/>
 						                </body>
 					                </body>
 				                </body>

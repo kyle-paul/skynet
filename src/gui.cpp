@@ -133,11 +133,13 @@ void Interface::render(Scene *scene) {
         scene->render();
         framebuffer->unbind();
 
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
         ImGui::Begin("Viewport");
         ImGui::Image(
             (ImTextureID)(intptr_t)framebuffer->color, 
             ImVec2(framebuffer->width, framebuffer->height), ImVec2(0, 1), ImVec2(1, 0));
         ImGui::End();
+        ImGui::PopStyleVar();
     }
 
     {
@@ -162,6 +164,8 @@ void Interface::render(Scene *scene) {
 
         for (auto &[name, link] : scene->links) {
             if (ImGui::TreeNode(name.c_str())) {
+                ImGui::DragFloat3("joint axis", link->w, 0.01f, -2.0f, 2.0f);
+                ImGui::DragFloat("angle", &link->theta, 0.1f, -360.0f, 360.0f);
                 ImGui::DragFloat3("position", link->p, 0.01f, -2.0f, 2.0f);
                 ImGui::DragFloat4("quaternion", link->q, 0.01f, -2.0f, 2.0f);
                 ImGui::DragFloat4("scale", link->s, 0.01f, -2.0f, 2.0f);

@@ -54,18 +54,22 @@ void Scene::render() {
 
 	shader->bind();
 	shader->setMat4("projview", projview);
-	shader->setMat4("model", math::identity());
 	shader->setFloat3("light", light);
 	this->forward("link0", "null");
 	shader->unbind();
 }
 
 void Scene::forward(const std::string &cur, const std::string &par) {
-	float T[16];
+	float T[16], T_link[16], T_joint[16];
+
 	if (par != "null") {
-		math::matmul4(T, links[par]->getWorldTransform(), links[cur]->getTransform());
+		math::matmul4(T_link, links[par]->getWorldTransform(), links[cur]->getTransform());
+		math::axis2R(T_joint, links[cur]->w, links[cur]->theta);
+		math::matmul4(T, T_link, T_joint);
+
 		links[cur]->setTransform(T);
 		links[cur]->render(shader);
+
 	} else {
 		links[cur]->render(shader);
 	}

@@ -12,6 +12,7 @@ void parseBody(tinyxml2::XMLElement* body,
 {
     float pos[3]   = {0.0f, 0.0f, 0.0f};
     float quat[4]  = {1.0f, 0.0f, 0.0f, 0.0f};
+    float axis[3]  = {0.0f, 0.0f, 1.0f};
     float color[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
     if (body->Attribute("pos")) {
@@ -20,7 +21,10 @@ void parseBody(tinyxml2::XMLElement* body,
 
     if (body->Attribute("quat")) {
         sscanf(body->Attribute("quat"), "%f %f %f %f", &quat[0], &quat[1], &quat[2], &quat[3]);
-        math::normVec4(quat);
+    }
+
+    if (body->FirstChildElement("joint") && body->FirstChildElement("joint")->Attribute("axis")) {
+        sscanf(body->FirstChildElement("joint")->Attribute("axis"), "%f %f %f", &axis[0], &axis[1], &axis[2]);
     }
 
     std::string bodyName = body->Attribute("name");
@@ -35,7 +39,7 @@ void parseBody(tinyxml2::XMLElement* body,
         meshes.push_back({meshPath, color});
     }
 
-    links[bodyName] = cref<Link>(pos, quat, meshes);
+    links[bodyName] = cref<Link>(pos, quat, axis, meshes);
 
     for (tinyxml2::XMLElement* childBody = body->FirstChildElement("body"); 
         childBody; childBody = childBody->NextSiblingElement("body")) 

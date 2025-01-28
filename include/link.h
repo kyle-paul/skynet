@@ -26,7 +26,7 @@ struct Inertial {
 class Link : public Transformable
 {
 public:
-	Link(float p[3], float q[4], std::vector<MeshData> &data);
+	Link(float p[3], float q[4], float w[3], std::vector<MeshData> &data);
 	~Link();
 
 	void render(const ref<Shader> &shader);

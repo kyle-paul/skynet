@@ -5,7 +5,7 @@
 namespace math {
 
 void quat2T(float* T, float* q, float* p) {
-    float x = q[0], y = q[1], z = q[2], w = q[3];
+    float x = q[1], y = q[2], z = q[3], w = q[0];
     float x2 = x + x, y2 = y + y, z2 = z + z;
     float xx = x * x2, xy = x * y2, xz = x * z2;
     float yy = y * y2, yz = y * z2, zz = z * z2;
@@ -18,6 +18,7 @@ void quat2T(float* T, float* q, float* p) {
 }
 
 void quat2R(float* R, float* q) {
+    normVec4(q);
     float x = q[1], y = q[2], z = q[3], w = q[0];
     float x2 = x + x, y2 = y + y, z2 = z + z;
     float xx = x * x2, xy = x * y2, xz = x * z2;
@@ -30,7 +31,7 @@ void quat2R(float* R, float* q) {
     R[3] = 0.0f;              R[7] = 0.0f;              R[11] = 0.0f;              R[15] = 1.0f;
 }
 
-void euler2T(float* T, float* e, float *p) {
+void euler2V(float* T, float* e, float *p) {
 	float cx = cos(e[0]);
     float cy = cos(e[1]);
     float cz = cos(e[2]);
@@ -42,6 +43,21 @@ void euler2T(float* T, float* e, float *p) {
     T[1] = sz*cy;  T[5] = sz*sy*sx + cz*cx;  T[9]  = sz*sy*cx - cz*sx;  T[13] = -p[1];
     T[2] = -sy;    T[6] = cy*sx;             T[10] = cy*cx;             T[14] = -p[2];
     T[3] = 0.0f;   T[7] = 0.0f;              T[11] = 0.0f,              T[15] =  1.0f;
+}
+
+void axis2R(float* R, float* w, float theta) {
+    const float cs_ = cos(DEG2RAD(theta));
+    const float sn_ = sin(DEG2RAD(theta));
+    normVec3(w); float t[3];
+
+    t[0] = (1 - cs_) * w[0];
+    t[1] = (1 - cs_) * w[1];
+    t[2] = (1 - cs_) * w[2];
+
+    R[0] = cs_ + t[0] * w[0];          R[4] = t[0] * w[1] + sn_ * w[2];   R[8]  = t[0] * w[2] - sn_ * w[1];   R[12] = 0.0f;
+    R[1] = t[0] * w[1] - sn_ * w[2];   R[5] = cs_ + t[1] * w[1];          R[9]  = t[1] * w[2] + sn_ * w[0];   R[13] = 0.0f;
+    R[2] = t[0] * w[2] + sn_ * w[1];   R[6] = t[1] * w[2] - sn_ * w[0];   R[10] = cs_ + t[2] * w[2];          R[14] = 0.0f;
+    R[3] = 0.0f;                       R[7] = 0.0f;                       R[11] = 0.0f;                       R[15] = 1.0f;
 }
 
 void perspective(float* P, float& fov, float& aspect, float& znear, float &zfar) {
@@ -73,6 +89,18 @@ void matmul3(float* res, float* m1, float* m2) {
                 res[i + j * 3] += m1[i + k * 3] * m2[k + j * 3];
             }
         }
+    }
+}
+
+void normVec3(float* v) {
+    float norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+    if (norm < MINVAL) {
+        v[0] = 1; v[1] = 0; v[2] = 0;
+    } else {
+        float normInv = 1/norm;
+        v[0] *= normInv;
+        v[1] *= normInv;
+        v[2] *= normInv;
     }
 }
 

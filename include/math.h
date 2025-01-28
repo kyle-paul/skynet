@@ -11,11 +11,13 @@ namespace math {
 
 void quat2T(float* T, float* q, float* p);
 void quat2R(float* R, float* q);
-void euler2T(float* T, float* e, float* p);
+void euler2V(float* T, float* e, float* p);
+void axis2R(float* R, float* w, float theta);
 void perspective(float* P, float& fov, float& aspect, float& znear, float &zfar);
 
 void matmul4(float* res, float* m1, float* m2);
 void matmul3(float* res, float* m1, float* m2);
+void normVec3(float* v);
 void normVec4(float* v);
 
 void printMat4(float* m);
