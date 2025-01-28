@@ -3,7 +3,7 @@
 #include "buffer.h"
 #include "transformable.h"
 
-class Mesh
+class Mesh : public Transformable
 {
 public:
 	enum class Loader {
@@ -16,14 +16,13 @@ public:
 	Mesh(const std::string &path, const float (&color)[4]);
 	~Mesh();
 	
-	void load(const std::string &path);
 	void render(const ref<Shader> &shader);
 	void initGL();
 	void info();
 
 private:
-	void readfile(const std::string& path);
-	void assRead(const std::string& path);
+	void readfile(const std::string &path);
+	void assRead(const std::string &path);
 
 	std::vector<std::string> split(const std::string &line,
 			const std::string &del, std::vector<std::string> &res);

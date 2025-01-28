@@ -53,7 +53,7 @@ std::vector<std::string> Mesh::split(
 }
 
 
-void Mesh::readfile(const std::string& path) {
+void Mesh::readfile(const std::string & path) {
 	std::ifstream file(path.c_str());
     if (!file.is_open()) {
         ERROR("Failed to open file: {0}", path);
@@ -123,7 +123,7 @@ void Mesh::readfile(const std::string& path) {
 }
 
 
-void Mesh::assRead(const std::string& path) {
+void Mesh::assRead(const std::string & path) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path,
         aiProcess_Triangulate | aiProcess_GenSmoothNormals |

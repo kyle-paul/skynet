@@ -18,8 +18,8 @@ public:
 private:
     uint32_t fbo, color, depth;
 
-    uint32_t width = 1200;
-    uint32_t height = 800;
+    uint32_t width = 1500;
+    uint32_t height = 900;
 
     friend class Interface;
 };

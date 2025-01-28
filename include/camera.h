@@ -16,7 +16,7 @@ public:
 
 public:
 	float fov    = 45.0f;
-    float aspect = 1200.0f / 800.0f;
+    float aspect = 1500.0f / 900.0f;
     float znear  = 0.1f;
     float zfar   = 100.0f;
 

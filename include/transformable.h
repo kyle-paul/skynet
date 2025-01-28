@@ -8,16 +8,18 @@
 class Transformable
 {
 public:
-	void updateRotatation(const Rot &type);
-	void updateTransform();
+	void updateRotatation(const RotAxis &type);
+	void updateTransform(const RotType &type);
 
 	void setTransform(float *T_) { std::copy(T_, T_ + 16, this->T); }
-
-	float* getTransform() { this->updateTransform(); return T; }
 	float* getWorldTransform() { return T; }
 
+	inline float* getTransform(const RotType &type = RotType::Quaternion) { 
+		this->updateTransform(type); return T;
+	}
+
 protected:
-	float p[3] = {0.0f, 0.0f, 3.0f};
+	float p[3] = {0.0f, 0.0f, 0.0f};
 	float e[3] = {0.0f, 0.0f, 0.0f};
     float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};
 	float s[3] = {1.0f, 1.0f, 1.0f};

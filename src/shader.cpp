@@ -1,12 +1,12 @@
 #include "shader.h"
 
-Shader::Shader(const std::string& name, const std::string& path) {
+Shader::Shader(const std::string & name, const std::string & path) {
 	std::string source = readfile(path);
     auto shaderSources = preprocess(source);    
     this->compile(shaderSources);
 }
 
-Shader::Shader(const std::string &name, const std::string& vertsrc, const std::string& fragsrc)
+Shader::Shader(const std::string &name, const std::string & vertsrc, const std::string & fragsrc)
     :name(name)
 {
     std::unordered_map<GLenum, std::string> sources;
@@ -20,7 +20,7 @@ Shader::~Shader() {
 }
 
 
-std::string Shader::readfile(const std::string& path) {
+std::string Shader::readfile(const std::string & path) {
     std::string result;
     std::fstream fin(path, std::ios::in | std::ios::binary);
     if (fin) {
@@ -64,7 +64,7 @@ void Shader::compile(const std::unordered_map<GLenum, std::string> &shaderSource
 
     for (auto &kv : shaderSources) {
         GLenum type = kv.first;
-        const std::string& source = kv.second;
+        const std::string & source = kv.second;
         GLuint shader = glCreateShader(type);
 
         const GLchar* sourceCStr = source.c_str();
@@ -128,42 +128,42 @@ void Shader::unbind() const {
 }
 
 
-void Shader::setInt(const std::string& name, int value) {
+void Shader::setInt(const std::string & name, int value) {
     GLint location = glGetUniformLocation(shaderID, name.c_str());
     glUniform1i(location, value);
 }
 
-void Shader::setIntArray(const std::string& name, int* values, uint32_t count) {
+void Shader::setIntArray(const std::string & name, int* values, uint32_t count) {
     GLint location = glGetUniformLocation(shaderID, name.c_str());
     glUniform1iv(location, count, values);
 }
 
-void Shader::setFloat(const std::string& name, float value) {
+void Shader::setFloat(const std::string & name, float value) {
     GLint location = glGetUniformLocation(shaderID, name.c_str());
     glUniform1f(location, value);
 }
 
-void Shader::setFloat2(const std::string& name, const float* value) {
+void Shader::setFloat2(const std::string & name, const float* value) {
     GLint location = glGetUniformLocation(shaderID, name.c_str());
     glUniform2f(location, value[0], value[1]);
 }
 
-void Shader::setFloat3(const std::string& name, const float* value) {
+void Shader::setFloat3(const std::string & name, const float* value) {
     GLint location = glGetUniformLocation(shaderID, name.c_str());
     glUniform3f(location, value[0], value[1], value[2]);
 }
 
-void Shader::setFloat4(const std::string& name, const float* value) {
+void Shader::setFloat4(const std::string & name, const float* value) {
     GLint location = glGetUniformLocation(shaderID, name.c_str());
     glUniform4f(location, value[0], value[1], value[2], value[3]);
 }
 
-void Shader::setMat3(const std::string& name, const float* value) {
+void Shader::setMat3(const std::string & name, const float* value) {
     GLint location = glGetUniformLocation(shaderID, name.c_str());
     glUniformMatrix3fv(location, 1, GL_FALSE, value);
 }
 
-void Shader::setMat4(const std::string& name, const float* value) {
+void Shader::setMat4(const std::string & name, const float* value) {
     GLint location = glGetUniformLocation(shaderID, name.c_str());
     glUniformMatrix4fv(location, 1, GL_FALSE, value);
 }

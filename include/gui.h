@@ -5,6 +5,7 @@
 #include "scene.h"
 #include "frame.h"
 #include "guizmo.h"
+#include "ImGuizmo.h"
 #include <GLFW/glfw3.h>
 
 class Interface

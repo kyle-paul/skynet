@@ -7,7 +7,7 @@ struct MeshData {
     std::string path;
     float color[4];
 
-    MeshData(const std::string& p, const float c[4]) : path(p) {
+    MeshData(const std::string & p, const float c[4]) : path(p) {
         std::copy(c, c + 4, color);
     }
 };

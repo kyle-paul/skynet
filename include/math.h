@@ -9,18 +9,24 @@
 
 namespace math {
 
-void quat2T(float* T, float* q, float* p);
-void quat2R(float* R, float* q);
-void euler2V(float* T, float* e, float* p);
-void axis2R(float* R, float* w, float theta);
+void quat2T  (float* T, float* q, float* p = nullptr);
+void euler2T (float* T, float* e, float* p = nullptr);
+void axisX2T (float* T, float* w, float &theta, float* p = nullptr);
+void axisY2T (float* T, float* w, float &theta, float* p = nullptr);
+void axisZ2T (float* T, float* w, float &theta, float* p = nullptr);
+void axis2T  (float* T, float* w, float& theta, float* p = nullptr);
 void perspective(float* P, float& fov, float& aspect, float& znear, float &zfar);
+void transcale (float* T, float* p, float* s);
+void decompose(float* T, float* p, float* s, float* e);
 
+void matmul(float* res, float* m1, float* m2, int n);
 void matmul4(float* res, float* m1, float* m2);
 void matmul3(float* res, float* m1, float* m2);
 void invert4(float* res, float* m);
-ImVec4 mulmatvec4(float* m, const ImVec4& v);
 void normVec3(float* v);
 void normVec4(float* v);
+
+ImVec4 mulmatvec4(float* m, const ImVec4& v);
 
 void printMat4(float* m);
 void printMat3(float* m);

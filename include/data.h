@@ -7,8 +7,21 @@ struct MouseConfig {
     bool first_left = true;
     bool first_right = true;
     bool viewport_hover = false;
-    float aspect = 1200.0f / 800.0f;
+    float aspect = 1500.0f / 900.0f;
 };
 
-enum class Rot { Xaxis, Yaxis, Zaxis, Waxis };
+struct Option {
+    bool guizmo_local = false;
+    bool guizmo_world = true;
+    int guizmo_type;
+};
+
+struct Data {
+    MouseConfig msc;
+    Option opt;
+};
+
+enum class RotType { Euler, Quaternion, Axis };
+enum class RotAxis { Xaxis, Yaxis, Zaxis, Waxis };
 enum class Frame { World, Body };
+enum class Object { Cube, Sphere, Capsule, Tetrahedra };

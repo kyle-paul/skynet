@@ -1,7 +1,7 @@
 #include "scene.h"
 #include "math.h"
-
 #include "imgui.h"
+#include "ImGuizmo.h"
 
 Scene::Scene() { }
 Scene::~Scene() { }
@@ -45,31 +45,45 @@ void Scene::multiMesh() {
 }
 
 void Scene::init() {
-	shader = cref<Shader>("scene", "/home/paul/dev/graphics/assets/glsl/scene.glsl");
-	xml::parseXML("/home/paul/dev/graphics/assets/mesh/robots/panda/panda.xml", graph, links);
+	base = std::filesystem::current_path().string();
+	shader = cref<Shader>("scene", base + "/assets/glsl/scene.glsl");
+	xml::parseXML(base + "/assets/mesh/robots/panda/panda.xml", graph, links);
 	this->multiMesh();
 }
 
+void Scene::create(const Object &type) {
+	switch (type) {
+		case(Object::Cube) : {
+			float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			ref<Mesh> cube = cref<Mesh>(base + "/assets/mesh/primitive/cube.obj", color);
+			cube->initGL(); this->objects["cube"] = cube;
+			break;
+		}
+	}
+}
+
 void Scene::render() {
-	camera.updateProjView();
+	this->updateCamera();
 	float* projview = camera.getProjView();
 
 	shader->bind();
 	shader->setMat4("projview", projview);
 	shader->setFloat3("light", light);
 	this->forward("link0", "null");
+	this->visualize();
 	shader->unbind();
 }
+
 
 void Scene::forward(const std::string &cur, const std::string &par) {
 	float T[16], T_link[16], T_joint[16];
 
 	if (par != "null") {
 		math::matmul4(T_link, links[par]->getWorldTransform(), links[cur]->getTransform());
-		math::axis2R(T_joint, links[cur]->w, links[cur]->theta);
+		math::axis2T(T_joint, links[cur]->w, links[cur]->theta);
 		math::matmul4(T, T_link, T_joint);
 
-		links[cur]->setTransform(T);
+		links[cur]->setTransform(T_link);
 		links[cur]->render(shader);
 
 	} else {
@@ -85,16 +99,39 @@ void Scene::inverse() {
 	
 }
 
-void Scene::updateCamera(MouseConfig* msc) {
-	if (!msc->first_left) {
-		this->camera.e[1] += 0.01f * msc->dx;
-		this->camera.e[0] += 0.01f * msc->dy;		 
-	} 
-	else if (!msc->first_right) {
-		this->camera.p[0] -= 0.001f * msc->dx;
-		this->camera.p[1] += 0.001f * msc->dy;
+void Scene::visualize() {
+	for (auto &[name, object] : objects) {
+		float* T = object->getTransform(RotType::Euler);
+		shader->setMat4("model", T);
+		object->render(shader);
+		this->selectedEntity = object;
 	}
-	this->camera.p[2] += -0.1f * msc->zoom;
-	this->camera.aspect = msc->aspect;
-	msc->dx = 0.0f; msc->dy = 0.0f; msc->zoom = 0.0f;
+}
+
+void Scene::updateCamera() {
+	if (!data->msc.first_left) {
+		this->camera.e[1] += 0.01f * data->msc.dx;
+		this->camera.e[0] += 0.01f * data->msc.dy;		 
+	} 
+	else if (!data->msc.first_right) {
+		this->camera.p[0] -= 0.001f * data->msc.dx;
+		this->camera.p[1] += 0.001f * data->msc.dy;
+	}
+	this->camera.p[2] += -0.1f * data->msc.zoom;
+	this->camera.aspect = data->msc.aspect;
+
+	data->msc.dx = 0.0f; 
+	data->msc.dy = 0.0f; 
+	data->msc.zoom = 0.0f;
+
+	camera.updateProjView();
+}
+
+void Scene::editGuizmo() {
+	if (data->opt.guizmo_local && selectedEntity) {
+		float* T = selectedEntity->getWorldTransform();
+		ImGuizmo::Manipulate(camera.getView(), camera.getProjection(), 
+		(ImGuizmo::OPERATION)data->opt.guizmo_type, ImGuizmo::LOCAL, T);
+		if (ImGuizmo::IsUsing) math::decompose(T, selectedEntity->p, selectedEntity->s, selectedEntity->e);
+	}
 }

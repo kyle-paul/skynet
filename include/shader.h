@@ -6,25 +6,25 @@
 class Shader
 {
 public:
-	Shader(const std::string& name, const std::string& path);
-    Shader(const std::string& name, const std::string& vertsrc, const std::string& fragsrc);
+	Shader(const std::string & name, const std::string & path);
+    Shader(const std::string & name, const std::string & vertsrc, const std::string & fragsrc);
 	~Shader();
 
 	void bind() const;
 	void unbind() const;
 
-	void setInt(const std::string& name, int value);
-	void setIntArray(const std::string& name, int* value, uint32_t count);
-	void setFloat(const std::string& name, float value);
-    void setFloat2(const std::string& name, const float* value);
-    void setFloat3(const std::string& name, const float* value);
-    void setFloat4(const std::string& name, const float* value);
-    void setMat3(const std::string& name, const float* value);
-    void setMat4(const std::string& name, const float* value);
+	void setInt(const std::string & name, int value);
+	void setIntArray(const std::string & name, int* value, uint32_t count);
+	void setFloat(const std::string & name, float value);
+    void setFloat2(const std::string & name, const float* value);
+    void setFloat3(const std::string & name, const float* value);
+    void setFloat4(const std::string & name, const float* value);
+    void setMat3(const std::string & name, const float* value);
+    void setMat4(const std::string & name, const float* value);
 
 private:
-    std::string readfile(const std::string& path);
-    std::unordered_map<GLenum, std::string> preprocess(const std::string& source);
+    std::string readfile(const std::string & path);
+    std::unordered_map<GLenum, std::string> preprocess(const std::string & source);
     void compile(const std::unordered_map<GLenum, std::string>& shaderSources);
 
     std::string name;

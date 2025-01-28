@@ -114,6 +114,7 @@ void Interface::begin() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
 
     ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 }
@@ -132,10 +133,10 @@ void Interface::render(Scene *scene) {
         glClearColor(scene->bgcol[0], scene->bgcol[1], scene->bgcol[2], scene->bgcol[3]);
         scene->render();
         framebuffer->unbind();
-        
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
         ImGui::Begin("Viewport");
-        
+
         this->viewport_hover = ImGui::IsWindowHovered() ? true : false;
         ImVec2 viewportPos = ImGui::GetCursorScreenPos();
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
@@ -151,8 +152,13 @@ void Interface::render(Scene *scene) {
             (ImTextureID)(intptr_t)framebuffer->color, 
             ImVec2(framebuffer->width, framebuffer->height), ImVec2(0, 1), ImVec2(1, 0));
 
+        ImGuizmo::SetRect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y);
+        ImGuizmo::SetOrthographic(false);
+		ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
+        scene->editGuizmo();
+        
         guizmo.config.drawlist = ImGui::GetWindowDrawList();
-        guizmo.config.x = viewportPos.x + 20.0f;
+        guizmo.config.x = viewportPos.x + 15.0f;
         guizmo.config.y = viewportPos.y + viewportSize.y - 120.0f;
         guizmo.render(scene->camera.getProjView(), scene->camera.getProjection(), 0.5f);
 
@@ -174,11 +180,33 @@ void Interface::render(Scene *scene) {
         ImGui::DragFloat3("position", scene->camera.p, 0.2f, -50.0f, 50.f);
         ImGui::DragFloat3("rotation", scene->camera.e, 0.1f, -45.0f, 45.0f);
 
+        ImGui::Text("Option");
+        ImGui::Checkbox("Use Guizmo", &scene->data->opt.guizmo_local);
+
         ImGui::End();
     }
     
     {
         ImGui::Begin("Objects setting");
+
+        if (ImGui::BeginPopupContextWindow(0, 1)) {
+            if (ImGui::BeginMenu("Create shape")) {
+                if (ImGui::MenuItem("cube")) scene->create(Object::Cube);
+                if (ImGui::MenuItem("sphere")) scene->create(Object::Sphere);
+                if (ImGui::MenuItem("capsule"))  scene->create(Object::Capsule);
+                if (ImGui::MenuItem("tetrahedra")) scene->create(Object::Tetrahedra);
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::MenuItem("Create camera")) {
+
+            }
+
+            if (ImGui::MenuItem("Create light")) {
+
+            }
+            ImGui::EndPopup();
+        }
 
         for (auto &[name, link] : scene->links) {
             if (ImGui::TreeNode(name.c_str())) {
@@ -186,7 +214,16 @@ void Interface::render(Scene *scene) {
                 ImGui::DragFloat("angle", &link->theta, 0.1f, -360.0f, 360.0f);
                 ImGui::DragFloat3("position", link->p, 0.01f, -2.0f, 2.0f);
                 ImGui::DragFloat4("quaternion", link->q, 0.01f, -2.0f, 2.0f);
-                ImGui::DragFloat4("scale", link->s, 0.01f, -2.0f, 2.0f);
+                ImGui::DragFloat3("scale", link->s, 0.01f, 0.0f, 10.0f);
+                ImGui::TreePop();
+            }
+        }
+
+        for (auto &[name, object] : scene->objects) {
+            if (ImGui::TreeNode(name.c_str())) {
+                ImGui::DragFloat3("position", object->p, 0.01f, -2.0f, 2.0f);
+                ImGui::DragFloat3("euler", object->e, 0.01f, -2.0f, 2.0f);
+                ImGui::DragFloat3("scale", object->s, 0.01f, 0.0f, 10.0f);
                 ImGui::TreePop();
             }
         }

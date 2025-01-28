@@ -10,7 +10,8 @@ void OpenGLOptions() {
     glEnable(GL_DEPTH_TEST);
 }
 
-MouseConfig msc;
+Data data;
+MouseConfig& msc = data.msc;
 
 void MsMoveCb(GLFWwindow* window, double xpos, double ypos) {
     if (!msc.viewport_hover) return;
@@ -55,13 +56,27 @@ void WinSizeCb(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
+void keyCb(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, GLFW_TRUE);
+    if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+        data.opt.guizmo_type = ImGuizmo::OPERATION::TRANSLATE;
+    }
+
+    else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        data.opt.guizmo_type = ImGuizmo::OPERATION::ROTATE;
+    }
+
+    else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+        data.opt.guizmo_type = ImGuizmo::OPERATION::SCALE;
+    }
+}
 
 int main() {
 
 	GLFWwindow* window;
 	if (!glfwInit()) return -1;
 
-	window = glfwCreateWindow(1200, 800, "Graphic Simulation", NULL, NULL);
+	window = glfwCreateWindow(1500, 900, "Graphic Simulation", NULL, NULL);
 	if (!window) {
         glfwTerminate();
         return -1;
@@ -69,7 +84,7 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSetScrollCallback(window, MsScrollCb);
     glfwSetCursorPosCallback(window, MsMoveCb);
-
+    glfwSetKeyCallback(window, keyCb);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         ASSERT(false, "Failed to initialize GLAD\n");
@@ -83,7 +98,7 @@ int main() {
         Interface gui = Interface(window);
         while (!glfwWindowShouldClose(window)) {
             msc.viewport_hover = gui.viewport_hover;
-            scene.updateCamera(&msc);
+            scene.updateData(&data);
             gui.render(&scene);
             glfwPollEvents();
             glfwSwapBuffers(window);

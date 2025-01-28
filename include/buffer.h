@@ -10,7 +10,7 @@ struct BufferElement {
     ShaderDataType type;
     bool normalized;
 
-    BufferElement(ShaderDataType type, const std::string& name, bool normalized=false)
+    BufferElement(ShaderDataType type, const std::string & name, bool normalized=false)
     :name(name), type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized) { }
 
     uint32_t getDimCount() const {
