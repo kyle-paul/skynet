@@ -21,8 +21,13 @@ void loadMesh(const std::string &name, const MeshData &data, std::unordered_map<
     }
 }
 
-void Scene::multiMesh() {
+void Scene::init() {
+	base = std::filesystem::current_path().string();
+	shader = cref<Shader>("scene", base + "/assets/glsl/scene.glsl");
+}
 
+void Scene::load(const std::string &path) {
+	xml::parseXML(path, graph, links);
 	std::vector<std::thread> threads;
 
 	for (auto &[name, link] : this->links) {
@@ -42,13 +47,7 @@ void Scene::multiMesh() {
 			mesh->initGL();
 		}
 	}
-}
-
-void Scene::init() {
-	base = std::filesystem::current_path().string();
-	shader = cref<Shader>("scene", base + "/assets/glsl/scene.glsl");
-	xml::parseXML(base + "/assets/mesh/robots/panda/panda.xml", graph, links);
-	this->multiMesh();
+	this->loaded = true;
 }
 
 void Scene::create(const Object &type) {
@@ -66,12 +65,14 @@ void Scene::render() {
 	this->updateCamera();
 	float* projview = camera.getProjView();
 
-	shader->bind();
-	shader->setMat4("projview", projview);
-	shader->setFloat3("light", light);
-	this->forward("link0", "null");
-	this->visualize();
-	shader->unbind();
+	if (this->loaded) {
+		shader->bind();
+		shader->setMat4("projview", projview);
+		shader->setFloat3("light", light);
+		this->forward("link0", "null");
+		this->visualize();
+		shader->unbind();
+	}	
 }
 
 
@@ -83,7 +84,7 @@ void Scene::forward(const std::string &cur, const std::string &par) {
 		math::axis2T(T_joint, links[cur]->w, links[cur]->theta);
 		math::matmul4(T, T_link, T_joint);
 
-		links[cur]->setTransform(T_link);
+		links[cur]->setTransform(T);
 		links[cur]->render(shader);
 
 	} else {
@@ -111,7 +112,7 @@ void Scene::visualize() {
 void Scene::updateCamera() {
 	if (!data->msc.first_left) {
 		this->camera.e[1] += 0.01f * data->msc.dx;
-		this->camera.e[0] += 0.01f * data->msc.dy;		 
+		this->camera.e[0] += 0.01f * data->msc.dy;
 	} 
 	else if (!data->msc.first_right) {
 		this->camera.p[0] -= 0.001f * data->msc.dx;

@@ -13,13 +13,13 @@ public:
 	~Scene();
 
 	void init();
+	void load(const std::string &path);
 	void render();
 	void updateCamera();
 	void editGuizmo();
 	inline void updateData(Data* data) { this->data = data; }
 
 private:
-	void multiMesh();
 	void visualize();
 	void forward(const std::string &cur, const std::string &par);
 	void inverse();
@@ -30,7 +30,7 @@ private:
 	Camera camera;
 	ref<Shader> shader;
 
-	std::string base;
+	std::string base; bool loaded = false;
 	std::unordered_map<std::string, ref<Link>> links;
 	std::unordered_map<std::string, ref<Mesh>> objects;
 	std::unordered_map<std::string, std::vector<std::string>> graph;

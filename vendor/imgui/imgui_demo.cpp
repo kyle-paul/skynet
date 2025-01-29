@@ -9920,7 +9920,7 @@ void ShowExampleAppDockSpace(bool* p_open)
             if (ImGui::MenuItem("Flag: PassthruCentralNode",    "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Close", NULL, false, p_open != NULL))
+            if (ImGui::MenuItem("Close", NULL, false, &p_open != NULL))
                 *p_open = false;
             ImGui::EndMenu();
         }

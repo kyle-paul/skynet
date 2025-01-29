@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME}
 	vendor/imgui/imgui_widgets.cpp
     vendor/imgui/backends/imgui_impl_opengl3.cpp
     vendor/imgui/backends/imgui_impl_glfw.cpp
+	vendor/dialog/ImGuiFileDialog.cpp
 )
 
 include_directories(${PROJECT_NAME}
@@ -36,6 +37,7 @@ include_directories(${PROJECT_NAME}
 	libs/glm-build/install/include
 	libs/assimp-build/install/include
 	libs/tinyxml2-build/install/include
+	vendor/dialog
 	vendor/imgui
 	vendor/imgui/backends
 	vendor/glad/include

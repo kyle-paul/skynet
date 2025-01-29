@@ -14,11 +14,13 @@ public:
     Interface(GLFWwindow *window);
     ~Interface();
 
-    void styling();
     void render(Scene* scene);
-
     void begin();
     void end();
+
+private:
+    void styling();
+    void menubar();
 
 public:
     bool viewport_hover = false;
@@ -27,4 +29,7 @@ public:
 private:
     ref<FrameBuffer> framebuffer = cref<FrameBuffer>();
     Guizmo guizmo;
+
+    bool dockspace_open = true;
+    Scene* scene;
 };
