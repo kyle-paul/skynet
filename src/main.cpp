@@ -94,12 +94,12 @@ int main() {
     OpenGLOptions();
 
     {
-        Scene scene; scene.init();
+        ref<Scene> scene = cref<Scene>(); scene->init();
         Interface gui = Interface(window);
         while (!glfwWindowShouldClose(window)) {
             msc.viewport_hover = gui.viewport_hover;
-            scene.updateData(&data);
-            gui.render(&scene);
+            scene->updateData(&data);
+            gui.render(scene);
             glfwPollEvents();
             glfwSwapBuffers(window);
         }

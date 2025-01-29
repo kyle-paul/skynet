@@ -28,3 +28,13 @@ cmake -S vendor/tinyxml2 \
 cmake --build libs/tinyxml2-build --parallel <your-cpu-threads> 
 cmake --install libs/tinyxml2-build --prefix libs/tinyxml2-build/install
 ```
+
+Build yaml-cpp
+```bash
+cmake -S vendor/yaml-cpp \
+      -B libs/yaml-cpp-build \
+      -D YAML_BUILD_SHARED_LIBS=ON
+
+cmake --build libs/yaml-cpp-build --parallel <your-cpu-threads> 
+cmake --install libs/yaml-cpp-build --prefix libs/yaml-cpp-build/install
+```

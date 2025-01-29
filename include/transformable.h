@@ -23,9 +23,8 @@ protected:
 	float e[3] = {0.0f, 0.0f, 0.0f};
     float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};
 	float s[3] = {1.0f, 1.0f, 1.0f};
-
-	float theta = 0.0f;
-	float w[3]  = {1.0f, 0.0f, 0.0f}; 
+	float w[3] = {1.0f, 0.0f, 0.0f}; 
+	float a    = 0.0f;
 
 	float R[16];
 	float T[16] = {
@@ -37,4 +36,5 @@ protected:
 
 	friend class Scene;
 	friend class Interface;
+	friend class Serializer;
 };

@@ -30,14 +30,19 @@ private:
 	Camera camera;
 	ref<Shader> shader;
 
-	std::string base; bool loaded = false;
-	std::unordered_map<std::string, ref<Link>> links;
+	std::string base;
+	std::string robotpath;
 	std::unordered_map<std::string, ref<Mesh>> objects;
+	std::unordered_map<std::string, ref<Link>> links;
+	std::unordered_map<std::string, ref<Joint>> joints;
 	std::unordered_map<std::string, std::vector<std::string>> graph;
+
+	bool loaded = false;
 	ref<Mesh> selectedEntity = nullptr;
 
 	float light[3] = { -30.0f, -50.0f, 50.0f };
 	float bgcol[4] = { 0.15f, 0.15f, 0.15f, 1.0f};
 
 	friend class Interface;
+	friend class Serializer;
 };

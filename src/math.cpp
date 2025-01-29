@@ -32,9 +32,9 @@ void euler2T(float* T, float* e, float *p) {
     T[3] = 0.0f;   T[7] = 0.0f;              T[11] = 0.0f,              T[15] = 1.0f;
 }
 
-void axisX2T (float* T, float* e, float &theta, float* p) {
-    const float cs = cos(DEG2RAD(theta));
-    const float sn = sin(DEG2RAD(theta));
+void axisX2T (float* T, float* e, float &a, float* p) {
+    const float cs = cos(DEG2RAD(a));
+    const float sn = sin(DEG2RAD(a));
 
     T[0] = 1.0f;  T[0] = 0.0f;  T[0] = 0.0f;   T[12] = p != nullptr ? p[0] : 0.0f;
     T[1] = 0.0f;  T[1] = cs;    T[1] = -sn;    T[13] = p != nullptr ? p[1] : 0.0f;
@@ -42,9 +42,9 @@ void axisX2T (float* T, float* e, float &theta, float* p) {
     T[3] = 0.0f;  T[3] = 0.0f;  T[3] = 0.0f;   T[3] = 1.0f;
 }
 
-void axisY2T (float* T, float* e, float &theta, float* p) {
-    const float cs = cos(DEG2RAD(theta));
-    const float sn = sin(DEG2RAD(theta));
+void axisY2T (float* T, float* e, float &a, float* p) {
+    const float cs = cos(DEG2RAD(a));
+    const float sn = sin(DEG2RAD(a));
     
     T[0] = cs;    T[4] = 0.0f;  T[8]  = -sn;   T[12] = p != nullptr ? p[0] : 0.0f;
     T[1] = 0.0f;  T[5] = 1.0f;  T[9]  = 0.0f;  T[13] = p != nullptr ? p[1] : 0.0f;
@@ -52,9 +52,9 @@ void axisY2T (float* T, float* e, float &theta, float* p) {
     T[3] = 0.0f;  T[7] = 0.0f;  T[11] = 0.0f;  T[15] = 1.0f;
 }
 
-void axisZ2T (float* T, float* e, float &theta, float* p) {
-    const float cs = cos(DEG2RAD(theta));
-    const float sn = sin(DEG2RAD(theta));
+void axisZ2T (float* T, float* e, float &a, float* p) {
+    const float cs = cos(DEG2RAD(a));
+    const float sn = sin(DEG2RAD(a));
     
     T[0] = cs;    T[4] = -sn;   T[8]  = 0.0f;  T[12] = p != nullptr ? p[0] : 0.0f;
     T[1] = sn;    T[5] = cs;    T[9]  = 0.0f;  T[13] = p != nullptr ? p[1] : 0.0f;
@@ -62,9 +62,9 @@ void axisZ2T (float* T, float* e, float &theta, float* p) {
     T[3] = 0.0f;  T[7] = 0.0f;  T[11] = 0.0f;  T[15] = 1.0f;
 }
 
-void axis2T(float* T, float* w, float &theta, float* p) {
-    const float cs = cos(DEG2RAD(theta));
-    const float sn = sin(DEG2RAD(theta));
+void axis2T(float* T, float* w, float &a, float* p) {
+    const float cs = cos(DEG2RAD(a));
+    const float sn = sin(DEG2RAD(a));
 
     normVec3(w); float t[3];
     t[0] = (1 - cs) * w[0];

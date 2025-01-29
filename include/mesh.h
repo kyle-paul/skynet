@@ -19,6 +19,7 @@ public:
 	void render(const ref<Shader> &shader);
 	void initGL();
 	void info();
+	float color[4];
 
 private:
 	void readfile(const std::string &path);
@@ -36,5 +37,5 @@ private:
 	ref<VertexBuffer> vb;
 	ref<IndexBuffer>  ib;
 
-	float color[4];
+	
 };

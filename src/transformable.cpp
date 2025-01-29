@@ -3,10 +3,10 @@
 void Transformable::updateRotatation(const RotAxis &type)
 {
     switch(type) {
-        case(RotAxis::Xaxis) : math::axisX2T(R, w, theta); return;
-        case(RotAxis::Yaxis) : math::axisY2T(R, w, theta); return;
-        case(RotAxis::Zaxis) : math::axisZ2T(R, w, theta); return;
-        case(RotAxis::Waxis) : math::axis2T (R, w, theta); return;
+        case(RotAxis::Xaxis) : math::axisX2T(R, w, a); return;
+        case(RotAxis::Yaxis) : math::axisY2T(R, w, a); return;
+        case(RotAxis::Zaxis) : math::axisZ2T(R, w, a); return;
+        case(RotAxis::Waxis) : math::axis2T (R, w, a); return;
     }
     ASSERT(false, "Must choose rotation type");
 }

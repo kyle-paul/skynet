@@ -6,6 +6,7 @@
 #include "frame.h"
 #include "guizmo.h"
 #include "ImGuizmo.h"
+#include "serializer.h"
 #include <GLFW/glfw3.h>
 
 class Interface
@@ -14,7 +15,7 @@ public:
     Interface(GLFWwindow *window);
     ~Interface();
 
-    void render(Scene* scene);
+    void render(ref<Scene> &scene);
     void begin();
     void end();
 
@@ -28,8 +29,8 @@ public:
 
 private:
     ref<FrameBuffer> framebuffer = cref<FrameBuffer>();
-    Guizmo guizmo;
+    ref<Scene> scene;
 
+    Guizmo guizmo;
     bool dockspace_open = true;
-    Scene* scene;
 };

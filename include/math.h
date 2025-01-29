@@ -11,10 +11,10 @@ namespace math {
 
 void quat2T  (float* T, float* q, float* p = nullptr);
 void euler2T (float* T, float* e, float* p = nullptr);
-void axisX2T (float* T, float* w, float &theta, float* p = nullptr);
-void axisY2T (float* T, float* w, float &theta, float* p = nullptr);
-void axisZ2T (float* T, float* w, float &theta, float* p = nullptr);
-void axis2T  (float* T, float* w, float& theta, float* p = nullptr);
+void axisX2T (float* T, float* w, float &a, float* p = nullptr);
+void axisY2T (float* T, float* w, float &a, float* p = nullptr);
+void axisZ2T (float* T, float* w, float &a, float* p = nullptr);
+void axis2T  (float* T, float* w, float &a, float* p = nullptr);
 void perspective(float* P, float& fov, float& aspect, float& znear, float &zfar);
 void transcale (float* T, float* p, float* s);
 void decompose(float* T, float* p, float* s, float* e);

@@ -1,6 +1,7 @@
 #pragma once
 #include "mesh.h"
 #include "shader.h"
+#include "joint.h"
 #include "transformable.h"
 
 struct MeshData {
@@ -26,12 +27,13 @@ struct Inertial {
 class Link : public Transformable
 {
 public:
-	Link(float p[3], float q[4], float w[3], std::vector<MeshData> &data);
+	Link(float p[3], float q[4], std::vector<MeshData> &data, const ref<Joint> &joint=nullptr);
 	~Link();
 
 	void render(const ref<Shader> &shader);
 
 public:
+    ref<Joint> joint = nullptr;
 	std::vector<MeshData> data;
 	std::vector<ref<Mesh>> meshes;
 };

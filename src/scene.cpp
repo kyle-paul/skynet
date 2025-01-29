@@ -22,12 +22,14 @@ void loadMesh(const std::string &name, const MeshData &data, std::unordered_map<
 }
 
 void Scene::init() {
-	base = std::filesystem::current_path().string();
+	base = std::filesystem::current_path().parent_path().string();
 	shader = cref<Shader>("scene", base + "/assets/glsl/scene.glsl");
 }
 
 void Scene::load(const std::string &path) {
-	xml::parseXML(path, graph, links);
+	xml::setData(&graph, &joints, &links);
+	xml::parseXML(path);
+
 	std::vector<std::thread> threads;
 
 	for (auto &[name, link] : this->links) {
@@ -48,14 +50,15 @@ void Scene::load(const std::string &path) {
 		}
 	}
 	this->loaded = true;
+	this->robotpath = path;
 }
 
 void Scene::create(const Object &type) {
 	switch (type) {
 		case(Object::Cube) : {
 			float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-			ref<Mesh> cube = cref<Mesh>(base + "/assets/mesh/primitive/cube.obj", color);
-			cube->initGL(); this->objects["cube"] = cube;
+			objects["cube"] = cref<Mesh>(base + "/assets/mesh/primitive/cube.obj", color);
+			objects["cube"]->initGL();
 			break;
 		}
 	}
@@ -81,8 +84,11 @@ void Scene::forward(const std::string &cur, const std::string &par) {
 
 	if (par != "null") {
 		math::matmul4(T_link, links[par]->getWorldTransform(), links[cur]->getTransform());
-		math::axis2T(T_joint, links[cur]->w, links[cur]->theta);
-		math::matmul4(T, T_link, T_joint);
+
+		if (links[cur]->joint != nullptr) {
+			math::axis2T(T_joint, links[cur]->joint->w, links[cur]->joint->a);
+			math::matmul4(T, T_link, T_joint);
+		} else std::copy(T_link, T_link + 16, T);
 
 		links[cur]->setTransform(T);
 		links[cur]->render(shader);

@@ -136,7 +136,8 @@ void Interface::menubar() {
             }
 
             if (ImGui::MenuItem("Save scene", "Ctrl+S")) {
-
+                IGFD::FileDialogConfig config; config.path = ".";
+                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Save scene", ".xml", config);
             }
 
             if (ImGui::MenuItem("Exit")) {
@@ -171,7 +172,7 @@ void Interface::menubar() {
     }
 }
 
-void Interface::render(Scene *scene) {
+void Interface::render(ref<Scene> &scene) {
     this->scene = scene;
     this->begin();
 
@@ -184,6 +185,8 @@ void Interface::render(Scene *scene) {
     | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove    | 
       ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::Begin("DockSpace", &dockspace_open, window_flags);
     ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
@@ -191,6 +194,7 @@ void Interface::render(Scene *scene) {
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
         this->menubar();
     }
+    ImGui::PopStyleVar(2);
     ImGui::End();
 
     {
@@ -276,11 +280,17 @@ void Interface::render(Scene *scene) {
 
         for (auto &[name, link] : scene->links) {
             if (ImGui::TreeNode(name.c_str())) {
-                ImGui::DragFloat3("joint axis", link->w, 0.01f, -2.0f, 2.0f);
-                ImGui::DragFloat("angle", &link->theta, 0.1f, -360.0f, 360.0f);
                 ImGui::DragFloat3("position", link->p, 0.01f, -2.0f, 2.0f);
                 ImGui::DragFloat4("quaternion", link->q, 0.01f, -2.0f, 2.0f);
                 ImGui::DragFloat3("scale", link->s, 0.01f, 0.0f, 10.0f);
+                ImGui::TreePop();
+            }
+        }
+
+        for (auto &[name, joint] : scene->joints) {
+            if (ImGui::TreeNode(name.c_str())) {
+                ImGui::DragFloat3("joint axis", joint->w, 0.01f, -2.0f, 2.0f);
+                ImGui::DragFloat("angle", &joint->a, 0.1f, -360.0f, 360.0f);
                 ImGui::TreePop();
             }
         }
