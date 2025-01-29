@@ -1,47 +1,27 @@
 #include "serializer.h"
 #include "mesh.h"
+#include "xml.h"
 
 namespace YAML {
-	template<>
-	struct convert<float[3]> {
-		static Node encode(const float (&v)[3]) {
-			if (!v) return Node();
-			Node node;
-			node.push_back(v[0]);
-			node.push_back(v[1]);
-			node.push_back(v[2]);
-			return node;
-		}
-		static bool decode(const Node &node, float (&v)[3]) {
-	        if (!node.IsSequence() || node.size() != 2) return false;
-	        v[0] = node[0].as<float>();
-	        v[1] = node[1].as<float>();
-	        v[2] = node[2].as<float>();
-	        return true;
-	    }
-	};
+    template <size_t N>
+    struct convert<float[N]> {
+        static Node encode(const float (&v)[N]) {
+            Node node;
+            for (size_t i = 0; i < N; ++i) {
+                node.push_back(v[i]);
+            }
+            return node;
+        }
 
-	template<>
-	struct convert<float[4]> {
-		static Node encode(const float (&v)[4]) {
-			if (!v) return Node();
-			Node node;
-			node.push_back(v[0]);
-			node.push_back(v[1]);
-			node.push_back(v[2]);
-			node.push_back(v[3]);
-			return node;
-		}
-		static bool decode(const Node &node, float (&v)[4]) {
-	        if (!node.IsSequence() || node.size() != 3) return false;
-	        v[0] = node[0].as<float>();
-	        v[1] = node[1].as<float>();
-	        v[2] = node[2].as<float>();
-	        v[3] = node[3].as<float>();
-	        return true;
-	    }
-	};
-};
+        static bool decode(const Node& node, float (&v)[N]) {
+            if (!node.IsSequence() || node.size() != N) return false;
+            for (size_t i = 0; i < N; ++i) {
+                v[i] = node[i].as<float>();
+            }
+            return true;
+        }
+    };
+}
 
 YAML::Emitter& operator<<(YAML::Emitter& out, const float (&v)[3]) {
 	out << YAML::Flow;
@@ -56,7 +36,7 @@ YAML::Emitter& operator<<(YAML::Emitter& out, const float (&v)[4]) {
 }
 
 
-Serializer::Serializer(ref<Scene> &scene) : scene(scene) {
+Serializer::Serializer() {
 
 }
 
@@ -69,31 +49,42 @@ void Serializer::serialize(const std::string &path) {
 	out << YAML::BeginMap;
 	out << YAML::Key << "Scene" << YAML::Value << "graphics simulation";
 	out << YAML::Key << "Default" << YAML::Value << scene->robotpath;
-	out << YAML::Key << "Joint" << YAML::Value << YAML::BeginSeq;
+
+	out << YAML::Key << "Joints" << YAML::Value << YAML::BeginSeq;
+		for (auto &[name, joint] : scene->joints) {
+			out << YAML::BeginMap;
+			out << YAML::Key << "joint" << YAML::Value << name;
+			out << YAML::Key << "configuration";
+			out << YAML::BeginMap;
+			out << YAML::Key << "w" << YAML::Value << joint->w;
+			out << YAML::Key << "a" << YAML::Value << joint->a;
+			out << YAML::EndMap;
+			out << YAML::EndMap;
+		}
 	out << YAML::EndSeq;
+
 	out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-	for (auto &[name, object] : scene->objects) {
-		this->serializeEntity(out, name, object);
-	}
+		for (auto &[name, object] : scene->objects) {
+			out << YAML::BeginMap;
+			out << YAML::Key << "entity" << YAML::Value << name;
+			out << YAML::Key << "type" << YAML::Value << ObjectToString(object->getType());
+			out << YAML::Key << "transform";
+			out << YAML::BeginMap;
+			out << YAML::Key << "p" << YAML::Value << object->p;
+			out << YAML::Key << "e" << YAML::Value << object->e;
+			out << YAML::Key << "q" << YAML::Value << object->q;
+			out << YAML::Key << "s" << YAML::Value << object->s;
+			out << YAML::Key << "w" << YAML::Value << object->w;
+			out << YAML::Key << "a" << YAML::Value << object->a;
+			out << YAML::EndMap;
+			out << YAML::EndMap;
+
+		}
 	out << YAML::EndSeq;
 	out << YAML::EndMap;
 	
 	std::ofstream fout(path);
 	fout << out.c_str();
-}
-
-void Serializer::serializeEntity(YAML::Emitter &out, const std::string &name, ref<Mesh> &object) {
-	out << YAML::BeginMap;
-    out << YAML::Key << "Entity" << YAML::Value << name;
-    out << YAML::Key << "transform";
-	out << YAML::BeginMap;
-	out << YAML::Key << "p" << YAML::Value << object->p;
-	out << YAML::Key << "e" << YAML::Value << object->e;
-	out << YAML::Key << "q" << YAML::Value << object->q;
-	out << YAML::Key << "s" << YAML::Value << object->s;
-	out << YAML::Key << "w" << YAML::Value << object->w;
-	out << YAML::Key << "a" << YAML::Value << object->a;
-	out << YAML::EndMap;
 }
 
 bool Serializer::deserialize(const std::string &path) {
@@ -106,6 +97,39 @@ bool Serializer::deserialize(const std::string &path) {
 
 	std::string sceneName = data["Scene"].as<std::string>();
 	SUCCESS("Deserializing scene '{0}'", sceneName);
+
+	// load xml default robot
+	std::string xml_path = data["Default"].as<std::string>();
+	scene->load(xml_path);
+
+	// load joints configuration
+	auto joints = data["Joints"];
+	if (joints) {
+		for (auto joint : joints) {
+			std::string joint_name = joint["joint"].as<std::string>();
+			auto configuration = joint["configuration"];
+
+			YAML::convert<float[3]>::decode(configuration["w"], scene->joints[joint_name]->w);
+			scene->joints[joint_name]->a = configuration["a"].as<float>();
+		}
+	}
+
+	// load normal entities
+	auto entities = data["Entities"];
+	if (entities) {
+		for (auto entity : entities) {
+			std::string entity_name = entity["entity"].as<std::string>();
+			scene->create(StringToObject(entity["type"].as<std::string>()));
+
+			auto transform = entity["transform"];
+			YAML::convert<float[3]>::decode(transform["p"], scene->objects[entity_name]->p);
+			YAML::convert<float[3]>::decode(transform["e"], scene->objects[entity_name]->e);
+			YAML::convert<float[4]>::decode(transform["q"], scene->objects[entity_name]->q);
+			YAML::convert<float[3]>::decode(transform["s"], scene->objects[entity_name]->s);
+			YAML::convert<float[3]>::decode(transform["w"], scene->objects[entity_name]->w);
+			scene->objects[entity_name]->a = transform["a"].as<float>();
+		}
+	}
 
 	return true;
 }

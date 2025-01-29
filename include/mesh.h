@@ -13,13 +13,14 @@ public:
 	};
 
 public:
-	Mesh(const std::string &path, const float (&color)[4]);
+	Mesh(const std::string &path, const Object &type, const float (&color)[4], const Loader& loader);
 	~Mesh();
 	
 	void render(const ref<Shader> &shader);
 	void initGL();
 	void info();
-	float color[4];
+
+	inline Object getType() const { return type; }
 
 private:
 	void readfile(const std::string &path);
@@ -37,5 +38,6 @@ private:
 	ref<VertexBuffer> vb;
 	ref<IndexBuffer>  ib;
 
-	
+	Object type;
+	float color[4];
 };

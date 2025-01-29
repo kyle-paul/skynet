@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core.h"
+#include "data.h"
 #include "imgui.h"
 #include "scene.h"
 #include "frame.h"
@@ -30,7 +31,8 @@ public:
 private:
     ref<FrameBuffer> framebuffer = cref<FrameBuffer>();
     ref<Scene> scene;
-
     Guizmo guizmo;
+    Serializer serial;
+    Action action;
     bool dockspace_open = true;
 };

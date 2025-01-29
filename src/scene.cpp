@@ -11,7 +11,7 @@ std::mutex meshMutex;
 
 void loadMesh(const std::string &name, const MeshData &data, std::unordered_map<std::string, ref<Link>> &links) {
     try {
-        ref<Mesh> mesh = cref<Mesh>(data.path, data.color);
+        ref<Mesh> mesh = cref<Mesh>(data.path, Object::Mesh, data.color, Mesh::Loader::scratch);
         { std::lock_guard<std::mutex> lock(meshMutex);
           links[name]->meshes.push_back(mesh); }
 
@@ -57,8 +57,15 @@ void Scene::create(const Object &type) {
 	switch (type) {
 		case(Object::Cube) : {
 			float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-			objects["cube"] = cref<Mesh>(base + "/assets/mesh/primitive/cube.obj", color);
+			objects["cube"] = cref<Mesh>(base + "/assets/mesh/primitive/cube.obj", Object::Cube, color, Mesh::Loader::assimp);
 			objects["cube"]->initGL();
+			break;
+		}
+
+		case(Object::Sphere) : {
+			float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			objects["sphere"] = cref<Mesh>(base + "/assets/mesh/primitive/sphere.obj", Object::Sphere, color, Mesh::Loader::assimp);
+			objects["sphere"]->initGL();
 			break;
 		}
 	}

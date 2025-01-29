@@ -7,12 +7,13 @@
 class Serializer
 {
 public:
-	Serializer(ref<Scene> &scene);
+	Serializer();
 	~Serializer();
 
+	inline void setScene(ref<Scene> &scene) { this->scene=scene; }
+	
 	void serialize(const std::string &path);
 	bool deserialize(const std::string &path);
-	void serializeEntity(YAML::Emitter &out, const std::string &name, ref<Mesh> &object);
 
 private:	
 	ref<Scene> scene;

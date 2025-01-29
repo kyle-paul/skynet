@@ -129,22 +129,30 @@ void Interface::menubar() {
             if (ImGui::MenuItem("Open file", "Ctrl+O")) {
                 IGFD::FileDialogConfig config; config.path = ".";
                 ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose file", ".xml", config);
+                action = Action::OpenFile;
+            }
+
+            if (ImGui::MenuItem("Open scene", "Ctrl+L")) {
+                IGFD::FileDialogConfig config; config.path = ".";
+                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose a directory", ".vx", config);
+                action = Action::OpenScene;
+            }
+
+            if (ImGui::MenuItem("Save scene", "Ctrl+S")) {
+                IGFD::FileDialogConfig config; config.path = ".";
+                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose a directory", ".vx", config);
+                action = Action::SaveScene;
             }
 
             if (ImGui::MenuItem("Clear scene", "Ctrl+L")) {
 
             }
 
-            if (ImGui::MenuItem("Save scene", "Ctrl+S")) {
-                IGFD::FileDialogConfig config; config.path = ".";
-                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Save scene", ".xml", config);
-            }
-
             if (ImGui::MenuItem("Exit")) {
 
             }
 
-			ImGui::EndMenu();
+            ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Edit")) {
@@ -164,16 +172,21 @@ void Interface::menubar() {
     // Open Dialog
     if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
-            std::string name = ImGuiFileDialog::Instance()->GetFilePathName();
-            std::string dir = ImGuiFileDialog::Instance()->GetCurrentPath();
-            this->scene->load(name);
+            std::string path = ImGuiFileDialog::Instance()->GetFilePathName();
+            std::string ext = path.substr(path.find_last_of('.') + 1);
+
+            switch(this->action) {
+                case(Action::OpenFile)  : this->scene->load(path);        break;
+                case(Action::SaveScene) : this->serial.serialize(path);   break;
+                case(Action::OpenScene) : this->serial.deserialize(path); break;
+            }
         }
         ImGuiFileDialog::Instance()->Close();
     }
 }
 
 void Interface::render(ref<Scene> &scene) {
-    this->scene = scene;
+    this->scene = scene; serial.setScene(scene);
     this->begin();
 
     const ImGuiViewport* viewport = ImGui::GetMainViewport();

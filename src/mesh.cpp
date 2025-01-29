@@ -5,10 +5,8 @@
 #include <assimp/Importer.hpp>
 
 
-Mesh::Loader Mesh::loader = Mesh::Loader::scratch;
-
-Mesh::Mesh(const std::string &path, const float (&color)[4]) 
-    : color{color[0], color[1], color[2], color[3]}
+Mesh::Mesh(const std::string &path, const Object &type, const float (&color)[4], const Loader& loader) 
+    : type(type), color{color[0], color[1], color[2], color[3]}
 {
 	switch(loader) {
 		case(Loader::scratch) : {
