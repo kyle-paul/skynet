@@ -1,7 +1,8 @@
-#pragma once
+#ifndef SKYNET_SHADER_H
+#define SKYNET_SHADER_H
+
 #include "core.h"
 #include <glad/glad.h>
-
 
 class Shader
 {
@@ -78,3 +79,5 @@ static GLenum ShaderTypeFromString(const std::string type) {
     ASSERT(false, "Unknown shader type!");
     return 0;
 }
+
+#endif // SKYNET_SHADER_H

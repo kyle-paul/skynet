@@ -1,3 +1,6 @@
+#ifndef SKYNET_GUIZMO_H
+#define SKYNET_GUIZMO_H
+
 #include "core.h"
 #include "imgui.h"
 #include "math.h"
@@ -55,3 +58,5 @@ private:
     Config config;
 	friend class Interface;
 };
+
+#endif // SKYNET_GUIZMO_H

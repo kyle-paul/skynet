@@ -1,11 +1,12 @@
-#pragma once
+#ifndef SKYNET_XML_H
+#define SKYNET_XML_H
 
 #include "core.h"
 #include "link.h"
+#include "math.h"
+
 #include <tinyxml2.h>
 
-#include "xml.h"
-#include "math.h"
 
 namespace xml {
 
@@ -106,4 +107,6 @@ inline void parseXML(const std::string &path)
     }
 }
 
-}
+} // namespace xml
+
+#endif // SKYNET_XML_H

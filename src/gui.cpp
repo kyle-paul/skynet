@@ -3,6 +3,8 @@
 #include "imgui_impl_opengl3.h"
 #include "ImGuiFileDialog.h"
 
+static bool dockspace_open = true;
+
 Interface::Interface(GLFWwindow *window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -134,18 +136,23 @@ void Interface::menubar() {
 
             if (ImGui::MenuItem("Open scene", "Ctrl+L")) {
                 IGFD::FileDialogConfig config; config.path = ".";
-                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose a directory", ".vx", config);
+                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose a directory", ".skynet", config);
                 action = Action::OpenScene;
             }
 
             if (ImGui::MenuItem("Save scene", "Ctrl+S")) {
                 IGFD::FileDialogConfig config; config.path = ".";
-                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose a directory", ".vx", config);
+                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose a directory", ".skynet", config);
                 action = Action::SaveScene;
             }
 
             if (ImGui::MenuItem("Clear scene", "Ctrl+L")) {
-
+                scene->objects.clear();
+                scene->links.clear();
+                scene->joints.clear();
+                scene->graph.clear();
+                scene->selectedEntity = nullptr;
+                scene->loaded = false;
             }
 
             if (ImGui::MenuItem("Exit")) {
@@ -274,10 +281,10 @@ void Interface::render(ref<Scene> &scene) {
 
         if (ImGui::BeginPopupContextWindow(0, 1)) {
             if (ImGui::BeginMenu("Create shape")) {
-                if (ImGui::MenuItem("cube")) scene->create(Object::Cube);
-                if (ImGui::MenuItem("sphere")) scene->create(Object::Sphere);
-                if (ImGui::MenuItem("capsule"))  scene->create(Object::Capsule);
-                if (ImGui::MenuItem("tetrahedra")) scene->create(Object::Tetrahedra);
+                if (ImGui::MenuItem("cube")) scene->create(Object::Cube, "cube");
+                if (ImGui::MenuItem("sphere")) scene->create(Object::Sphere, "sphere");
+                if (ImGui::MenuItem("capsule"))  scene->create(Object::Capsule, "capsule");
+                if (ImGui::MenuItem("tetrahedra")) scene->create(Object::Tetrahedra, "tetrahedra");
                 ImGui::EndMenu();
             }
 
@@ -308,13 +315,27 @@ void Interface::render(ref<Scene> &scene) {
             }
         }
 
+        std::string old_name, new_name;
+
         for (auto &[name, object] : scene->objects) {
             if (ImGui::TreeNode(name.c_str())) {
+                scene->selectedEntity = object;
+                static char newName[128];
+                strcpy(newName, name.c_str());
+
+                if (ImGui::InputText("Name", newName, IM_ARRAYSIZE(newName), ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    old_name = name; new_name = newName;
+                }
+                ImGui::ColorEdit4("color", object->color);
                 ImGui::DragFloat3("position", object->p, 0.01f, -2.0f, 2.0f);
                 ImGui::DragFloat3("euler", object->e, 0.01f, -2.0f, 2.0f);
                 ImGui::DragFloat3("scale", object->s, 0.01f, 0.0f, 10.0f);
                 ImGui::TreePop();
             }
+        }
+
+        if (!old_name.empty() && old_name != new_name) {
+            util::renameEntity(scene->objects, old_name, new_name);
         }
 
         ImGui::End();

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SKYNET_SERIALIZE_H
+#define SKYNET_SERIALIZE_H
 
 #include "core.h"
 #include "scene.h"
@@ -18,3 +19,5 @@ public:
 private:	
 	ref<Scene> scene;
 };
+
+#endif // SKYNET_SERIALIZE_H

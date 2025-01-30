@@ -1,12 +1,9 @@
-#pragma once
-
-#ifndef IMGUIZMO_NAMESPACE
-#define IMGUIZMO_NAMESPACE ImGuizmo
-#endif
+#ifndef SKYNET_IMGUIZMO_H
+#define SKYNET_IMGUIZMO_H
 
 struct ImGuiWindow;
 
-namespace IMGUIZMO_NAMESPACE
+namespace ImGuizmo
 {
    IMGUI_API void SetDrawlist(ImDrawList* drawlist = nullptr);
    IMGUI_API void BeginFrame();
@@ -121,3 +118,5 @@ namespace IMGUIZMO_NAMESPACE
 
    IMGUI_API Style& GetStyle();
 }
+
+#endif // SKYNET_IMGUIZMO_H

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SKYNET_MESH_H
+#define SKYNET_MESH_H
+
 #include "core.h"
 #include "buffer.h"
 #include "transformable.h"
@@ -30,7 +32,6 @@ private:
 			const std::string &del, std::vector<std::string> &res);
 
 private:
-	static Loader loader;
 	std::vector<float> verts;
     std::vector<uint32_t> faces;
         
@@ -40,4 +41,9 @@ private:
 
 	Object type;
 	float color[4];
+
+	friend class Interface;
+	friend class Serializer;
 };
+
+#endif // SKYNET_MESH_H

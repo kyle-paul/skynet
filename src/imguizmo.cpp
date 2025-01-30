@@ -3,7 +3,7 @@
 #endif
 #include "imgui.h"
 #include "imgui_internal.h"
-#include "ImGuizmo.h"
+#include "imguizmo.h"
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #include <malloc.h>
@@ -14,7 +14,7 @@
 #endif
 
 
-namespace IMGUIZMO_NAMESPACE
+namespace ImGuizmo
 {
    static const float ZPI = 3.14159265358979323846f;
    static const float RAD2DEG = (180.f / ZPI);

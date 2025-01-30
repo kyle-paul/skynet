@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SKYNET_BUFFER_H
+#define SKYNET_BUFFER_H
+
 #include "core.h"
 #include "shader.h"
 
@@ -124,3 +126,5 @@ private:
     ref<VertexBuffer> vb;
     ref<IndexBuffer> ib;
 };
+
+#endif  // SKYNET_BUFFER_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SKYNET_CAMERA_H
+#define SKYNET_CAMERA_H
 
 class Camera
 {
@@ -32,3 +33,5 @@ public:
     float P[16];
     float C[16];
 };
+
+#endif // CAMERA

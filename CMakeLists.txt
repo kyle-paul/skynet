@@ -18,7 +18,7 @@ add_executable(${PROJECT_NAME}
 	src/gui.cpp
 	src/frame.cpp
 	src/guizmo.cpp
-	src/ImGuizmo.cpp
+	src/imguizmo.cpp
 	src/serializer.cpp
 
 	vendor/glad/src/glad.c

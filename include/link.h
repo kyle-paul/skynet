@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SKYNET_LINK_H
+#define SKYNET_LINK_H
+
 #include "mesh.h"
 #include "shader.h"
 #include "joint.h"
@@ -37,3 +39,5 @@ public:
 	std::vector<MeshData> data;
 	std::vector<ref<Mesh>> meshes;
 };
+
+#endif // SKYNET_LINK_H

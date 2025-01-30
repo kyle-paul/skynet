@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SKYNET_TRANSFORMABLE_H
+#define SKYNET_TRANSFORMABLE_H
 
 #include "core.h"
 #include "data.h"
@@ -38,3 +39,5 @@ protected:
 	friend class Interface;
 	friend class Serializer;
 };
+
+#endif // SKYNET_TRANSFORMABLE_H

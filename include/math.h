@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SKYNET_MATH_H
+#define SKYNET_MATH_H
+
 #include "core.h"
 #include "imgui.h"
 
@@ -20,22 +22,27 @@ void transcale (float* T, float* p, float* s);
 void decompose(float* T, float* p, float* s, float* e);
 
 void matmul(float* res, float* m1, float* m2, int n);
-void matmul4(float* res, float* m1, float* m2);
 void matmul3(float* res, float* m1, float* m2);
+void matmul4(float* res, float* m1, float* m2);
+void invert3(float* res, float* m);
 void invert4(float* res, float* m);
+void transpose(float* m);
+void transpose3(float* m);
+void transpose4(float* m);
+void identity3(float* m);
+void identity4(float* m);
 void normVec3(float* v);
 void normVec4(float* v);
 
 ImVec4 mulmatvec4(float* m, const ImVec4& v);
 
-void printMat4(float* m);
 void printMat3(float* m);
-void printVec4(float* v);
+void printMat4(float* m);
 void printVec3(float* v);
-
-void transpose(float* m);
-const float* identity();
+void printVec4(float* v);
 
 void vizgraph(std::unordered_map<std::string, std::vector<std::string>> &graph);
 
 } // namespace math
+
+#endif // SKYNET_MATH_H

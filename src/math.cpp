@@ -165,6 +165,29 @@ void matmul3(float *res, float* m1, float* m2) {
     res[8] = m2[6] * m1[2] + m2[7] * m1[5] + m2[8] * m1[8];
 }
 
+void invert3(float *res, float* m) {
+    float det = m[0] * (m[4] * m[8] - m[5] * m[7]) -
+                m[1] * (m[3] * m[8] - m[5] * m[6]) +
+                m[2] * (m[3] * m[7] - m[4] * m[6]);
+
+    if (fabs(det) < MINVAL) {
+        identity3(res); // Matrix is not invertible
+        return;
+    }
+
+    float invDet = 1.0f / det;
+
+    res[0] = (m[4] * m[8] - m[5] * m[7]) * invDet;
+    res[1] = (m[2] * m[7] - m[1] * m[8]) * invDet;
+    res[2] = (m[1] * m[5] - m[2] * m[4]) * invDet;
+    res[3] = (m[5] * m[6] - m[3] * m[8]) * invDet;
+    res[4] = (m[0] * m[8] - m[2] * m[6]) * invDet;
+    res[5] = (m[2] * m[3] - m[0] * m[5]) * invDet;
+    res[6] = (m[3] * m[7] - m[4] * m[6]) * invDet;
+    res[7] = (m[1] * m[6] - m[0] * m[7]) * invDet;
+    res[8] = (m[0] * m[4] - m[1] * m[3]) * invDet;
+}
+
 void invert4(float* res, float* m) {
     res[0] = m[5] * m[10] * m[15] - m[5] * m[11] * m[14] - m[9] * m[6] * m[15] + m[9] * m[7] * m[14] + m[13] * m[6] * m[11] - m[13] * m[7] * m[10];
     res[4] = -m[4] * m[10] * m[15] + m[4] * m[11] * m[14] + m[8] * m[6] * m[15] - m[8] * m[7] * m[14] - m[12] * m[6] * m[11] + m[12] * m[7] * m[10];
@@ -184,16 +207,48 @@ void invert4(float* res, float* m) {
     res[15] = m[0] * m[5] * m[10] - m[0] * m[6] * m[9] - m[4] * m[1] * m[10] + m[4] * m[2] * m[9] + m[8] * m[1] * m[6] - m[8] * m[2] * m[5];
 
     float det = m[0] * res[0] + m[1] * res[4] + m[2] * res[8] + m[3] * res[12];
-    det = 1.0f / det;
-    for (uint32_t i = 0; i < 16; i++) res[i] = res[i] * det;
+    det = 1.0f / det; for (uint32_t i = 0; i < 16; i++) res[i] = res[i] * det;
 }
 
-ImVec4 mulmatvec4(float* m, const ImVec4& v) {
-    const float x = m[0] * v.x + m[4] * v.y + m[8] * v.z + m[12] * v.w;
-    const float y = m[1] * v.x + m[5] * v.y + m[9] * v.z + m[13] * v.w;
-    const float z = m[2] * v.x + m[6] * v.y + m[10] * v.z + m[14] * v.w;
-    const float w = m[3] * v.x + m[7] * v.y + m[11] * v.z + m[15] * v.w;
-    return { x, y, z, w };
+void transpose(float* m) {
+    float temp;
+    for (int i = 0; i < 4; i++) {
+        for (int j = i + 1; j < 4; j++) {
+            temp = m[i + j * 4];
+            m[i + j * 4] = m[j + i * 4];
+            m[j + i * 4] = temp;
+        }
+    }
+}
+
+void transpose3(float* m) {
+    std::swap(m[1], m[3]);
+    std::swap(m[2], m[6]);
+    std::swap(m[5], m[7]);
+}
+
+void transpose4(float* m) {
+    std::swap(m[1], m[4]);
+    std::swap(m[2], m[8]);
+    std::swap(m[3], m[12]);
+    std::swap(m[6], m[9]);
+    std::swap(m[7], m[13]);
+    std::swap(m[11], m[14]);
+}
+
+void identity3(float* m) {
+    memset(m, 0, 9 * sizeof(float));
+    m[0] = 1.0f;
+    m[5] = 1.0f;
+    m[7] = 1.0f;
+}
+
+void identity4(float* m) {
+    memset(m, 0, 16 * sizeof(float));
+    m[0] = 1.0f;
+    m[4] = 1.0f;
+    m[10] = 1.0f;
+    m[15] = 1.0f;
 }
 
 void normVec3(float* v) {
@@ -222,11 +277,19 @@ void normVec4(float* v) {
     }
 }
 
+ImVec4 mulmatvec4(float* m, const ImVec4& v) {
+    const float x = m[0] * v.x + m[4] * v.y + m[8] * v.z + m[12] * v.w;
+    const float y = m[1] * v.x + m[5] * v.y + m[9] * v.z + m[13] * v.w;
+    const float z = m[2] * v.x + m[6] * v.y + m[10] * v.z + m[14] * v.w;
+    const float w = m[3] * v.x + m[7] * v.y + m[11] * v.z + m[15] * v.w;
+    return { x, y, z, w };
+}
+
 void printMat4(float* m) {
     std::cout << std::fixed << std::setprecision(2);
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << m[j * 4 + i] << ' ';
+            LOG("{0} ", m[j * 4 + i]);
         } std::cout << '\n';
     } std::cout << '\n';
 }
@@ -235,47 +298,27 @@ void printMat3(float* m) {
     std::cout << std::fixed << std::setprecision(2);
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            std::cout << m[j * 3 + i] << ' ';
+            LOG("{0} ", m[j * 3 + i]);
         } std::cout << '\n';
     } std::cout << '\n';
 }
 
 void printVec4(float* v) {
     std::cout << std::fixed << std::setprecision(2);
-    std::cout << v[0] << ' ' << v[1] << ' ' << v[2] << ' ' << v[3] << '\n';
+    LOG("{0} {1} {2} {3}", v[0], v[1], v[2], v[3]);
 }
 
 void printVec3(float* v) {
     std::cout << std::fixed << std::setprecision(2);
-    std::cout << v[0] << ' ' << v[1] << ' ' << v[2] << '\n';
-}
-
-void transpose(float* m) {
-    float temp;
-    for (int i = 0; i < 4; i++) {
-        for (int j = i + 1; j < 4; j++) {
-            temp = m[i + j * 4];
-            m[i + j * 4] = m[j + i * 4];
-            m[j + i * 4] = temp;
-        }
-    }
-}
-
-const float* identity() {
-    static float m[16] = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    }; return m;
+    LOG("{0} {1} {2}", v[0], v[1], v[2]);
 }
 
 void vizgraph(std::unordered_map<std::string, std::vector<std::string>> &graph) {
     for (auto &[name, vec] : graph) {
-        std::cout << name << ": {";
+        LOG("{0} => (", name);
         for (auto &v : graph[name]) {
-            std::cout << v << ' ';
-        } std::cout << "} \n";
+            LOG("{0} ", v);
+        } LOG(") \n");
     }
 }
 

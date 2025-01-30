@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SKYNET_FRAME_H
+#define SKYNET_FRAME_H
 
 #include "core.h"
 #include <glad/glad.h>
@@ -23,3 +24,5 @@ private:
 
     friend class Interface;
 };
+
+#endif // SKYNET_FRAME_H

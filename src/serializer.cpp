@@ -68,6 +68,7 @@ void Serializer::serialize(const std::string &path) {
 			out << YAML::BeginMap;
 			out << YAML::Key << "entity" << YAML::Value << name;
 			out << YAML::Key << "type" << YAML::Value << ObjectToString(object->getType());
+			out << YAML::Key << "color" << YAML::Value << object->color;
 			out << YAML::Key << "transform";
 			out << YAML::BeginMap;
 			out << YAML::Key << "p" << YAML::Value << object->p;
@@ -119,7 +120,8 @@ bool Serializer::deserialize(const std::string &path) {
 	if (entities) {
 		for (auto entity : entities) {
 			std::string entity_name = entity["entity"].as<std::string>();
-			scene->create(StringToObject(entity["type"].as<std::string>()));
+			scene->create(StringToObject(entity["type"].as<std::string>()), entity_name);
+			YAML::convert<float[4]>::decode(entity["color"], scene->objects[entity_name]->color);
 
 			auto transform = entity["transform"];
 			YAML::convert<float[3]>::decode(transform["p"], scene->objects[entity_name]->p);

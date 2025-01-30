@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SKYNET_DATA_H
+#define SKYNET_DATA_H
 
 struct MouseConfig {
     float lastx = 0.0f, lasty = 0.0f;
@@ -23,9 +24,9 @@ struct Data {
 
 enum class RotType { Euler, Quaternion, Axis };
 enum class RotAxis { Xaxis, Yaxis, Zaxis, Waxis };
-enum class Frame { World, Body };
-enum class Object { Cube, Sphere, Capsule, Tetrahedra, Mesh };
-enum class Action { OpenFile, OpenScene, SaveScene };
+enum class Frame   { World, Body };
+enum class Object  { Cube, Sphere, Capsule, Tetrahedra, Mesh };
+enum class Action  { OpenFile, OpenScene, SaveScene };
 
 
 inline static std::string ObjectToString(Object obj) {
@@ -47,3 +48,5 @@ inline static Object StringToObject(const std::string &str) {
     if (str == "Mesh") return Object::Mesh;
     throw std::invalid_argument("Unknown object type");
 }
+
+#endif // SKYNET_DATA_H

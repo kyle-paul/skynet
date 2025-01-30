@@ -1,12 +1,14 @@
-#pragma once
+#ifndef SKYNET_GUI_H
+#define SKYNET_GUI_H
 
 #include "core.h"
 #include "data.h"
+#include "util.h"
 #include "imgui.h"
 #include "scene.h"
 #include "frame.h"
 #include "guizmo.h"
-#include "ImGuizmo.h"
+#include "imguizmo.h"
 #include "serializer.h"
 #include <GLFW/glfw3.h>
 
@@ -34,5 +36,6 @@ private:
     Guizmo guizmo;
     Serializer serial;
     Action action;
-    bool dockspace_open = true;
 };
+
+#endif // SKYNET_GUI_H

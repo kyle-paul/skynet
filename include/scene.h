@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SKYNET_SCENE_H
+#define SKYNET_SCENE_H
+
 #include "core.h"
 #include "data.h"
 #include "camera.h"
@@ -23,7 +25,7 @@ private:
 	void visualize();
 	void forward(const std::string &cur, const std::string &par);
 	void inverse();
-	void create(const Object &type);
+	bool create(const Object &type, const std::string &name);
 
 private:
 	Data* data;
@@ -46,3 +48,5 @@ private:
 	friend class Interface;
 	friend class Serializer;
 };
+
+#endif // SKYNET_SCENE_H

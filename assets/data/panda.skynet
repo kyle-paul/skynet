@@ -12,19 +12,19 @@ Joints:
   - joint: joint6
     configuration:
       w: [0, 0, 1]
-      a: -41.7000008
+      a: -78.8000031
   - joint: joint5
     configuration:
       w: [0, 0, 1]
-      a: -22.5
+      a: -8.10000038
   - joint: joint3
     configuration:
       w: [0, 0, 1]
-      a: 2.0999999
+      a: 52.7999992
   - joint: joint2
     configuration:
       w: [0, 0, 1]
-      a: 40.7999992
+      a: -7.5
   - joint: joint7
     configuration:
       w: [0, 0, 1]
@@ -32,18 +32,29 @@ Joints:
   - joint: joint4
     configuration:
       w: [0, 0, 1]
-      a: 106.5
+      a: 56
   - joint: joint1
     configuration:
       w: [0, 0, 1]
-      a: -23.5
+      a: 117.400002
 Entities:
-  - entity: cube
-    type : Cube
+  - entity: floor
+    type: Cube
+    color: [0.837696314, 0.971957982, 1, 1]
     transform:
-      p: [0.340549797, -0.121091053, 0.200478435]
+      p: [0, 0, 0]
       e: [0, -0, 0]
       q: [1, 0, 0, 0]
-      s: [0.290000021, 0.290000021, 0.290000021]
+      s: [3.89395595, 4.66089535, 5.22507253e-05]
+      w: [1, 0, 0]
+      a: 0
+  - entity: cube
+    type: Cube
+    color: [1, 1, 1, 1]
+    transform:
+      p: [-0.653581798, -0.20212169, 0.113632619]
+      e: [0, -0, 0]
+      q: [1, 0, 0, 0]
+      s: [0.192508012, 0.192508012, 0.192508012]
       w: [1, 0, 0]
       a: 0

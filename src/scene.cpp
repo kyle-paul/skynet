@@ -1,7 +1,7 @@
 #include "scene.h"
 #include "math.h"
 #include "imgui.h"
-#include "ImGuizmo.h"
+#include "imguizmo.h"
 
 Scene::Scene() { }
 Scene::~Scene() { }
@@ -53,22 +53,33 @@ void Scene::load(const std::string &path) {
 	this->robotpath = path;
 }
 
-void Scene::create(const Object &type) {
+bool Scene::create(const Object &type, const std::string &name) {
+	float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+	
 	switch (type) {
 		case(Object::Cube) : {
-			float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-			objects["cube"] = cref<Mesh>(base + "/assets/mesh/primitive/cube.obj", Object::Cube, color, Mesh::Loader::assimp);
-			objects["cube"]->initGL();
-			break;
+
+			if (objects.find(name) != objects.end()) {
+				WARN("object name already exists");
+				return false;
+			}
+
+			objects[name] = cref<Mesh>(base + "/assets/mesh/primitive/cube.obj", Object::Cube, color, Mesh::Loader::assimp);
+			objects[name]->initGL(); return true;
 		}
 
 		case(Object::Sphere) : {
-			float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-			objects["sphere"] = cref<Mesh>(base + "/assets/mesh/primitive/sphere.obj", Object::Sphere, color, Mesh::Loader::assimp);
-			objects["sphere"]->initGL();
-			break;
+
+			if (objects.find(name) != objects.end()) {
+				WARN("object name already exists");
+				return false;
+			}
+
+			objects[name] = cref<Mesh>(base + "/assets/mesh/primitive/sphere.obj", Object::Sphere, color, Mesh::Loader::assimp);
+			objects[name]->initGL(); return true;
 		}
 	}
+	ASSERT(false, "Object type not found"); return false;
 }
 
 void Scene::render() {
@@ -118,7 +129,6 @@ void Scene::visualize() {
 		float* T = object->getTransform(RotType::Euler);
 		shader->setMat4("model", T);
 		object->render(shader);
-		this->selectedEntity = object;
 	}
 }
 
