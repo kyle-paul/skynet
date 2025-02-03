@@ -3,6 +3,7 @@
 
 #include "core.h"
 #include "gui.h"
+#include "imgui_internal.h"
 
 void OpenGLOptions() {
     glFrontFace(GL_CCW);
@@ -68,6 +69,17 @@ void keyCb(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
     else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
         data.opt.guizmo_type = ImGuizmo::OPERATION::SCALE;
+    }
+
+    else if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    else if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glEnable(GL_DEPTH_TEST);
+    }
+    else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+        glDisable(GL_DEPTH_TEST);
     }
 }
 

@@ -7,6 +7,7 @@
 #include "shader.h"
 #include "buffer.h"
 #include "xml.h"
+#include "engine.h"
 
 class Scene 
 {
@@ -24,6 +25,8 @@ public:
 private:
 	void visualize();
 	void forward(const std::string &cur, const std::string &par);
+	void subtree(const std::string &cur, const std::string &par);
+	void compute_dof();
 	void inverse();
 	bool create(const Object &type, const std::string &name);
 
@@ -38,6 +41,12 @@ private:
 	std::unordered_map<std::string, ref<Link>> links;
 	std::unordered_map<std::string, ref<Joint>> joints;
 	std::unordered_map<std::string, std::vector<std::string>> graph;
+	std::unordered_map<std::string, float> m;
+	std::unordered_map<std::string, float[3]> u;
+	std::unordered_map<std::string, float[3]> subcom;
+	std::unordered_map<std::string, std::string> dof_parent;
+
+	std::vector<std::string> joint_names = {"joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "joint7", "finger_joint1", "finger_joint2"};
 
 	bool loaded = false;
 	ref<Mesh> selectedEntity = nullptr;

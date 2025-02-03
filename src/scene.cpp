@@ -27,7 +27,7 @@ void Scene::init() {
 }
 
 void Scene::load(const std::string &path) {
-	xml::setData(&graph, &joints, &links);
+	xml::setData(&graph, &joints, &links, &u, &m, &dof_parent);
 	xml::parseXML(path);
 
 	std::vector<std::thread> threads;
@@ -93,7 +93,7 @@ void Scene::render() {
 		this->forward("link0", "null");
 		this->visualize();
 		shader->unbind();
-	}	
+	}
 }
 
 
@@ -101,17 +101,18 @@ void Scene::forward(const std::string &cur, const std::string &par) {
 	float T[16], T_link[16], T_joint[16];
 
 	if (par != "null") {
-		math::matmul4(T_link, links[par]->getWorldTransform(), links[cur]->getTransform());
+		math::matmul4(T_link, links[par]->getWorldTransform(), links[cur]->getLocalTransform());
 
-		if (links[cur]->joint != nullptr) {
-			math::axis2T(T_joint, links[cur]->joint->w, links[cur]->joint->a);
-			math::matmul4(T, T_link, T_joint);
-		} else std::copy(T_link, T_link + 16, T);
-
-		links[cur]->setTransform(T);
+		if (links[cur]->joint) {
+			math::matmul4(T, T_link, links[cur]->joint->getJointTransform());
+			links[cur]->joint->updateWorldTransform(T, links[cur]->p_w);
+		} else {
+			std::copy(T_link, T_link + 16, T);
+		}
+		links[cur]->setWorldTransform(T);
 		links[cur]->render(shader);
-
 	} else {
+		links[cur]->setWorldTransform();
 		links[cur]->render(shader);
 	}
 
@@ -120,13 +121,85 @@ void Scene::forward(const std::string &cur, const std::string &par) {
 	}
 }
 
+void Scene::compute_dof() {
+	for (auto &[name, joint] : this->joints) {
+		switch(joint->type) {
+			case(JType::Hinge) : {
+				float r[3], v[3];
+				math::subVec3(r, this->subcom["link0"], joint->p_w);
+				math::cross3(v, joint->w_w, r);
+
+				math::copy3(joint->cdof, joint->w_w);
+				math::copy3(joint->cdof+3, v);
+				break;
+			}
+			case(JType::Slide) : {
+				math::copy3(joint->cdof+3, joint->w_w);
+				break;
+			}
+		}
+
+		// INFO("joint = {} | cdof = {} {} {} {} {} {}", name, 
+		// joint->cdof[0], joint->cdof[1], joint->cdof[2], joint->cdof[3], joint->cdof[4], joint->cdof[5]);
+	}
+}
+
+void Scene::subtree(const std::string &cur, const std::string &par) {
+
+	this->m[cur] = links[cur]->mass;
+	math::mulVecS3(this->u[cur], links[cur]->com_w, links[cur]->mass);
+
+	for (auto &next : graph[cur]) {
+		this->subtree(next, cur);
+		this->m[cur] += this->m[next];
+		math::addVec3(this->u[cur], this->u[cur], this->u[next]);
+	}
+
+	math::divVecS3(this->subcom[cur], this->u[cur], this->m[cur]);
+	// INFO("Name = {0} | u = {1} {2} {3} | m = {4}", cur, this->subcom[cur][0], this->subcom[cur][1], this->subcom[cur][2], this->m[cur]);
+}
+
+
 void Scene::inverse() {
+
+	this->subtree("link0", "null");
+	this->compute_dof();
 	
+	float error[3], offset[3], temp[3], joint_jac[3];
+	float state_goal[3] = {0.379, 0.398, 0.226};
+	
+	std::string end_effector = "left_finger";
+	std::string closest_joint = "finger_joint1";
+	float cur_state[3] = {links[end_effector]->p_w[0], links[end_effector]->p_w[1], links[end_effector]->p_w[2]};
+	
+	math::subVec3(error, state_goal, cur_state);
+	math::subVec3(offset, state_goal, this->subcom["link0"]);
+
+	int n = 3; int m = joints.size();
+	float jacobian[n * m];
+
+	std::string name = closest_joint;
+
+	while(dof_parent[name].size() > 0) {
+
+		auto &joint = joints[name];
+		uint32_t i = joint->index;
+
+		math::cross3(temp, joint->cdof, offset);
+		math::addVec3(joint_jac, joint->cdof + 3, temp);
+				
+		jacobian[i + 0*m] = joint_jac[0];
+		jacobian[i + 1*m] = joint_jac[1];
+		jacobian[i + 2*m] = joint_jac[2];
+
+		name = dof_parent[name];
+		INFO("{} {} {}", jacobian[i + 0*m], jacobian[i + 1*m], jacobian[i + 2*m]);
+	}
 }
 
 void Scene::visualize() {
 	for (auto &[name, object] : objects) {
-		float* T = object->getTransform(RotType::Euler);
+		float* T = object->getLocalTransform(RotType::Euler);
 		shader->setMat4("model", T);
 		object->render(shader);
 	}

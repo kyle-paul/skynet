@@ -29,15 +29,26 @@ struct Inertial {
 class Link : public Transformable
 {
 public:
-	Link(float p[3], float q[4], std::vector<MeshData> &data, const ref<Joint> &joint=nullptr);
+	Link(float p[3], float q[4], float &mass, float* com, 
+        std::vector<MeshData> &data, const ref<Joint> &joint=nullptr);
+        
 	~Link();
 
+	void setWorldTransform(float* Tw_=nullptr);
 	void render(const ref<Shader> &shader);
 
 public:
     ref<Joint> joint = nullptr;
 	std::vector<MeshData> data;
 	std::vector<ref<Mesh>> meshes;
+
+    float p_w[3] = {0.0f, 0.0f, 0.0f};
+	float e_w[3] = {0.0f, 0.0f, 0.0f};
+	float q_w[4] = {0.0f, 0.0f, 0.0f};
+    
+	float mass   = 0.0f;
+	float com[3] = {0.0f, 0.0f, 0.0f};
+	float com_w[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 };
 
 #endif // SKYNET_LINK_H

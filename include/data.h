@@ -1,6 +1,8 @@
 #ifndef SKYNET_DATA_H
 #define SKYNET_DATA_H
 
+#include "core.h"
+
 struct MouseConfig {
     float lastx = 0.0f, lasty = 0.0f;
     float dx = 0.0f, dy = 0.0f;
@@ -27,6 +29,7 @@ enum class RotAxis { Xaxis, Yaxis, Zaxis, Waxis };
 enum class Frame   { World, Body };
 enum class Object  { Cube, Sphere, Capsule, Tetrahedra, Mesh };
 enum class Action  { OpenFile, OpenScene, SaveScene };
+enum class JType   { Hinge, Slide, Ball, Free};
 
 
 inline static std::string ObjectToString(Object obj) {
@@ -36,8 +39,8 @@ inline static std::string ObjectToString(Object obj) {
         case Object::Capsule: return "Capsule";
         case Object::Tetrahedra: return "Tetrahedra";
         case Object::Mesh: return "Mesh";
-        default: return "Unknown";
     }
+    ASSERT(false, "Unknown object type");
 }
 
 inline static Object StringToObject(const std::string &str) {
@@ -46,7 +49,25 @@ inline static Object StringToObject(const std::string &str) {
     if (str == "Capsule") return Object::Capsule;
     if (str == "Tetrahedra") return Object::Tetrahedra;
     if (str == "Mesh") return Object::Mesh;
-    throw std::invalid_argument("Unknown object type");
+    ASSERT(false, "Unknown object type");
+}
+
+inline static std::string JTypeToString(JType type) {
+    switch (type) {
+        case JType::Hinge: return "hinge";
+        case JType::Slide: return "slide";
+        case JType::Ball: return "ball";
+        case JType::Free: return "free";
+    }
+    ASSERT(false, "Unknown joint type");
+}
+
+inline static JType StringToJType(const std::string &str) {
+    if (str == "hinge") return JType::Hinge;
+    if (str == "slide") return JType::Slide;
+    if (str == "ball") return JType::Ball;
+    if (str == "free") return JType::Free;
+    ASSERT(false, "Unknown joint type");
 }
 
 #endif // SKYNET_DATA_H

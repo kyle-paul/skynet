@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
 	src/mesh.cpp
 	src/transformable.cpp
 	src/gui.cpp
+	src/dialog.cpp
 	src/frame.cpp
 	src/guizmo.cpp
 	src/imguizmo.cpp
@@ -29,7 +30,6 @@ add_executable(${PROJECT_NAME}
 	vendor/imgui/imgui_widgets.cpp
     vendor/imgui/backends/imgui_impl_opengl3.cpp
     vendor/imgui/backends/imgui_impl_glfw.cpp
-	vendor/dialog/ImGuiFileDialog.cpp
 )
 
 include_directories(${PROJECT_NAME}
@@ -39,7 +39,6 @@ include_directories(${PROJECT_NAME}
 	libs/assimp-build/install/include
 	libs/tinyxml2-build/install/include
 	libs/yaml-cpp-build/install/include
-	vendor/dialog
 	vendor/imgui
 	vendor/imgui/backends
 	vendor/glad/include

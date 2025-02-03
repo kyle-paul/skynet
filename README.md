@@ -1,1 +1,1 @@
-# Physics-based Graphis Simulation for Robotics
+# Physics-based Graphic Simulation for Robotics

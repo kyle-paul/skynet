@@ -1,7 +1,7 @@
 #include "gui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include "ImGuiFileDialog.h"
+#include "dialog.h"
 
 static bool dockspace_open = true;
 
@@ -250,7 +250,7 @@ void Interface::render(ref<Scene> &scene) {
         guizmo.config.drawlist = ImGui::GetWindowDrawList();
         guizmo.config.x = viewportPos.x + 15.0f;
         guizmo.config.y = viewportPos.y + viewportSize.y - 120.0f;
-        guizmo.render(scene->camera.getProjView(), scene->camera.getProjection(), 0.5f);
+        guizmo.render(scene->camera.getProjView(), scene->camera.getProjection());
 
         ImGui::End();
         ImGui::PopStyleVar();
@@ -273,6 +273,25 @@ void Interface::render(ref<Scene> &scene) {
         ImGui::Text("Option");
         ImGui::Checkbox("Use Guizmo", &scene->data->opt.guizmo_local);
 
+        ImGui::End();
+    }
+
+    {
+        ImGui::Begin("Engine experiment");
+        ImGui::Text("Inverse kinematics");
+        if (ImGui::Button("inverse")) {
+            this->scene->inverse();
+        }
+
+        ImGui::Text("Subtree center of mass");
+        if (ImGui::Button("subtree")) {
+            this->scene->subtree("link0", "null");
+        }
+
+        ImGui::Text("compute degree of freedom");
+        if (ImGui::Button("dof")) {
+            this->scene->compute_dof();
+        }
         ImGui::End();
     }
     
@@ -300,17 +319,20 @@ void Interface::render(ref<Scene> &scene) {
 
         for (auto &[name, link] : scene->links) {
             if (ImGui::TreeNode(name.c_str())) {
-                ImGui::DragFloat3("position", link->p, 0.01f, -2.0f, 2.0f);
-                ImGui::DragFloat4("quaternion", link->q, 0.01f, -2.0f, 2.0f);
+                ImGui::DragFloat3("position", link->p_w, 0.01f, -10.0f, 10.0f);
+                ImGui::DragFloat4("quaternion", link->q, 0.01f, -10.0f, 10.0f);
                 ImGui::DragFloat3("scale", link->s, 0.01f, 0.0f, 10.0f);
+                ImGui::DragFloat3("com", link->com_w, 0.01f, 0.0f, 10.0f);
+                ImGui::DragFloat("mass", &link->mass, 0.01f, 0.0f, 10.0f);
                 ImGui::TreePop();
             }
         }
 
         for (auto &[name, joint] : scene->joints) {
             if (ImGui::TreeNode(name.c_str())) {
-                ImGui::DragFloat3("joint axis", joint->w, 0.01f, -2.0f, 2.0f);
-                ImGui::DragFloat("angle", &joint->a, 0.1f, -360.0f, 360.0f);
+                ImGui::DragFloat3("axis", joint->w_w, 0.01f, -2.0f, 2.0f);
+                ImGui::DragFloat3("anchor", joint->p_w, 0.01f, -10.0f, 10.0f);
+                ImGui::DragFloat("angle", &joint->a, 0.1f, -2*PI, 2*PI);
                 ImGui::TreePop();
             }
         }

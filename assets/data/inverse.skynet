@@ -3,48 +3,57 @@ Default: /home/paul/dev/graphics/assets/mesh/robots/panda/panda.xml
 Joints:
   - joint: finger_joint2
     configuration:
-      w: [0, 0, 1]
+      type: slide
+      range: [0, 0.0399999991]
+      w: [0, 1, 0]
       a: 0
   - joint: finger_joint1
     configuration:
-      w: [0, 0, 1]
+      type: slide
+      range: [0, 0.0399999991]
+      w: [0, 1, 0]
       a: 0
   - joint: joint6
     configuration:
+      type: hinge
+      range: [-0.0175000001, 3.75250006]
       w: [0, 0, 1]
       a: 0
   - joint: joint5
     configuration:
+      type: hinge
+      range: [-300, 300]
       w: [0, 0, 1]
       a: 0
   - joint: joint3
     configuration:
+      type: hinge
+      range: [-300, 300]
       w: [0, 0, 1]
       a: 0
   - joint: joint2
     configuration:
+      type: hinge
+      range: [-1.76279998, 1.76279998]
       w: [0, 0, 1]
       a: 0
   - joint: joint7
     configuration:
+      type: hinge
+      range: [-300, 300]
       w: [0, 0, 1]
       a: 0
   - joint: joint4
     configuration:
+      type: hinge
+      range: [-3.07179999, -0.0697999969]
       w: [0, 0, 1]
-      a: 0
+      a: -0.0697999969
   - joint: joint1
     configuration:
+      type: hinge
+      range: [-300, 300]
       w: [0, 0, 1]
       a: 0
 Entities:
-  - entity: cube
-    type: Cube
-    color: [1, 1, 1, 1]
-    transform:
-      p: [0.379000008, 0.398000002, 0.225999996]
-      e: [0, -0, 0]
-      q: [1, 0, 0, 0]
-      s: [0.129999995, 0.129999995, 0.129999995]
-      w: [1, 0, 0]
-      a: 0
+  []

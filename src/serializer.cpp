@@ -23,6 +23,12 @@ namespace YAML {
     };
 }
 
+YAML::Emitter& operator<<(YAML::Emitter& out, const float (&v)[2]) {
+	out << YAML::Flow;
+	out << YAML::BeginSeq << v[0] << v[1] << YAML::EndSeq;
+	return out;
+}
+
 YAML::Emitter& operator<<(YAML::Emitter& out, const float (&v)[3]) {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v[0] << v[1] << v[2] << YAML::EndSeq;
@@ -56,6 +62,8 @@ void Serializer::serialize(const std::string &path) {
 			out << YAML::Key << "joint" << YAML::Value << name;
 			out << YAML::Key << "configuration";
 			out << YAML::BeginMap;
+			out << YAML::Key << "type" << YAML::Value <<  JTypeToString(joint->type);
+			out << YAML::Key << "range" << YAML::Value << joint->range;
 			out << YAML::Key << "w" << YAML::Value << joint->w;
 			out << YAML::Key << "a" << YAML::Value << joint->a;
 			out << YAML::EndMap;
@@ -110,6 +118,8 @@ bool Serializer::deserialize(const std::string &path) {
 			std::string joint_name = joint["joint"].as<std::string>();
 			auto configuration = joint["configuration"];
 
+			scene->joints[joint_name]->type = StringToJType(configuration["type"].as<std::string>());
+			YAML::convert<float[2]>::decode(configuration["range"], scene->joints[joint_name]->range);
 			YAML::convert<float[3]>::decode(configuration["w"], scene->joints[joint_name]->w);
 			scene->joints[joint_name]->a = configuration["a"].as<float>();
 		}

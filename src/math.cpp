@@ -63,8 +63,8 @@ void axisZ2T (float* T, float* e, float &a, float* p) {
 }
 
 void axis2T(float* T, float* w, float &a, float* p) {
-    const float cs = cos(DEG2RAD(a));
-    const float sn = sin(DEG2RAD(a));
+    const float cs = cos(-a);
+    const float sn = sin(-a);
 
     normVec3(w); float t[3];
     t[0] = (1 - cs) * w[0];
@@ -94,6 +94,12 @@ void transcale(float* T, float* p, float* s) {
     T[3] = 0.0f;  T[7] = 0.0f;  T[11] = 0.0f;  T[15] = 1.0f;
 }
 
+void translate(float* T, float* w, float &a) {
+    T[12] = w[0] * a;
+    T[13] = w[1] * a;
+    T[14] = w[2] * a;
+}
+
 void decompose(float* T, float* p, float* s, float* e) {
     p[0] = T[12];
     p[1] = T[13];
@@ -118,7 +124,77 @@ void decompose(float* T, float* p, float* s, float* e) {
     }
 }
 
-void matmul(float* res, float* m1, float* m2, int n) {
+void decomposeTw(float* T, float* p, float* q) {
+    p[0] = T[12];
+    p[1] = T[13];
+    p[2] = T[14];
+
+    float trace = T[0] + T[5] + T[10];
+    if (trace > 0.0f) {
+        float s = 0.5f / sqrtf(trace + 1.0f);
+        q[0] = 0.25f / s; // w
+        q[1] = (T[6] - T[9]) * s;
+        q[2] = (T[8] - T[2]) * s;
+        q[3] = (T[1] - T[4]) * s;
+    } else {
+        if (T[0] > T[5] && T[0] > T[6]) {
+            float s = 2.0f * sqrtf(1.0f + T[0] - T[5] - T[6]);
+            q[0] = (T[6] - T[9]) / s;
+            q[1] = 0.25f * s;
+            q[2] = (T[4] + T[1]) / s;
+            q[3] = (T[8] + T[2]) / s;
+        } else if (T[5] > T[6]) {
+            float s = 2.0f * sqrtf(1.0f + T[5] - T[0] - T[6]);
+            q[0] = (T[8] - T[2]) / s;
+            q[1] = (T[4] + T[1]) / s;
+            q[2] = 0.25f * s;
+            q[3] = (T[9] + T[6]) / s;
+        } else {
+            float s = 2.0f * sqrtf(1.0f + T[6] - T[0] - T[5]);
+            q[0] = (T[1] - T[4]) / s;
+            q[1] = (T[8] + T[2]) / s;
+            q[2] = (T[9] + T[6]) / s;
+            q[3] = 0.25f * s;
+        }
+    }
+}
+
+
+void mulMatVec(float* res, float* mat, float* vec, int n, int m) {
+    for (int i = 0; i < n; i++) {
+        res[i] = 0.0f;
+        for (int j = 0; j < m; j++) {
+            res[i] += mat[j * m + i] * vec[j];
+        }
+    }
+}
+
+void mulMatVec4(float* res, float* mat, float* vec) {
+    res[0] = mat[0] * vec[0] + mat[4] * vec[1] + mat[8] * vec[2] + mat[12];
+    res[1] = mat[1] * vec[0] + mat[5] * vec[1] + mat[9] * vec[2] + mat[13];
+    res[2] = mat[2] * vec[0] + mat[6] * vec[1] + mat[10] * vec[2] + mat[14];
+    res[3] = mat[3] * vec[0] + mat[7] * vec[1] + mat[11] * vec[2] + mat[15];
+}
+
+void rotMatVec3(float* res, float* mat, float* vec) {
+    res[0] = mat[0] * vec[0] + mat[4] * vec[1] + mat[8] * vec[2];
+    res[1] = mat[1] * vec[0] + mat[5] * vec[1] + mat[9] * vec[2];
+    res[2] = mat[2] * vec[0] + mat[6] * vec[1] + mat[10] * vec[2];
+}
+
+void matmul(float* res, float* m1, float* m2, int n, int m, int q) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < q; j++) {
+            res[i * q + j] = 0.0f;
+            for (int k = 0; k < m; k++) {
+                res[i * q + j] += m1[i * m + k] * m2[k * q + j];
+            }
+        }
+    }
+}
+
+
+void matmulsq(float* res, float* m1, float* m2, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             res[i + j * n] = 0.0f;
@@ -211,12 +287,9 @@ void invert4(float* res, float* m) {
 }
 
 void transpose(float* m) {
-    float temp;
     for (int i = 0; i < 4; i++) {
         for (int j = i + 1; j < 4; j++) {
-            temp = m[i + j * 4];
-            m[i + j * 4] = m[j + i * 4];
-            m[j + i * 4] = temp;
+            std::swap( m[i + j * 4], m[j + i * 4]);
         }
     }
 }
@@ -251,31 +324,182 @@ void identity4(float* m) {
     m[15] = 1.0f;
 }
 
-void normVec3(float* v) {
+void addVec3(float* res, float* v1, float* v2) {
+    res[0] = v1[0] + v2[0];
+    res[1] = v1[1] + v2[1];
+    res[2] = v1[2] + v2[2];
+}
+
+void addVecS3(float* res, float* v1, float &a) {
+    res[0] = v1[0] + a;
+    res[1] = v1[1] + a;
+    res[2] = v1[2] + a;
+}
+
+void subVec3(float* res, float* v1, float* v2) {
+    res[0] = v1[0] - v2[0];
+    res[1] = v1[1] - v2[1];
+    res[2] = v1[2] - v2[2];
+}
+
+void mulVecS3(float* res, float* v, float &s) {
+    res[0] = v[0] * s;
+    res[1] = v[1] * s;
+    res[2] = v[2] * s;
+}
+
+void divVecS3(float* res, float* v, float &s) {
+    ASSERT(s > MINVAL, "Divide by zero");
+    res[0] = v[0] / s;
+    res[1] = v[1] / s;
+    res[2] = v[2] / s;
+}
+
+float normVec3(float* v) {
     float norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     if (norm < MINVAL) {
         v[0] = 1; v[1] = 0; v[2] = 0;
-    } else {
-        float normInv = 1/norm;
-        v[0] *= normInv;
-        v[1] *= normInv;
-        v[2] *= normInv;
     }
+    float normInv = 1/norm;
+    v[0] *= normInv;
+    v[1] *= normInv;
+    v[2] *= normInv;
+    return norm;
 }
 
-void normVec4(float* v) {
+float normVec4(float* v) {
     float norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2] + v[3]*v[3]);
     if (norm < MINVAL) {
         v[0] = 1; v[1] = 0;
         v[2] = 0; v[3] = 0;
-    } else {
-        float normInv = 1/norm;
-        v[0] *= normInv;
-        v[1] *= normInv;
-        v[2] *= normInv;
-        v[3] *= normInv;
+        return 1;
+    }
+    float normInv = 1/norm;
+    v[0] *= normInv;
+    v[1] *= normInv;
+    v[2] *= normInv;
+    v[3] *= normInv;
+    return norm;
+}
+
+void cross3(float* res, float* v1, float* v2) {
+    res[0] = v1[1] * v2[2] - v1[2] * v2[1];
+    res[1] = v1[2] * v2[0] - v1[0] * v2[2];
+    res[2] = v1[0] * v2[1] - v1[1] * v2[0];
+}
+
+void zero3(float* v) {
+    v[0] = 0.0f;
+    v[1] = 0.0f;
+    v[2] = 0.0f;
+}
+
+void copy3(float* res, const float* v) {
+    res[0] = v[0];
+    res[1] = v[1];
+    res[2] = v[2];
+}
+
+void rotVecQuat(float res[3], const float vec[3], const float quat[4]) {
+    if (vec[0] == 0 && vec[1] == 0 && vec[2] == 0) {
+        zero3(res);
+    }
+
+    else if (quat[0] == 1 && quat[1] == 0 && quat[2] == 0 && quat[3] == 0) {
+        copy3(res, vec);
+    }
+
+    else {
+        float tmp[3] = {
+            quat[0]*vec[0] + quat[2]*vec[2] - quat[3]*vec[1],
+            quat[0]*vec[1] + quat[3]*vec[0] - quat[1]*vec[2],
+            quat[0]*vec[2] + quat[1]*vec[1] - quat[2]*vec[0]
+        };
+
+        res[0] = vec[0] + 2 * (quat[2]*tmp[2] - quat[3]*tmp[1]);
+        res[1] = vec[1] + 2 * (quat[3]*tmp[0] - quat[1]*tmp[2]);
+        res[2] = vec[2] + 2 * (quat[1]*tmp[1] - quat[2]*tmp[0]);
     }
 }
+
+void clamp(float &a, float* range) {
+    if (a > range[1]) a = range[1];
+    else if (a < range[0]) a = range[0];
+}
+
+void invert(float* m, int n) {
+    std::vector<int> indxc(n), indxr(n), ipiv(n);
+    for (int i = 0; i < n; i++) ipiv[i] = 0;
+
+    for (int i = 0; i < n; i++) {
+        int irow = -1, icol = -1;
+        float big = 0.0f;
+
+        for (int j = 0; j < n; j++) {
+            if (ipiv[j] != 1) {
+                for (int k = 0; k < n; k++) {
+                    if (ipiv[k] == 0) {
+                        if (fabs(m[j * n + k]) >= big) {
+                            big = fabs(m[j * n + k]);
+                            irow = j;
+                            icol = k;
+                        }
+                    }
+                }
+            }
+        }
+
+        ++(ipiv[icol]);
+
+        if (irow != icol) {
+            for (int l = 0; l < n; l++) std::swap(m[irow * n + l], m[icol * n + l]);
+        }
+
+        indxr[i] = irow;
+        indxc[i] = icol;
+
+        if (m[icol * n + icol] == 0.0f) {
+            std::cerr << "Singular matrix in invert\n";
+            return;
+        }
+
+        float pivinv = 1.0f / m[icol * n + icol];
+        m[icol * n + icol] = 1.0f;
+
+        for (int l = 0; l < n; l++) m[icol * n + l] *= pivinv;
+
+        for (int ll = 0; ll < n; ll++) {
+            if (ll != icol) {
+                float dum = m[ll * n + icol];
+                m[ll * n + icol] = 0.0f;
+                for (int l = 0; l < n; l++) m[ll * n + l] -= m[icol * n + l] * dum;
+            }
+        }
+    }
+
+    for (int l = n - 1; l >= 0; l--) {
+        if (indxr[l] != indxc[l]) {
+            for (int k = 0; k < n; k++) {
+                std::swap(m[k * n + indxr[l]], m[k * n + indxc[l]]);
+            }
+        }
+    }
+}
+
+
+void pseudoinvert(float* J, int n, int m) {
+    if (n < m) {
+        float J_T[m * n];
+        std::copy(J, J + (n * m), J_T);
+        transpose(J_T);
+
+        float product[m * n];        
+        matmul(product, J, J_T, n, m, n);
+        invert(product, n);
+        matmul(J, J_T, product, m, n, n);
+    }
+}
+
 
 ImVec4 mulmatvec4(float* m, const ImVec4& v) {
     const float x = m[0] * v.x + m[4] * v.y + m[8] * v.z + m[12] * v.w;
@@ -285,32 +509,51 @@ ImVec4 mulmatvec4(float* m, const ImVec4& v) {
     return { x, y, z, w };
 }
 
+void printMat(float* mat, int n, int m) {
+    std::ostringstream o;
+    o << std::fixed << std::setprecision(2);
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<m; j++) {
+            o << mat[i * n + m] << ' ';
+        } o << '\n';
+    }
+    LOG("{}", o.str());
+}
+
 void printMat4(float* m) {
-    std::cout << std::fixed << std::setprecision(2);
+    std::ostringstream o;
+    o << std::fixed << std::setprecision(3);
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            LOG("{0} ", m[j * 4 + i]);
-        } std::cout << '\n';
-    } std::cout << '\n';
+            o << m[j * 4 + i] << ' ';
+        } o << '\n';
+    }
+    LOG("{}", o.str());
 }
 
 void printMat3(float* m) {
-    std::cout << std::fixed << std::setprecision(2);
+    std::ostringstream o;
+    o << std::fixed << std::setprecision(3);
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            LOG("{0} ", m[j * 3 + i]);
-        } std::cout << '\n';
-    } std::cout << '\n';
+            o << m[j * 3 + i] << ' ';
+        } o << '\n';
+    }
+    LOG("{}", o.str());
 }
 
 void printVec4(float* v) {
-    std::cout << std::fixed << std::setprecision(2);
-    LOG("{0} {1} {2} {3}", v[0], v[1], v[2], v[3]);
+    std::ostringstream o;
+    o << std::fixed << std::setprecision(3);
+    o << v[0] << ' ' << v[1] << ' ' << v[2] << ' ' << v[3] << '\n';
+    LOG("{}", o.str());
 }
-
+    
 void printVec3(float* v) {
-    std::cout << std::fixed << std::setprecision(2);
-    LOG("{0} {1} {2}", v[0], v[1], v[2]);
+    std::ostringstream o;
+    o << std::fixed << std::setprecision(3);
+    o << v[0] << ' ' << v[1] << ' ' << v[2] << " \n";
+    LOG("{}", o.str());
 }
 
 void vizgraph(std::unordered_map<std::string, std::vector<std::string>> &graph) {
