@@ -292,6 +292,10 @@ void Interface::render(ref<Scene> &scene) {
         if (ImGui::Button("dof")) {
             this->scene->compute_dof();
         }
+
+        if (ImGui::Button("reset joint")) {
+            this->scene->reset();
+        }
         ImGui::End();
     }
     

@@ -122,13 +122,17 @@ void Scene::forward(const std::string &cur, const std::string &par) {
 }
 
 void Scene::compute_dof() {
+
+	this->forward("link0", "null");
+	this->forward("link0", "null");
+	this->subtree("link0", "null");
+
 	for (auto &[name, joint] : this->joints) {
 		switch(joint->type) {
 			case(JType::Hinge) : {
 				float r[3], v[3];
 				math::subVec3(r, this->subcom["link0"], joint->p_w);
 				math::cross3(v, joint->w_w, r);
-
 				math::copy3(joint->cdof, joint->w_w);
 				math::copy3(joint->cdof+3, v);
 				break;
@@ -138,9 +142,7 @@ void Scene::compute_dof() {
 				break;
 			}
 		}
-
-		// INFO("joint = {} | cdof = {} {} {} {} {} {}", name, 
-		// joint->cdof[0], joint->cdof[1], joint->cdof[2], joint->cdof[3], joint->cdof[4], joint->cdof[5]);
+		// INFO("joint = {} | {} {} {} {} {} {}", name, joint->cdof[0], joint->cdof[1], joint->cdof[2], joint->cdof[3], joint->cdof[4], joint->cdof[5]);
 	}
 }
 
@@ -156,45 +158,80 @@ void Scene::subtree(const std::string &cur, const std::string &par) {
 	}
 
 	math::divVecS3(this->subcom[cur], this->u[cur], this->m[cur]);
-	// INFO("Name = {0} | u = {1} {2} {3} | m = {4}", cur, this->subcom[cur][0], this->subcom[cur][1], this->subcom[cur][2], this->m[cur]);
 }
 
+void Scene::reset() {
+	for (auto &[name, joint] : joints) {
+		joint->a = 0.0f;
+	}
+}
 
 void Scene::inverse() {
 
-	this->subtree("link0", "null");
 	this->compute_dof();
-	
+
 	float error[3], offset[3], temp[3], joint_jac[3];
-	float state_goal[3] = {0.379, 0.398, 0.226};
+	float state_goal[3] = {this->objects["cube"]->p[0], this->objects["cube"]->p[1], this->objects["cube"]->p[2]};
 	
 	std::string end_effector = "left_finger";
 	std::string closest_joint = "finger_joint1";
+
 	float cur_state[3] = {links[end_effector]->p_w[0], links[end_effector]->p_w[1], links[end_effector]->p_w[2]};
-	
 	math::subVec3(error, state_goal, cur_state);
-	math::subVec3(offset, state_goal, this->subcom["link0"]);
 
 	int n = 3; int m = joints.size();
-	float jacobian[n * m];
 
-	std::string name = closest_joint;
+	int count = 0;
+	float tolerance = 0.01;
+	float step_size = 0.5;
 
-	while(dof_parent[name].size() > 0) {
+	while (math::normVec(error, 3) > tolerance) {
 
-		auto &joint = joints[name];
-		uint32_t i = joint->index;
+		float jac[n * m]; std::fill(jac, jac + (n * m), 0.0f);
+		math::subVec3(offset, state_goal, this->subcom["link0"]);
+		
+		std::string name = closest_joint;
 
-		math::cross3(temp, joint->cdof, offset);
-		math::addVec3(joint_jac, joint->cdof + 3, temp);
-				
-		jacobian[i + 0*m] = joint_jac[0];
-		jacobian[i + 1*m] = joint_jac[1];
-		jacobian[i + 2*m] = joint_jac[2];
+		while(dof_parent[name].size() > 0) {
+			auto &joint = joints[name];
+			uint32_t i = joint->index;
+			math::cross3(temp, joint->cdof, offset);
+			math::addVec3(joint_jac, joint->cdof + 3, temp);
+					
+			jac[i + 0*m] = joint_jac[0];
+			jac[i + 1*m] = joint_jac[1];
+			jac[i + 2*m] = joint_jac[2];
 
-		name = dof_parent[name];
-		INFO("{} {} {}", jacobian[i + 0*m], jacobian[i + 1*m], jacobian[i + 2*m]);
+			name = dof_parent[name];
+		}
+
+		float jac_T[m * n], j_inv[n * m], product[n * n], delta[m];
+		
+		math::transpose(jac_T, jac, n, m);
+		math::matmul(product, jac, jac_T, n, m, n);
+		math::invert(product, n);
+		math::matmul(j_inv, jac_T, product, m, n, n);
+		math::matmul(delta, j_inv, error, m, n, 1);
+
+		name = closest_joint;
+
+		while(dof_parent[name].size() > 0) {
+			uint32_t i = joints[name]->index;
+			joints[name]->a += step_size * delta[i];
+			name = dof_parent[name];
+		}
+
+		this->compute_dof();
+
+		cur_state[0] = links[end_effector]->p_w[0]; 
+		cur_state[1] = links[end_effector]->p_w[1];
+		cur_state[2] = links[end_effector]->p_w[2];
+
+		math::subVec3(error, state_goal, cur_state);
+		count++;
 	}
+
+	WARN("Done with {} loops", count);
 }
 
 void Scene::visualize() {

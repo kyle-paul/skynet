@@ -18,42 +18,51 @@ Joints:
       type: hinge
       range: [-0.0175000001, 3.75250006]
       w: [0, 0, 1]
-      a: 0.659200013
+      a: 0
   - joint: joint5
     configuration:
       type: hinge
       range: [-300, 300]
       w: [0, 0, 1]
-      a: 0.112499997
+      a: 0
   - joint: joint3
     configuration:
       type: hinge
       range: [-300, 300]
       w: [0, 0, 1]
-      a: 0.138500005
+      a: 0
   - joint: joint2
     configuration:
       type: hinge
       range: [-1.76279998, 1.76279998]
       w: [0, 0, 1]
-      a: 1.35689998
+      a: 0
   - joint: joint7
     configuration:
       type: hinge
       range: [-300, 300]
       w: [0, 0, 1]
-      a: 0.168599993
+      a: 0
   - joint: joint4
     configuration:
       type: hinge
       range: [-3.07179999, -0.0697999969]
       w: [0, 0, 1]
-      a: -0.217199996
+      a: -0.0697999969
   - joint: joint1
     configuration:
       type: hinge
       range: [-300, 300]
       w: [0, 0, 1]
-      a: 0.138500005
+      a: 0
 Entities:
-  []
+  - entity: cube
+    type: Cube
+    color: [1, 1, 1, 1]
+    transform:
+      p: [0.444560617, -0.519399345, 0.163541764]
+      e: [0, -0, 0]
+      q: [1, 0, 0, 0]
+      s: [0.116800025, 0.116800025, 0.116800025]
+      w: [1, 0, 0]
+      a: 0

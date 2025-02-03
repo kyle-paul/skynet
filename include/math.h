@@ -29,7 +29,7 @@ void matmul3(float* res, float* m1, float* m2);
 void matmul4(float* res, float* m1, float* m2);
 void invert3(float* res, float* m);
 void invert4(float* res, float* m);
-void transpose(float* m);
+void transpose(float* mat_T, float* mat, int n, int m);
 void transpose3(float* m);
 void transpose4(float* m);
 void identity3(float* m);
@@ -46,11 +46,11 @@ void mulVecS3(float* res, float* v, float &s);
 void divVecS3(float* res, float* v, float &s);
 float normVec3(float* v);
 float normVec4(float* v);
+float normVec(float* v, int n);
 void cross3(float* res, float* v1, float* v2);
 
 void clamp(float &a, float* range);
-
-void pseudoinvert(float* j, int n, int m);
+void invert(float* m, int n);
 
 ImVec4 mulmatvec4(float* m, const ImVec4& v);
 void rotVecQuat(float res[3], const float vec[3], const float quat[4]);
@@ -62,6 +62,7 @@ void printMat3(float* m);
 void printMat4(float* m);
 void printVec3(float* v);
 void printVec4(float* v);
+void printVec(float* v, int n);
 
 void vizgraph(std::unordered_map<std::string, std::vector<std::string>> &graph);
 

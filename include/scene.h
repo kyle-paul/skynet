@@ -16,6 +16,7 @@ public:
 	~Scene();
 
 	void init();
+	void reset();
 	void load(const std::string &path);
 	void render();
 	void updateCamera();

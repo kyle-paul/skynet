@@ -23,5 +23,5 @@ void Joint::updateWorldTransform(float* T, float* pos_w) {
     float vec[3] = {0.0f, 0.0f, 0.0f};
     math::rotVecQuat(this->p_w, vec, this->q);
     math::addVec3(this->p_w, this->p, pos_w);     // anchor
-    math::rotMatVec3(this->w_w, T, this->w);      // axis 
+    math::rotMatVec3(this->w_w, T, this->w);      // axis
 }

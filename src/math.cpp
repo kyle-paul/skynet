@@ -182,12 +182,13 @@ void rotMatVec3(float* res, float* mat, float* vec) {
     res[2] = mat[2] * vec[0] + mat[6] * vec[1] + mat[10] * vec[2];
 }
 
-void matmul(float* res, float* m1, float* m2, int n, int m, int q) {
+
+void matmul(float* product, float* jac, float* jac_T, int n, int m, int q) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < q; j++) {
-            res[i * q + j] = 0.0f;
+            product[i * q + j]= 0.0f;
             for (int k = 0; k < m; k++) {
-                res[i * q + j] += m1[i * m + k] * m2[k * q + j];
+                product[i * q + j] += jac[i * m + k] * jac_T[k * q + j];
             }
         }
     }
@@ -286,10 +287,10 @@ void invert4(float* res, float* m) {
     det = 1.0f / det; for (uint32_t i = 0; i < 16; i++) res[i] = res[i] * det;
 }
 
-void transpose(float* m) {
-    for (int i = 0; i < 4; i++) {
-        for (int j = i + 1; j < 4; j++) {
-            std::swap( m[i + j * 4], m[j + i * 4]);
+void transpose(float* mat_T, float* mat, int n, int m) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            mat_T[j * n + i] = mat[i * m + j];
         }
     }
 }
@@ -365,6 +366,14 @@ float normVec3(float* v) {
     v[1] *= normInv;
     v[2] *= normInv;
     return norm;
+}
+
+float normVec(float* v, int n) {
+    float norm = 0.0f;
+    for (int i = 0; i < n; i++) {
+        norm += v[i] * v[i];
+    }
+    return sqrt(norm);
 }
 
 float normVec4(float* v) {
@@ -487,18 +496,18 @@ void invert(float* m, int n) {
 }
 
 
-void pseudoinvert(float* J, int n, int m) {
-    if (n < m) {
-        float J_T[m * n];
-        std::copy(J, J + (n * m), J_T);
-        transpose(J_T);
+// void pseudoinvert(float* J, int n, int m) {
+//     if (n < m) {
+//         float J_T[m * n];
+//         std::copy(J, J + (n * m), J_T);
+//         transpose(J_T, );
 
-        float product[m * n];        
-        matmul(product, J, J_T, n, m, n);
-        invert(product, n);
-        matmul(J, J_T, product, m, n, n);
-    }
-}
+//         float product[m * n];        
+//         matmul(product, J, J_T, n, m, n);
+//         invert(product, n);
+//         matmul(J, J_T, product, m, n, n);
+//     }
+// }
 
 
 ImVec4 mulmatvec4(float* m, const ImVec4& v) {
@@ -511,10 +520,10 @@ ImVec4 mulmatvec4(float* m, const ImVec4& v) {
 
 void printMat(float* mat, int n, int m) {
     std::ostringstream o;
-    o << std::fixed << std::setprecision(2);
+    o << std::fixed << std::setprecision(3);
     for (int i=0; i<n; i++) {
         for (int j=0; j<m; j++) {
-            o << mat[i * n + m] << ' ';
+            o << mat[i * m + j] << ' ';
         } o << '\n';
     }
     LOG("{}", o.str());
@@ -551,8 +560,17 @@ void printVec4(float* v) {
     
 void printVec3(float* v) {
     std::ostringstream o;
-    o << std::fixed << std::setprecision(3);
+    o << std::fixed << std::setprecision(7);
     o << v[0] << ' ' << v[1] << ' ' << v[2] << " \n";
+    LOG("{}", o.str());
+}
+
+void printVec(float* v, int n) {
+    std::ostringstream o;
+    o << std::fixed << std::setprecision(3);
+    for (int i = 0; i < n; i++) {
+        o << v[i] << ' ';
+    } o << '\n';
     LOG("{}", o.str());
 }
 
