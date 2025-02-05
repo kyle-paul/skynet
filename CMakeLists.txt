@@ -11,6 +11,7 @@ add_executable(${PROJECT_NAME}
 	src/camera.cpp
 	src/shader.cpp
 	src/buffer.cpp
+	src/texture2d.cpp
 	src/link.cpp
 	src/joint.cpp
 	src/mesh.cpp
@@ -39,6 +40,7 @@ include_directories(${PROJECT_NAME}
 	libs/assimp-build/install/include
 	libs/tinyxml2-build/install/include
 	libs/yaml-cpp-build/install/include
+	vendor/stb
 	vendor/imgui
 	vendor/imgui/backends
 	vendor/glad/include

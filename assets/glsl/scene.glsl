@@ -28,9 +28,24 @@ uniform vec4 color;
 in vec3 v_normal;
 in vec2 v_texcoord;
 uniform vec3 light;
+uniform vec3 viewPos;
 
 void main() {
     vec3 norm = normalize(v_normal);
-    float diffuse = max(dot(norm, normalize(light)), 0.6);
-    render = color * diffuse;
+    vec3 lightDir = normalize(light - vec3(0.0)); // Assuming object is at (0,0,0)
+
+    float ambientStrength = 0.3;
+    vec3 ambient = ambientStrength * vec3(1.0);
+
+    float diffuseStrength = 0.7;
+    float diffuse = max(dot(norm, lightDir), 0.4); // Min diffuse to avoid full darkness
+
+    float specularStrength = 0.5;
+    vec3 viewDir = normalize(viewPos - vec3(0.0));
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = specularStrength * spec * vec3(1.0);
+
+    vec3 lighting = ambient + diffuseStrength * diffuse + specular;
+    render = vec4(lighting, 1.0) * color;
 }

@@ -64,7 +64,8 @@ bool Scene::create(const Object &type, const std::string &name) {
 				return false;
 			}
 
-			objects[name] = cref<Mesh>(base + "/assets/mesh/primitive/cube.obj", Object::Cube, color, Mesh::Loader::assimp);
+			objects[name] = cref<Mesh>();
+			objects[name]->genCube(0.25, 0.25, 0.25, color);
 			objects[name]->initGL(); return true;
 		}
 
@@ -75,8 +76,19 @@ bool Scene::create(const Object &type, const std::string &name) {
 				return false;
 			}
 
-			objects[name] = cref<Mesh>(base + "/assets/mesh/primitive/sphere.obj", Object::Sphere, color, Mesh::Loader::assimp);
+			objects[name] = cref<Mesh>();
+			objects[name]->genSphere(0.5, 32, 32, color);
 			objects[name]->initGL(); return true;
+		}
+
+		case (Object::Camera) : {
+
+			if (objects.find(name) != objects.end()) {
+				WARN("object name already exists");
+				return false;
+			}
+
+			
 		}
 	}
 	ASSERT(false, "Object type not found"); return false;
@@ -85,15 +97,19 @@ bool Scene::create(const Object &type, const std::string &name) {
 void Scene::render() {
 	this->updateCamera();
 	float* projview = camera.getProjView();
-
+	
+	shader->bind();
+	shader->setMat4("projview", projview);
+	shader->setFloat3("light", light);
+	shader->setFloat3("viewPos", camera.p);
+	
 	if (this->loaded) {
-		shader->bind();
-		shader->setMat4("projview", projview);
-		shader->setFloat3("light", light);
 		this->forward("link0", "null");
-		this->visualize();
-		shader->unbind();
 	}
+
+	this->visualize();
+	this->updatePhysics();
+	shader->unbind();
 }
 
 
@@ -142,7 +158,6 @@ void Scene::compute_dof() {
 				break;
 			}
 		}
-		// INFO("joint = {} | {} {} {} {} {} {}", name, joint->cdof[0], joint->cdof[1], joint->cdof[2], joint->cdof[3], joint->cdof[4], joint->cdof[5]);
 	}
 }
 
@@ -164,6 +179,28 @@ void Scene::reset() {
 	for (auto &[name, joint] : joints) {
 		joint->a = 0.0f;
 	}
+}
+
+void Scene::updatePhysics() {
+	
+	if (objects.find("sphere1") != objects.end()) {
+
+		for (auto &[name, object] : objects) {
+
+			if(name == "ground") continue;
+			
+			math::addScl3(object->vel, this->gravity, deltaTime);
+			math::addScl3(object->p, object->vel, deltaTime);
+
+			math::printVec3(object->p);
+			math::printVec3(object->vel);
+
+			if (object->p[2] <= objects["ground"]->p[2]) {
+				object->p[2] = objects["ground"]->p[2];
+				object->vel[2] *= -restitution;
+			}
+		}		
+	}	
 }
 
 void Scene::inverse() {
@@ -252,7 +289,6 @@ void Scene::updateCamera() {
 		this->camera.p[1] += 0.001f * data->msc.dy;
 	}
 	this->camera.p[2] += -0.1f * data->msc.zoom;
-	this->camera.aspect = data->msc.aspect;
 
 	data->msc.dx = 0.0f; 
 	data->msc.dy = 0.0f; 

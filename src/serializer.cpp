@@ -109,7 +109,7 @@ bool Serializer::deserialize(const std::string &path) {
 
 	// load xml default robot
 	std::string xml_path = data["Default"].as<std::string>();
-	scene->load(xml_path);
+	if (xml_path.size() > 0) scene->load(xml_path);
 
 	// load joints configuration
 	auto joints = data["Joints"];

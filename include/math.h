@@ -57,6 +57,8 @@ void rotVecQuat(float res[3], const float vec[3], const float quat[4]);
 void copy3(float* res, const float* v);
 void zero3(float* v);
 
+void addScl3(float* res, float* vec, float s);
+
 void printMat(float* mat, int n, int m);
 void printMat3(float* m);
 void printMat4(float* m);

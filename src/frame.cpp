@@ -1,7 +1,7 @@
 #include "frame.h"
 
 FrameBuffer::FrameBuffer() {
-    this->init();   
+    this->init();
 }
 
 FrameBuffer::~FrameBuffer() {
@@ -9,6 +9,8 @@ FrameBuffer::~FrameBuffer() {
 }
 
 void FrameBuffer::init() {
+    glViewport(0, 0, width, height);
+
     glCreateFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -41,9 +43,11 @@ void FrameBuffer::resize(uint32_t &newWidth, uint32_t &newHeight) {
     this->width = newWidth;
     this->height = newHeight;
 
-    glDeleteFramebuffers(1, &fbo);
-    glDeleteTextures(1, &color);
-    glDeleteTextures(1, &depth);
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    glBindTexture(GL_TEXTURE_2D, depth);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 
     this->init();
 }

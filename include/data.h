@@ -24,13 +24,13 @@ struct Data {
     Option opt;
 };
 
-enum class RotType { Euler, Quaternion, Axis };
-enum class RotAxis { Xaxis, Yaxis, Zaxis, Waxis };
-enum class Frame   { World, Body };
-enum class Object  { Cube, Sphere, Capsule, Tetrahedra, Mesh };
-enum class Action  { OpenFile, OpenScene, SaveScene };
-enum class JType   { Hinge, Slide, Ball, Free};
-
+enum class RotType    { Euler, Quaternion, Axis };
+enum class RotAxis    { Xaxis, Yaxis, Zaxis, Waxis };
+enum class Frame      { World, Body };
+enum class Object     { Cube, Sphere, Capsule, Tetrahedra, Mesh, Camera};
+enum class Action     { OpenFile, OpenScene, SaveScene };
+enum class JType      { Hinge, Slide, Ball, Free};
+enum class SceneState { Edit, Play };
 
 inline static std::string ObjectToString(Object obj) {
     switch (obj) {

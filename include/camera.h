@@ -1,6 +1,8 @@
 #ifndef SKYNET_CAMERA_H
 #define SKYNET_CAMERA_H
 
+#include "math.h"
+
 class Camera
 {
 public:
@@ -21,7 +23,7 @@ public:
     float znear  = 0.1f;
     float zfar   = 100.0f;
 
-    float p[3]   = {0.0f, 0.0f, 3.0f};
+    float p[3]   = {0.0f, 0.0f, 6.0f};
     float e[3]   = {0.0f, 0.0f, 0.0f};
     float q[4]   = {1.0f, 0.0f, 0.0f, 0.0f};
 

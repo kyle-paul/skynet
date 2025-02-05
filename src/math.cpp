@@ -356,6 +356,12 @@ void divVecS3(float* res, float* v, float &s) {
     res[2] = v[2] / s;
 }
 
+void addScl3(float* res, float* vec, float s) {
+    res[0] += vec[0] * s;
+    res[1] += vec[1] * s;
+    res[2] += vec[2] * s;
+}
+
 float normVec3(float* v) {
     float norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     if (norm < MINVAL) {

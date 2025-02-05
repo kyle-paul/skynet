@@ -52,11 +52,6 @@ void MsScrollCb(GLFWwindow* window, double xoffset, double yoffset) {
     msc.zoom = yoffset;
 }
 
-void WinSizeCb(GLFWwindow* window, int width, int height) {
-    msc.aspect = static_cast<float>(width) / static_cast<float>(height);
-    glViewport(0, 0, width, height);
-}
-
 void keyCb(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, GLFW_TRUE);
     if (key == GLFW_KEY_T && action == GLFW_PRESS) {

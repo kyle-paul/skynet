@@ -2,12 +2,12 @@
 #define SKYNET_SCENE_H
 
 #include "core.h"
+#include "xml.h"
+#include "engine.h"
 #include "data.h"
 #include "camera.h"
 #include "shader.h"
 #include "buffer.h"
-#include "xml.h"
-#include "engine.h"
 
 class Scene 
 {
@@ -30,6 +30,7 @@ private:
 	void compute_dof();
 	void inverse();
 	bool create(const Object &type, const std::string &name);
+	void updatePhysics();
 
 private:
 	Data* data;
@@ -51,9 +52,15 @@ private:
 
 	bool loaded = false;
 	ref<Mesh> selectedEntity = nullptr;
+	SceneState state = SceneState::Edit;
 
 	float light[3] = { -30.0f, -50.0f, 50.0f };
 	float bgcol[4] = { 0.15f, 0.15f, 0.15f, 1.0f};
+
+	float gravity[3] = {0.0f, 0.0f, -9.81f};
+	float deltaTime = 0.016f;
+	float groundLevel = 0.0f;
+	float restitution = 0.4f;
 
 	friend class Interface;
 	friend class Serializer;

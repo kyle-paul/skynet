@@ -16,12 +16,15 @@ Interface::Interface(GLFWwindow *window) {
     }
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.Fonts->AddFontFromFileTTF("/home/paul/dev/graphics/assets/gui/fonts/Arial.ttf", 14.0f);
+    io.Fonts->AddFontFromFileTTF("../assets/gui/fonts/Arial.ttf", 14.0f);
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     this->styling();
+
+    iconPlay = cref<Texture2D>("../assets/gui/icons/play_button.png");
+    iconEdit = cref<Texture2D>("../assets/gui/icons/stop_button.png");
 }
 
 Interface::~Interface() {
@@ -192,6 +195,44 @@ void Interface::menubar() {
     }
 }
 
+void Interface::toolbar() {
+    ref<Texture2D> icon = this->scene->state == SceneState::Edit ? iconPlay : iconEdit;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+
+    // Get default color
+	auto& colors = ImGui::GetStyle().Colors;
+	const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+
+	const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+	ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoTitleBar);
+    if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused()) ImGui::SetWindowCollapsed(false);
+    else ImGui::SetWindowCollapsed(true);
+
+	float size = ImGui::GetWindowHeight() - 4.0f;
+	ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - size * 0.5f);
+
+	if (ImGui::ImageButton("PlayButton", 
+                           (ImTextureID)(uintptr_t)(icon->getTextureID()), 
+                           ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1))) 
+    {
+		if (scene->state == SceneState::Edit) {
+            scene->state = SceneState::Play;
+		}
+		else if (scene->state == SceneState::Play) {
+            scene->state = SceneState::Edit;
+        }
+	}
+	ImGui::PopStyleVar(2);
+	ImGui::PopStyleColor(3);
+	ImGui::End();
+}
+
 void Interface::render(ref<Scene> &scene) {
     this->scene = scene; serial.setScene(scene);
     this->begin();
@@ -217,6 +258,9 @@ void Interface::render(ref<Scene> &scene) {
     ImGui::PopStyleVar(2);
     ImGui::End();
 
+    // toolbar
+    this->toolbar();
+
     {
         framebuffer->bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -235,6 +279,7 @@ void Interface::render(ref<Scene> &scene) {
             uint32_t newHeight = (uint32_t)viewportSize.y;
             if (framebuffer->width != newWidth || framebuffer->height != newHeight) {
                 framebuffer->resize(newWidth, newHeight);
+                scene->camera.aspect = viewportSize.x / viewportSize.y;
             }
         }
 
@@ -278,24 +323,15 @@ void Interface::render(ref<Scene> &scene) {
 
     {
         ImGui::Begin("Engine experiment");
-        ImGui::Text("Inverse kinematics");
-        if (ImGui::Button("inverse")) {
+
+        if (ImGui::Button("inverse kinematics")) {
             this->scene->inverse();
-        }
-
-        ImGui::Text("Subtree center of mass");
-        if (ImGui::Button("subtree")) {
-            this->scene->subtree("link0", "null");
-        }
-
-        ImGui::Text("compute degree of freedom");
-        if (ImGui::Button("dof")) {
-            this->scene->compute_dof();
         }
 
         if (ImGui::Button("reset joint")) {
             this->scene->reset();
         }
+
         ImGui::End();
     }
     
@@ -312,7 +348,7 @@ void Interface::render(ref<Scene> &scene) {
             }
 
             if (ImGui::MenuItem("Create camera")) {
-
+                scene->create(Object::Camera, "runtime_camera_1");
             }
 
             if (ImGui::MenuItem("Create light")) {

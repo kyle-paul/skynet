@@ -7,6 +7,7 @@
 #include "imgui.h"
 #include "scene.h"
 #include "frame.h"
+#include "texture2d.h"
 #include "guizmo.h"
 #include "imguizmo.h"
 #include "serializer.h"
@@ -25,6 +26,7 @@ public:
 private:
     void styling();
     void menubar();
+    void toolbar();
 
 public:
     bool viewport_hover = false;
@@ -36,6 +38,9 @@ private:
     Guizmo guizmo;
     Serializer serial;
     Action action;
+
+    ref<Texture2D> iconPlay;
+    ref<Texture2D> iconEdit;
 };
 
 #endif // SKYNET_GUI_H
