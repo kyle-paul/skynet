@@ -403,6 +403,10 @@ void cross3(float* res, float* v1, float* v2) {
     res[2] = v1[0] * v2[1] - v1[1] * v2[0];
 }
 
+float dotVec3(float* v1, float* v2) {
+    return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+}
+
 void zero3(float* v) {
     v[0] = 0.0f;
     v[1] = 0.0f;

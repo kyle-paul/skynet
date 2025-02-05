@@ -49,6 +49,8 @@ float normVec4(float* v);
 float normVec(float* v, int n);
 void cross3(float* res, float* v1, float* v2);
 
+float dotVec3(float* v1, float* v2);
+
 void clamp(float &a, float* range);
 void invert(float* m, int n);
 

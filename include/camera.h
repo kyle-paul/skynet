@@ -36,4 +36,18 @@ public:
     float C[16];
 };
 
+class EditorCamera
+{
+public:
+    EditorCamera() = default;
+    EditorCamera(float fov, float aspectRatio, float nearClip, float farClip);
+
+
+private:
+    float fov    = 45.0f;
+    float aspect = 1500.0f / 900.0f;
+    float znear  = 0.1f;
+    float zfar   = 100.0f;
+};
+
 #endif // CAMERA

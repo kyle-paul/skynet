@@ -5,6 +5,7 @@ class Physics
 {
 public:
     float vel[3] = {0.0f, 0.0f, 0.0f};
+    float acc[3] = {0.0f, 0.0f, 0.0f};
 };
 
 #endif

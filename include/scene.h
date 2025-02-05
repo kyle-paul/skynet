@@ -31,6 +31,7 @@ private:
 	void inverse();
 	bool create(const Object &type, const std::string &name);
 	void updatePhysics();
+	void collision();
 
 private:
 	Data* data;
@@ -47,15 +48,17 @@ private:
 	std::unordered_map<std::string, float[3]> u;
 	std::unordered_map<std::string, float[3]> subcom;
 	std::unordered_map<std::string, std::string> dof_parent;
+	std::vector<std::string> cams;
 
 	std::vector<std::string> joint_names = {"joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "joint7", "finger_joint1", "finger_joint2"};
 
 	bool loaded = false;
 	ref<Mesh> selectedEntity = nullptr;
 	SceneState state = SceneState::Edit;
+	uint32_t currentCamera = 0;
 
 	float light[3] = { -30.0f, -50.0f, 50.0f };
-	float bgcol[4] = { 0.15f, 0.15f, 0.15f, 1.0f};
+	float bgcol[4] = { 0.15f, 0.15f, 0.15f, 1.0f };
 
 	float gravity[3] = {0.0f, 0.0f, -9.81f};
 	float deltaTime = 0.016f;

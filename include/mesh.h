@@ -25,6 +25,7 @@ public:
 	void info();
 
 	void genCube(float halfx, float halfy, float halfz, float* color);
+	void genCamera(float halfx, float halfy, float halfz, float* color);
 	void genSphere(float radius, int sectors, int stacks, float* color);
 
 	inline Object getType() const { return type; }

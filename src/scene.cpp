@@ -77,7 +77,7 @@ bool Scene::create(const Object &type, const std::string &name) {
 			}
 
 			objects[name] = cref<Mesh>();
-			objects[name]->genSphere(0.5, 32, 32, color);
+			objects[name]->genSphere(0.3, 32, 32, color);
 			objects[name]->initGL(); return true;
 		}
 
@@ -88,27 +88,44 @@ bool Scene::create(const Object &type, const std::string &name) {
 				return false;
 			}
 
-			
+			objects[name] = cref<Mesh>();
+			objects[name]->genCamera(0.15, 0.15, 0.15, color);
+			objects[name]->initGL();
+			cams.push_back(name);
+			return true;
 		}
 	}
 	ASSERT(false, "Object type not found"); return false;
 }
 
 void Scene::render() {
-	this->updateCamera();
-	float* projview = camera.getProjView();
-	
+
 	shader->bind();
-	shader->setMat4("projview", projview);
 	shader->setFloat3("light", light);
-	shader->setFloat3("viewPos", camera.p);
 	
-	if (this->loaded) {
-		this->forward("link0", "null");
+	switch(state) {
+		case(SceneState::Edit) : {
+			this->updateCamera();
+			shader->setMat4("projview", camera.getProjView());
+			shader->setFloat3("viewPos", camera.p);
+			this->visualize();
+			this->collision();
+			break;
+		}
+
+		case(SceneState::Play) : {
+			shader->setMat4("projview", camera.getProjView());
+			shader->setFloat3("viewPos", camera.p);
+			this->visualize();
+			this->updatePhysics();
+			break;
+		}
 	}
 
-	this->visualize();
-	this->updatePhysics();
+	if (this->loaded) { 
+		this->forward("link0", "null"); 
+	}
+
 	shader->unbind();
 }
 
@@ -187,20 +204,58 @@ void Scene::updatePhysics() {
 
 		for (auto &[name, object] : objects) {
 
-			if(name == "ground") continue;
+			if(name == "ground" || object->getType() == Object::Camera) continue;
 			
 			math::addScl3(object->vel, this->gravity, deltaTime);
+			math::addScl3(object->vel, object->acc, deltaTime);
 			math::addScl3(object->p, object->vel, deltaTime);
-
-			math::printVec3(object->p);
-			math::printVec3(object->vel);
 
 			if (object->p[2] <= objects["ground"]->p[2]) {
 				object->p[2] = objects["ground"]->p[2];
 				object->vel[2] *= -restitution;
 			}
-		}		
-	}	
+		}
+	}
+
+	this->collision();
+}
+
+void Scene::collision() {
+	for (auto it1 = objects.begin(); it1 != objects.end(); ++it1) {
+        auto &[name1, obj1] = *it1;
+
+        // Ensure the object is a sphere
+        if (obj1->getType() != Object::Sphere) continue;
+
+        for (auto it2 = std::next(it1); it2 != objects.end(); ++it2) {
+            auto &[name2, obj2] = *it2;
+
+            // Ensure the second object is also a sphere
+            if (obj2->getType() != Object::Sphere) continue;
+
+            // Compute distance between centers
+			float distance[3];
+			math::subVec3(distance, obj1->p, obj2->p);
+
+			float radiusSum = 0.3 + 0.3;
+			float normDist = math::normVec3(distance);
+
+            // Check for collision
+            if (normDist <= radiusSum) {
+
+				float depth = radiusSum - normDist;
+				depth *= 0.5;
+
+				if (normDist > 0.0f) { 
+
+					float force[3];
+					math::mulVecS3(force, distance, depth);
+					math::addVec3(obj1->p, obj1->p, force);
+					math::subVec3(obj2->p, obj2->p, force);
+                }
+			}
+		}
+	}
 }
 
 void Scene::inverse() {
@@ -285,8 +340,8 @@ void Scene::updateCamera() {
 		this->camera.e[0] += 0.01f * data->msc.dy;
 	} 
 	else if (!data->msc.first_right) {
-		this->camera.p[0] -= 0.001f * data->msc.dx;
-		this->camera.p[1] += 0.001f * data->msc.dy;
+		this->camera.p[0] -= 0.01f * data->msc.dx;
+		this->camera.p[1] += 0.01f * data->msc.dy;
 	}
 	this->camera.p[2] += -0.1f * data->msc.zoom;
 

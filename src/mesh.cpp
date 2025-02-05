@@ -159,6 +159,12 @@ void Mesh::assRead(const std::string & path) {
     }
 }
 
+void Mesh::genCamera(float halfx, float halfy, float halfz, float* color) {
+    this->genCube(halfx, halfy, halfz, color);
+    this->type = Object::Camera;
+    math::addVec3(this->p, this->p, color);
+}
+
 void Mesh::genCube(float halfx, float halfy, float halfz, float* color) {
     
     this->type = Object::Cube;

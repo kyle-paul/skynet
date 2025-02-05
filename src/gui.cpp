@@ -331,7 +331,25 @@ void Interface::render(ref<Scene> &scene) {
         if (ImGui::Button("reset joint")) {
             this->scene->reset();
         }
+        
 
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+        const char* current_camera = scene->cams.size() > 0 ? scene->cams[scene->currentCamera].c_str() : "null";
+        
+        if (ImGui::BeginCombo("Camera", current_camera)) {
+            for (int n = 0; n < scene->cams.size(); n++) {
+            bool is_selected = (scene->currentCamera == n);
+            if (ImGui::Selectable(scene->cams[n].c_str(), is_selected)) {
+                scene->currentCamera = n;
+            }
+            if (is_selected) {
+                ImGui::SetItemDefaultFocus();
+            }
+            }
+            ImGui::EndCombo();
+        }
+        ImGui::PopStyleColor(1);
+        
         ImGui::End();
     }
     
@@ -392,6 +410,8 @@ void Interface::render(ref<Scene> &scene) {
                 ImGui::DragFloat3("position", object->p, 0.01f, -2.0f, 2.0f);
                 ImGui::DragFloat3("euler", object->e, 0.01f, -2.0f, 2.0f);
                 ImGui::DragFloat3("scale", object->s, 0.01f, 0.0f, 10.0f);
+                ImGui::DragFloat3("velocity", object->vel, 0.01f, -10.0f, 10.0f);
+                ImGui::DragFloat3("acceleration", object->acc, 0.01f, -10.0f, 10.0f);
                 ImGui::TreePop();
             }
         }
