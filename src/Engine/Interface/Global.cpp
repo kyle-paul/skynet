@@ -186,7 +186,6 @@ namespace Skynet
                         scene->bodies.emplace<MeshComp>(body, Object::Cube, 0.5f, 0.5f, 0.5f);
                         scene->bodies.emplace<TagComp>(body, "cube");
                         scene->bodies.emplace<TextureComp>(body);
-                        scene->bodies.emplace<TransformComp>(body);
                         scene->bodies.emplace<RigidBodyComp>(body, 3.0f);
                         scene->bodies.get<MeshComp>(body).mesh->InitGL();
                     }
@@ -197,7 +196,6 @@ namespace Skynet
                         scene->bodies.emplace<MeshComp>(body, Object::Sphere, 0.5f);
                         scene->bodies.emplace<TagComp>(body, "sphere");
                         scene->bodies.emplace<TextureComp>(body);
-                        scene->bodies.emplace<TransformComp>(body);
                         scene->bodies.emplace<RigidBodyComp>(body, 3.0f);
                         scene->bodies.get<MeshComp>(body).mesh->InitGL();
                     }
@@ -290,32 +288,17 @@ namespace Skynet
             ImGui::Separator();
         }
 
-        if (scene->bodies.has<TransformComp>(entityID))
-        {
-            ImGui::PushFont(io.Fonts->Fonts[1]);
-            ImGui::Text("Transform component");
-            ImGui::PopFont();
-
-            auto& c = scene->bodies.get<TransformComp>(entityID);
-
-            DrawVec3Control("Position", c.p);
-            DrawVec3Control("Euler", c.e);
-            DrawVec3Control("Scale", c.s);
-
-            ImGui::Separator();
-        }
-
         if (scene->bodies.has<RigidBodyComp>(entityID))
         {
             ImGui::PushFont(io.Fonts->Fonts[1]);
-            ImGui::Text("Physics component");
+            ImGui::Text("Rigidbody component");
             ImGui::PopFont();
 
             auto& c = scene->bodies.get<RigidBodyComp>(entityID);
 
-            DrawVec3Control("Linear velocity", c.body.GetLinearVelocity());
-            DrawVec3Control("Angular velocity", c.body.GetAngularVelocity());
-
+            DrawVec3Control("Position", c.body.x);
+            DrawVec3Control("Omega", c.body.omega);
+            DrawVec3Control("Scale", c.body.s);
             ImGui::Separator();
         }
 
@@ -371,25 +354,25 @@ namespace Skynet
 
         if (scene->selectedEntityID != entt::null)
         {
-            auto& rigid = scene->bodies.get<RigidBodyComp>(scene->selectedEntityID);
-            auto& trans = scene->bodies.get<TransformComp>(scene->selectedEntityID);
+            // auto& rigid = scene->bodies.get<RigidBodyComp>(scene->selectedEntityID);
+            // auto& trans = scene->bodies.get<TransformComp>(scene->selectedEntityID);
 
-            Math::AddVec3(force, pos, dir);
+            // Math::AddVec3(force, pos, dir);
 
-            DrawVec3Control("Direction", dir);
-            DrawVec3Control("Position", pos);
-            DrawVec3Control("Force", force);
+            // DrawVec3Control("Direction", dir);
+            // DrawVec3Control("Position", pos);
+            // DrawVec3Control("Force", force);
 
-            if (ImGui::Button("Render force"))
-            {
-                entt::entity vector = scene->vectors.create();
-                scene->vectors.emplace<VectorComp>(vector, pos, force);
-            }
+            // if (ImGui::Button("Render force"))
+            // {
+            //     entt::entity vector = scene->vectors.create();
+            //     scene->vectors.emplace<VectorComp>(vector, pos, force);
+            // }
 
-            if (ImGui::Button("Apply force"))
-            {
-                rigid.body.AddForceAtPos(trans.p, pos, dir);
-            }   
+            // if (ImGui::Button("Apply force"))
+            // {
+                
+            // }   
         }
 
         ImGui::End();

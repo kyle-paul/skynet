@@ -82,7 +82,7 @@ namespace Skynet
         RigidBodyComp(const RigidBodyComp&) = default;
         RigidBodyComp(const float mass) {
             body.SetMass(mass);
-            body.UpdateInertial(0.5f, 0.5f, 0.5f);
+            body.SetInertialTensor(0.5f, 0.5f, 0.5f);
         }
     };
 

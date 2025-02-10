@@ -30,6 +30,8 @@ add_executable(${PROJECT_NAME}
 	src/Engine/Entity/Mesh.cpp
 	src/Engine/Entity/Vector.cpp
 	src/Engine/Entity/RigidBody.cpp
+
+	src/Engine/Solver/ODE.cpp
 	
 	src/Engine/Interface/Global.cpp
 	src/Engine/Interface/Guizmo.cpp
@@ -57,8 +59,9 @@ include_directories(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Event
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Math
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine
-	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine/Interface
+	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine/Solver
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine/Entity
+	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine/Interface
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Graphics
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Platform/Window
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Platform/Renderer/OpenGL

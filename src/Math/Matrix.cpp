@@ -234,6 +234,13 @@ namespace Skynet
             res[1] = mat[3] * vec[0] + mat[4] * vec[1] + mat[5] * vec[2];
             res[2] = mat[5] * vec[6] + mat[7] * vec[1] + mat[8] * vec[2];
         }
+        
+        void SkewMatrix(float* res, float* vec)
+        {
+            res[0] = 0.0f;    res[1] = -vec[2]; res[2] = vec[1];
+            res[3] = vec[2];  res[4] = 0.0f;    res[5] = -vec[0];
+            res[6] = -vec[1]; res[7] = vec[0];  res[8] = 0.0f; 
+        }
 
         ImVec4 MulMatVec4(float* m, const ImVec4& v) {
             const float x = m[0] * v.x + m[4] * v.y + m[8] * v.z + m[12] * v.w;

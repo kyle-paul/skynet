@@ -2,53 +2,50 @@
 #define SKYNET_RIGID_BODY_H
 
 #include "Timestep.h"
+#include "Math.h"
 
 namespace Skynet
-{
-    /*
-    This class provide different functions for computing
-    physics properties of a rigid body, interface for
-    different mesh type.
-    */
-
+{  
     class RigidBody
     {
     public:
         RigidBody();
         ~RigidBody();
 
-        void UpdateInertial(float x, float y, float z);
-        void AddForceAtPos(float* com, float* pos, float* force);
-        void Update(Timestep* timestep, float* com, float* euler);
-
         inline void SetMass(const float mass) { this->mass = mass; }
+        void SetInertialTensor(int x, int y, int z);
+
+        float* GetTransform();
 
         inline float* GetLinearVelocity() { return vel; }
         inline float* GetAngularVelocity() { return omega; }
 
-    private:
+    public:
 
-        float mass = 0.0f;
+        /* Constant quantities */ 
+        float mass        = 0.0f;
+        float Ibody[9]    = {0.0f};
+        float Ibodyinv[9] = {0.0f};
 
-        float I[9] = {0.0f};
-        float I_inv[9] = {0.0f};
-        float I_body[9] = {0.0f};
-        float I_body_inv[9] = {0.0f};
+        /* State variables */ 
+        float x[3] = {0.0f};
+        float R[9] = {0.0f};
+        float P[3] = {0.0f};
+        float L[3] = {0.0f};
 
-        float vel[3] = {0.0f};
-        float acc[3] = {0.0f};
+        /* Visualize component */
+        float s[3] = {1.0f, 1.0f, 1.0f};
+        float T[9] = {0.0f};
 
+        /* Derived quantities */
+        float Iinv[9]  = {0.0f};
+        float vel[9]   = {0.0f};
         float omega[3] = {0.0f};
-        float alpha[3] = {0.0f};
 
+        /* Computed quantities */ 
         float force[3] = {0.0f};
         float torque[3] = {0.0f};
-
-        float force_cons[3] = {0.0f};
-        float torque_cons[3] = {0.0f};
-
-        friend class Serializer;
-    };;
+    };
 
 } // namespace Skynet
 

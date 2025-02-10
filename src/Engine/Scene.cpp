@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "Renderer.h"
 #include "ImGuizmo.h"
+#include "ODE.h"
 
 namespace Skynet
 {
@@ -73,8 +74,8 @@ namespace Skynet
 
     void Scene::OnUpdate(Timestep* ts)
     {
-        this->UpdateVisualize();
         this->UpdatePhysics(ts);
+        this->UpdateVisualize();
     };
 
     void Scene::UpdateVisualize()
@@ -92,15 +93,15 @@ namespace Skynet
             shader->SetFloat3("viewPos", camera->p);
             shader->SetFloat3("light", light);
 
-            auto view = bodies.view<TransformComp, MeshComp, TextureComp>();
+            auto view = bodies.view<RigidBodyComp, MeshComp, TextureComp>();
             for (auto entity : view)
             {
-                auto& transform_comp = view.get<TransformComp>(entity);
-                auto& mesh_comp      = view.get<MeshComp>(entity);
-                auto& texture_comp   = view.get<TextureComp>(entity);
+                auto& rigid_comp   = view.get<RigidBodyComp>(entity);
+                auto& mesh_comp    = view.get<MeshComp>(entity);
+                auto& texture_comp = view.get<TextureComp>(entity);
 
                 shader->SetFloat4("color", texture_comp.color);
-                shader->SetMat4("model", transform_comp.GetTransform());
+                shader->SetMat4("model", rigid_comp.body.GetTransform());
                 Renderer::Draw(mesh_comp.mesh->GetVA());
             }
 
@@ -126,18 +127,7 @@ namespace Skynet
 
     void Scene::UpdatePhysics(Timestep* ts)
     {
-        /* Apply force */
-        
-
-        /* Update state */
-        auto view = bodies.view<RigidBodyComp, TransformComp>();
-        for (auto entity : view)
-        {
-            auto& rigid_comp     = view.get<RigidBodyComp>(entity);
-            auto& transform_comp = view.get<TransformComp>(entity);
-
-            rigid_comp.body.Update(ts, transform_comp.p, transform_comp.e);
-        }
+        ODE::EulerStep(bodies, 0, ts->GetSeconds(), this->y, this->ydot);
     }
 
     void Scene::EditGuizmo()
@@ -145,13 +135,13 @@ namespace Skynet
         if (selectedEntityID == entt::null) 
             return;
 
-        auto& tc = bodies.get<TransformComp>(selectedEntityID);
-        float* T = tc.GetTransform();
+        auto& c = bodies.get<RigidBodyComp>(selectedEntityID);
+        float* T = c.body.GetTransform();
 
         ImGuizmo::Manipulate(camera->GetView(), camera->GetProjection(), 
                  (ImGuizmo::OPERATION)typeGuizmo, ImGuizmo::LOCAL, T);
         
-        if (ImGuizmo::IsUsing) Math::Decompose(T, tc.p, tc.s, tc.e);
+        // if (ImGuizmo::IsUsing) Math::Decompose(T, c.body.x, c.body.s, c.body.omega);
     }
 
     void Scene::OnEvent(Event& event)

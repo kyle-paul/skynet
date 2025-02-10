@@ -30,6 +30,8 @@ namespace Skynet
         void RotMatVec3(float* res, float* mat, float* vec);
         void MulMatVec3R(float* res, float* mat, float* vec);
 
+        /* other oeprations */ 
+        void SkewMatrix(float* res, float* vec);
         ImVec4 MulMatVec4(float* m, const ImVec4& v);
     
     } // namespace Math

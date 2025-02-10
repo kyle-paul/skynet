@@ -16,6 +16,8 @@
 #include <cmath>
 #include <variant>
 
+#define STATE_SIZE 18
+
 #define LOG_RED    "\033[1;31m"
 #define LOG_PINK   "\033[1;35m"
 #define LOG_GREEN  "\033[1;32m"
