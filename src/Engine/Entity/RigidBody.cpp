@@ -23,10 +23,10 @@ namespace Skynet
 
     float* RigidBody::GetTransform() 
     {
-        float T_[16]; 
+        float T_[16]; float R_[16];
         Math::Transcale(T_, x, s);
-        Math::Euler2T(R, this->omega);
-        Math::Matmul4(T, T_, R);
+        Math::Euler2T(R_, omega);
+        Math::Matmul4(T, T_, R_);
         return T;
     }
     

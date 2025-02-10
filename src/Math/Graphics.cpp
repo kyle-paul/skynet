@@ -1,5 +1,6 @@
 #include "Graphics.h"
 #include "Vector.h"
+#include "Visualize.h"
 
 namespace Skynet
 {

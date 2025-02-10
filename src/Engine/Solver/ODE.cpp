@@ -1,4 +1,5 @@
 #include "ODE.h"
+#include "Data.h"
 #include "Math.h"
 #include "Component.h"
 
@@ -66,8 +67,9 @@ namespace Skynet
         auto view = bodies.view<RigidBodyComp>();
         for (auto entity : view)
         {
-            auto& body = view.get<RigidBodyComp>(entity).body;
-            InitializeStateArray(&body, y + STATE_SIZE * i++);
+            auto& rb = view.get<RigidBodyComp>(entity);
+            if (rb.type == BodyType::Dynamic)
+                InitializeStateArray(&rb.body, y + STATE_SIZE * i++);
         }
     }
 
@@ -77,8 +79,9 @@ namespace Skynet
         auto view = bodies.view<RigidBodyComp>();
         for (auto entity : view)
         {
-            auto& body = view.get<RigidBodyComp>(entity).body;
-            DecomposeStateArray(&body, y + STATE_SIZE * i++);
+            auto& rb = view.get<RigidBodyComp>(entity);
+            if (rb.type == BodyType::Dynamic)
+                DecomposeStateArray(&rb.body, y + STATE_SIZE * i++);
         }
     }
 
@@ -95,9 +98,12 @@ namespace Skynet
         auto view = bodies.view<RigidBodyComp>();
         for (auto entity : view)
         {
-            auto& body = view.get<RigidBodyComp>(entity).body; 
-            ComputeForceTorque(t, &body);
-            DydtStateArray(&body, ydot);
+            auto& rb = view.get<RigidBodyComp>(entity); 
+            if (rb.type == BodyType::Dynamic) 
+            {
+                ComputeForceTorque(t, &rb.body);
+                DydtStateArray(&rb.body, ydot);
+            }   
         }
     }
 
@@ -127,6 +133,8 @@ namespace Skynet
 
     void ODE::EulerStep(entt::registry& bodies, float t, float dt, float* y, float* ydot)
     {
+        BodiesToArray(bodies, y);
+        
         Derivative(bodies, t, y, ydot);
 
         for (int i = 0; i < STATE_SIZE; ++i) 

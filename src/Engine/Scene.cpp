@@ -74,8 +74,9 @@ namespace Skynet
 
     void Scene::OnUpdate(Timestep* ts)
     {
-        this->UpdatePhysics(ts);
         this->UpdateVisualize();
+        if (this->state == SceneState::Play) 
+            this->UpdatePhysics(ts);
     };
 
     void Scene::UpdateVisualize()
@@ -141,7 +142,9 @@ namespace Skynet
         ImGuizmo::Manipulate(camera->GetView(), camera->GetProjection(), 
                  (ImGuizmo::OPERATION)typeGuizmo, ImGuizmo::LOCAL, T);
         
-        // if (ImGuizmo::IsUsing) Math::Decompose(T, c.body.x, c.body.s, c.body.omega);
+        if (state == SceneState::Edit && ImGuizmo::IsUsing) {
+            Math::Decompose(T, c.body.x, c.body.s, c.body.omega);
+        }
     }
 
     void Scene::OnEvent(Event& event)
@@ -188,6 +191,26 @@ namespace Skynet
             lastx = xpos;
             lasty = ypos;
         }
+
+        else if (Input::IsKeyPressed(Key::LeftShift) && Input::IsMouseButtonPressed(Mouse::ButtonRight))
+        {
+            auto [xpos, ypos] = Input::GetMousePos();
+
+            if (firstRight)
+            {
+                lastx = xpos;
+                lasty = ypos;
+
+                firstRight = false;
+            }
+
+            camera->p[0] -= 0.01f * (xpos - lastx);
+            camera->p[1] += 0.01f * (ypos - lasty);
+
+            lastx = xpos;
+            lasty = ypos;
+        }
+
         return true;
     }
 
@@ -200,6 +223,7 @@ namespace Skynet
     bool Scene::OnMouseReleasedEvent(MouseButtonReleasedEvent& event)
     {
         firstLeft = true;
+        firstRight = true;
         return true;
     }
 

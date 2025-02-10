@@ -40,7 +40,7 @@ namespace Skynet
     private:
 
         float lastx, lasty;
-        bool  firstLeft;
+        bool  firstLeft, firstRight = true;
         
         uint32_t typeGuizmo = 0;
         SceneState state = SceneState::Edit;

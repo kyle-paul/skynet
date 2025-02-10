@@ -77,10 +77,12 @@ namespace Skynet
     struct RigidBodyComp
     {
         RigidBody body;
+        BodyType type;
 
         RigidBodyComp() = default;
         RigidBodyComp(const RigidBodyComp&) = default;
-        RigidBodyComp(const float mass) {
+        RigidBodyComp(const BodyType& type, const float mass) {
+            this->type = type;
             body.SetMass(mass);
             body.SetInertialTensor(0.5f, 0.5f, 0.5f);
         }

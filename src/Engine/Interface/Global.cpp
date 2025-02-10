@@ -186,7 +186,7 @@ namespace Skynet
                         scene->bodies.emplace<MeshComp>(body, Object::Cube, 0.5f, 0.5f, 0.5f);
                         scene->bodies.emplace<TagComp>(body, "cube");
                         scene->bodies.emplace<TextureComp>(body);
-                        scene->bodies.emplace<RigidBodyComp>(body, 3.0f);
+                        scene->bodies.emplace<RigidBodyComp>(body, BodyType::Dynamic, 0.5f);
                         scene->bodies.get<MeshComp>(body).mesh->InitGL();
                     }
 
@@ -196,7 +196,7 @@ namespace Skynet
                         scene->bodies.emplace<MeshComp>(body, Object::Sphere, 0.5f);
                         scene->bodies.emplace<TagComp>(body, "sphere");
                         scene->bodies.emplace<TextureComp>(body);
-                        scene->bodies.emplace<RigidBodyComp>(body, 3.0f);
+                        scene->bodies.emplace<RigidBodyComp>(body, BodyType::Dynamic, 0.5f);
                         scene->bodies.get<MeshComp>(body).mesh->InitGL();
                     }
 
@@ -270,7 +270,7 @@ namespace Skynet
 
             if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
             {
-            c.tag = std::string(buffer);
+                c.tag = std::string(buffer);
             }
 
             ImGui::Separator();
@@ -295,6 +295,25 @@ namespace Skynet
             ImGui::PopFont();
 
             auto& c = scene->bodies.get<RigidBodyComp>(entityID);
+
+            const char* options[] = { "Static", "Dynamic" };
+            const char* curString = BodyTypeToString(c.type).c_str();
+
+            if (ImGui::BeginCombo("Body Type", curString))
+            {
+                for (int n = 0; n < IM_ARRAYSIZE(options); n++)
+                {
+                    bool isSelected = (curString == options[n]);
+                    if (ImGui::Selectable(options[n], isSelected))
+                    {
+                        curString = options[n];
+                        c.type = StringToBodyType(options[n]);
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
 
             DrawVec3Control("Position", c.body.x);
             DrawVec3Control("Omega", c.body.omega);

@@ -10,6 +10,7 @@ namespace Skynet
     enum class RotAxis    { Xaxis, Yaxis, Zaxis, Waxis };
     enum class Reference  { World, Body };
     enum class Object     { Cube, Sphere, Capsule, Tetrahedra, Mesh, Camera};
+    enum class BodyType   { Static = 0, Dynamic = 1};
     enum class Action     { OpenFile, OpenScene, SaveScene };
     enum class JType      { Hinge, Slide, Ball, Free};
     enum class SceneState { Edit, Play };
@@ -52,6 +53,20 @@ namespace Skynet
         if (str == "ball") return JType::Ball;
         if (str == "free") return JType::Free;
         ASSERT(false, "Unknown joint type");
+    }
+
+    inline static std::string BodyTypeToString(BodyType &type) {
+        switch (type) {
+            case BodyType::Static: return "Static";
+            case BodyType::Dynamic: return "Dynamic";
+        }
+        ASSERT(false, "Unknown body type");
+    }
+
+    inline static BodyType StringToBodyType(const std::string &str) {
+        if (str == "Static") return BodyType::Static;
+        if (str == "Dynamic") return BodyType::Dynamic;
+        ASSERT(false, "Unknown body type");
     }
 
 } // namespace Skynet
