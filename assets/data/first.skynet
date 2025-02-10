@@ -1,0 +1,32 @@
+Scene: "Skynet: Graphics Simulation"
+Entities:
+  - EntityID: 1
+    TagComp:
+      Tag: cube
+    TextureComp:
+      Color: [1, 0.82914573, 0.82914573, 1]
+    MeshComp:
+      Object: Cube
+    TransformComp:
+      Position: [0.756043017, 0, 0]
+      Euler: [0, -0, 0]
+      Scale: [1, 1, 1]
+      Quaternion: [1, 0, 0, 0]
+    RigidBodyComp:
+      Linear Velocity: [0, 0, 0]
+      Angular Velocity: [0, 0, 0]
+  - EntityID: 0
+    TagComp:
+      Tag: sphere
+    TextureComp:
+      Color: [0.891593635, 1, 0.592964828, 1]
+    MeshComp:
+      Object: Sphere
+    TransformComp:
+      Position: [-0.909460545, 0, 0]
+      Euler: [0, -0, 0]
+      Scale: [1, 1, 1]
+      Quaternion: [1, 0, 0, 0]
+    RigidBodyComp:
+      Linear Velocity: [0, 0, 0]
+      Angular Velocity: [0, 0, 0]

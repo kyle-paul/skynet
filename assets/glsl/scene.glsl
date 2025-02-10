@@ -10,7 +10,8 @@ uniform mat4 model;
 out vec3 v_normal;
 out vec2 v_texcoord;
 
-void main() {
+void main() 
+{
     gl_Position = projview * model * vec4(a_position, 1.0);
     v_normal = a_normal;
     v_texcoord = a_texcoord;
@@ -30,7 +31,8 @@ in vec2 v_texcoord;
 uniform vec3 light;
 uniform vec3 viewPos;
 
-void main() {
+void main() 
+{
     vec3 norm = normalize(v_normal);
     vec3 lightDir = normalize(light - vec3(0.0)); // Assuming object is at (0,0,0)
 
