@@ -129,6 +129,20 @@ namespace Skynet
     void Scene::UpdatePhysics(Timestep* ts)
     {
         ODE::EulerStep(bodies, 0, ts->GetSeconds(), this->y, this->ydot);
+
+        // Check collision
+        entt::entity cube = (entt::entity)0;
+        entt::entity ground = (entt::entity)1;
+
+        auto& cube_body = bodies.get<RigidBodyComp>(cube).body;
+        auto& plane_body = bodies.get<RigidBodyComp>(ground).body;
+
+        if (cube_body.x[1] - 0.5f < plane_body.x[1])
+        {
+            float depth = cube_body.x[1] - 0.5f - plane_body.x[1];
+            cube_body.force_int[1] = -k * depth - b * cube_body.vel[1];
+        }
+        else cube_body.force_int[1] = 0.0f;
     }
 
     void Scene::EditGuizmo()

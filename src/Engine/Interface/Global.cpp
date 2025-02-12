@@ -369,29 +369,28 @@ namespace Skynet
 
     void Global::RenderExperiment()
     {
-        ImGui::Begin("Physics Experiemnt");
+        ImGui::Begin("Scenario Experiemnt");
 
-        if (scene->selectedEntityID != entt::null)
+        ImGui::Text("Spring-damper system");
+
+        ImGui::DragFloat("Spring coef", &scene->k);
+        ImGui::DragFloat("Damping coef", &scene->b);
+        
+        if (ImGui::Button("Collision on plane")) 
         {
-            // auto& rigid = scene->bodies.get<RigidBodyComp>(scene->selectedEntityID);
-            // auto& trans = scene->bodies.get<TransformComp>(scene->selectedEntityID);
+            entt::entity body = scene->bodies.create();
+            scene->bodies.emplace<MeshComp>(body, Object::Cube, 0.5f, 0.5f, 0.5f);
+            scene->bodies.emplace<TagComp>(body, "cube");
+            scene->bodies.emplace<TextureComp>(body);
+            scene->bodies.emplace<RigidBodyComp>(body, BodyType::Dynamic, 0.5f);
+            scene->bodies.get<MeshComp>(body).mesh->InitGL();
 
-            // Math::AddVec3(force, pos, dir);
-
-            // DrawVec3Control("Direction", dir);
-            // DrawVec3Control("Position", pos);
-            // DrawVec3Control("Force", force);
-
-            // if (ImGui::Button("Render force"))
-            // {
-            //     entt::entity vector = scene->vectors.create();
-            //     scene->vectors.emplace<VectorComp>(vector, pos, force);
-            // }
-
-            // if (ImGui::Button("Apply force"))
-            // {
-                
-            // }   
+            entt::entity ground = scene->bodies.create();
+            scene->bodies.emplace<MeshComp>(ground, Object::Cube, 6.0f, 0.01f, 6.0f);
+            scene->bodies.emplace<TagComp>(ground, "ground");
+            scene->bodies.emplace<TextureComp>(ground);
+            scene->bodies.emplace<RigidBodyComp>(ground, BodyType::Static, 10.0f);
+            scene->bodies.get<MeshComp>(ground).mesh->InitGL();
         }
 
         ImGui::End();

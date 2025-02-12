@@ -75,8 +75,8 @@ namespace Skynet
 
     void Application::Run()
     {   
-        while(running) {
-
+        while(running) 
+        {
             float time = window->GetTime();
 			Timestep timestep = time - lastFrameTime;
 			lastFrameTime = time; 

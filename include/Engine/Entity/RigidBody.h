@@ -39,11 +39,13 @@ namespace Skynet
 
         /* Derived quantities */
         float Iinv[9]  = {0.0f};
-        float vel[9]   = {0.0f};
+        float vel[3]   = {0.0f};
         float omega[3] = {0.0f};
 
         /* Computed quantities */ 
-        float force[3] = {0.0f};
+        float force_ext[3] = {0.0f};
+        float force_int[3] = {0.0f};
+        float force[3]  = {0.0f};
         float torque[3] = {0.0f};
     };
 
