@@ -118,7 +118,7 @@ namespace Skynet
                     break;
 
                 case(Object::Sphere):
-                    if constexpr (sizeof...(Args) >= 1 && sizeof...(Args) <= 3) {
+                    if constexpr (sizeof...(Args) == 1) {
                         mesh->GenSphere(std::forward<Args>(args)...);
                     } else {
                         ASSERT(false, "Invalid number of arguments for Sphere");

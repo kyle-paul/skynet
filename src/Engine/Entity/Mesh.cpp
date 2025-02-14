@@ -35,8 +35,8 @@ namespace Skynet
     {
         switch(loader)
         {
-            case(Loader::Scratch) : this->Readfile(path); break;
-            case(Loader::Assimp)  : this->AssRead(path);  break;
+            case(Loader::Scratch) : this->Readfile(path); return;
+            case(Loader::Assimp)  : this->AssRead(path);  return;
         }
         ASSERT(false, "Mesh loader undefined");
     }
@@ -237,19 +237,40 @@ namespace Skynet
             ERROR("Failed to load mesh: {0}", importer.GetErrorString());
         }
 
+        // Initialize min and max points
+    
+
         for (size_t i = 0; i < scene->mNumMeshes; ++i) 
         {
             const aiMesh* mesh = scene->mMeshes[i];
-            for (size_t j = 0; j < mesh->mNumVertices; ++j) 
-            {
-                verts.push_back(mesh->mVertices[j].x);
-                verts.push_back(mesh->mVertices[j].y);
-                verts.push_back(mesh->mVertices[j].z);
+            num_verts =  mesh->mNumVertices;
 
+            for (size_t j = 0; j < num_verts; ++j)
+            {
+                float x = mesh->mVertices[j].x;
+                float y = mesh->mVertices[j].y;
+                float z = mesh->mVertices[j].z;
+
+                // Vertex positions
+                verts.push_back(x);
+                verts.push_back(y);
+                verts.push_back(z);
+
+                // Update bounding box
+                // min_point[0] = std::min(min_point[0], x);
+                // min_point[1] = std::min(min_point[1], y);
+                // min_point[2] = std::min(min_point[2], z);
+
+                // max_point[0] = std::max(max_point[0], x);
+                // max_point[1] = std::max(max_point[1], y);
+                // max_point[2] = std::max(max_point[2], z);
+
+                // Vertex normals
                 verts.push_back(mesh->mNormals[j].x);
                 verts.push_back(mesh->mNormals[j].y);
                 verts.push_back(mesh->mNormals[j].z);
 
+                // Vertex texture
                 if (mesh->mTextureCoords[0]) 
                 {
                     verts.push_back(mesh->mTextureCoords[0][j].x);

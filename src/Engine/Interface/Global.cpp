@@ -1,10 +1,14 @@
 #include "Global.h"
 #include "Component.h"
+#include "BVH.h"
+#include "OBB.h"
+#include "BoxGen.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
 
 #include "FileDialog.h"
+
 
 namespace Skynet
 {
@@ -379,11 +383,14 @@ namespace Skynet
         if (ImGui::Button("Collision on plane")) 
         {
             entt::entity body = scene->bodies.create();
-            scene->bodies.emplace<MeshComp>(body, Object::Cube, 0.5f, 0.5f, 0.5f);
-            scene->bodies.emplace<TagComp>(body, "cube");
+            scene->bodies.emplace<MeshComp>(body, Object::Mesh, "../assets/mesh/primitive/cube.obj", Loader::Assimp);
+            scene->bodies.emplace<TagComp>(body, "bottle");
             scene->bodies.emplace<TextureComp>(body);
             scene->bodies.emplace<RigidBodyComp>(body, BodyType::Dynamic, 0.5f);
             scene->bodies.get<MeshComp>(body).mesh->InitGL();
+
+            // float* scale = scene->bodies.get<RigidBodyComp>(body).body.s;
+            // Math::DivVecS3(scale, scale, 3);
 
             entt::entity ground = scene->bodies.create();
             scene->bodies.emplace<MeshComp>(ground, Object::Cube, 6.0f, 0.01f, 6.0f);
@@ -391,6 +398,15 @@ namespace Skynet
             scene->bodies.emplace<TextureComp>(ground);
             scene->bodies.emplace<RigidBodyComp>(ground, BodyType::Static, 10.0f);
             scene->bodies.get<MeshComp>(ground).mesh->InitGL();
+        }
+
+        if (ImGui::Button("Bounding Box"))
+        {
+            auto& mesh_comp = scene->bodies.get<MeshComp>((entt::entity)0);
+            BoundingBox box = BoundingBox();
+
+            BVH::FitCovariance(mesh_comp.mesh->verts.data(), mesh_comp.mesh->num_verts, &box);
+            BVH::GenerateBox(scene->vectors, &box);
         }
 
         ImGui::End();

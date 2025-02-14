@@ -38,13 +38,15 @@ namespace Skynet
         std::vector<std::string> Split(const std::string& line,
 			const std::string& del, std::vector<std::string>& res);
 
-    private:
+    public:
+        float num_verts;
         std::vector<float> verts;
         std::vector<uint32_t> faces;
 
         ref<VertexArray>  va;
         ref<VertexBuffer> vb;
         ref<IndexBuffer>  ib;
+
     };
 
 } // namespace Skynet

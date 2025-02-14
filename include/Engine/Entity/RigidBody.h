@@ -1,8 +1,8 @@
 #ifndef SKYNET_RIGID_BODY_H
 #define SKYNET_RIGID_BODY_H
 
-#include "Timestep.h"
 #include "Math.h"
+#include "Timestep.h"
 
 namespace Skynet
 {  

@@ -59,6 +59,7 @@ include_directories(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Event
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Math
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine
+	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine/Collision
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine/Solver
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine/Entity
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Engine/Interface
