@@ -13,17 +13,17 @@ namespace Skynet
             {{0, 1}, {0, 2}, {0, 4}, {1, 3}, {1, 5}, {2, 3}, 
             {2, 6}, {3, 7}, {4, 5}, {4, 6}, {5, 7}, {6, 7}};
 
-        void GenerateBox(entt::registry& vectors, BoundingBox* box)
-        {
+        // void GenerateBox(entt::registry& vectors, BoundingBox* box)
+        // {
 
-            std::vector<std::array<float, 3>> corners = box->GetCorners();
+        //     std::vector<std::array<float, 3>> corners = box->GetCorners();
 
-            for (auto& [u,v] : edges)
-            {
-                entt::entity e = vectors.create();
-                vectors.emplace<VectorComp>(e, corners[u].data(), corners[v].data());
-            }
-        }
+        //     for (auto& [u,v] : edges)
+        //     {
+        //         entt::entity e = vectors.create();
+        //         vectors.emplace<VectorComp>(e, corners[u].data(), corners[v].data());
+        //     }
+        // }
     }
 }
 

@@ -2,6 +2,7 @@
 #include "Data.h"
 #include "Math.h"
 #include "Component.h"
+#include "titan.hpp"
 
 namespace Skynet
 {
@@ -13,8 +14,12 @@ namespace Skynet
         *y++ = body->x[2];
 
         /* Rotation component */ 
-        for (int i=0; i<9; i++) 
-            *y++ = body->R[i];
+        // for (int i=0; i<9; i++) 
+        //     *y++ = body->R[i];
+
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                *y++ = body->R(i,j);
 
         /* Linear momentum component */
         *y++ = body->P[0];
@@ -34,8 +39,9 @@ namespace Skynet
         body->x[2] = *y++;
 
         /* Rotation component */ 
-        for (int i=0; i<9; i++) 
-            body->R[i] = *y++; 
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                body->R(i,j) = *y++;
 
         /* Linear momentum component */
         body->P[0] = *y++;
@@ -48,17 +54,13 @@ namespace Skynet
         body->L[2] = *y++;
 
         /* Compute auxiliary variables */
-        Math::DivVecS3(body->vel, body->P, body->mass);
-
-        float R_transpose[9], temp[9];
-        Math::Transpose(R_transpose, body->R, 3, 3);
+        body->vel = body->P * (1 / body->mass);
 
         /* Iinv = R * Ibody * R_T */ 
-        Math::Matmul(temp, body->R, body->Ibody, 3, 3, 3);
-        Math::Matmul(body->Iinv, temp, R_transpose, 3, 3, 3);
+        body->Iinv = body->R * body->Ibody * body->R.transpose();
 
         /* omega = Iinv * L */ 
-        Math::Matmul(body->omega, body->Iinv, body->L, 3, 3, 1);
+        body->omega = body->Iinv * body->L;
     }   
 
     void ODE::BodiesToArray(entt::registry& bodies, float* y)
@@ -88,13 +90,13 @@ namespace Skynet
     void ODE::ComputeForceTorque(float t, RigidBody* body)
     {
         /* External force */
-        Math::Zero3(body->force_ext);
-        Math::Zero3(body->torque);
+        body->force_ext.zero();
+        body->torque.zero();
 
         body->force_ext[1] -= body->mass * 9.81f;
 
         /* Accumulate all force */ 
-        Math::AddVec3(body->force, body->force_int, body->force_ext);
+        body->force = body->force_int + body->force_ext;
     }
 
     void ODE::Derivative(entt::registry& bodies, float t, float* y, float* ydot)
@@ -119,10 +121,11 @@ namespace Skynet
         *ydot++ = body->vel[2];
 
         /* Compute angular velocity */ 
-        float Rdot[9], SkewOmega[9];
-        Math::SkewMatrix(SkewOmega, body->omega);
-        Math::Matmul(Rdot, SkewOmega, body->R, 3, 3, 3);
-        for (int i=0; i<9; i++) *ydot++ = Rdot[i];
+        titan::mat3 Rdot = titan::Skew(body->omega) * body->R;
+        
+        for (int i = 0; i < 3; i++) 
+            for (int j = 0; j < 3; j++)
+                *ydot++ = Rdot(i,j);
 
         /* d/dt P(t) = F(t) */ 
         *ydot++ = body->force[0];

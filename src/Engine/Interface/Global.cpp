@@ -319,9 +319,9 @@ namespace Skynet
                 ImGui::EndCombo();
             }
 
-            DrawVec3Control("Position", c.body.x);
-            DrawVec3Control("Omega", c.body.omega);
-            DrawVec3Control("Scale", c.body.s);
+            DrawVec3Control("Position", c.body.x.raw());
+            DrawVec3Control("Omega", c.body.omega.raw());
+            DrawVec3Control("Scale", c.body.s.raw());
             ImGui::Separator();
         }
 
@@ -405,8 +405,8 @@ namespace Skynet
             auto& mesh_comp = scene->bodies.get<MeshComp>((entt::entity)0);
             BoundingBox box = BoundingBox();
 
-            BVH::FitCovariance(mesh_comp.mesh->verts.data(), mesh_comp.mesh->num_verts, &box);
-            BVH::GenerateBox(scene->vectors, &box);
+            // BVH::FitCovariance(mesh_comp.mesh->verts.data(), mesh_comp.mesh->num_verts, &box);
+            // BVH::GenerateBox(scene->vectors, &box);
         }
 
         ImGui::End();

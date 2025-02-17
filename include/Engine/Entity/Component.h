@@ -6,71 +6,64 @@
 #include "Mesh.h"
 #include "Vector.h"
 #include "RigidBody.h"
-
+#include "titan.hpp"
 
 namespace Skynet
 {
 
     struct LinkTransformComp
     {
-        float p_local[3] = {0.0f, 0.0f, 0.0f};
-        float q_local[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-        
-        float p_world[3] = {0.0f, 0.0f, 0.0f};
-        float q_world[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-        
-        float s[3] = {0.0f, 0.0f, 0.0f};
-        float T[16];
+        titan::vec3 p_local;
+        titan::quat q_local;
+
+        titan::vec3 p_world;
+        titan::quat q_world;
+
+        titan::vec3 s = {1.0f, 1.0f, 1.0f};
+        titan::mat4 T;
 
         LinkTransformComp() = default;
         LinkTransformComp(const LinkTransformComp&) = default;
-        LinkTransformComp(const float* p) { std::copy(p, p+3, p_local); }
+        LinkTransformComp(titan::vec3 p) : p_local(p) {}
 
-        inline void SetWorldTransform(float* T_world) {
-            std::copy(T_world, T_world + 16, T);
+        inline void SetWorldTransform(titan::mat4& T_world) {
+            T = T_world;
         }
 
-        inline void DecomposeTransform() {
-            Math::DecomposeTw(T, p_world, q_world);
+        inline void DecomposeTransform() {}
+
+        inline titan::mat4 GetLocalTransform() {
+            return titan::Transcale(p_local, s) * q_local.Quat2T();
         }
 
-        inline float* GetLocalTransform() {
-            Math::Quat2T(T, q_local, p_local);
-            return T;
-        }
-
-        inline float* GetWorldTransform() { return T; }
+        inline titan::mat4& GetWorldTransform() { return T; }
     };
 
     struct TransformComp
     {
-        float p[3] = {0.0f, 0.0f, 0.0f};
-        float e[3] = {0.0f, 0.0f, 0.0f};
-        float s[3] = {1.0f, 1.0f, 1.0f};
-        float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};
-
-        float T[16];
+        titan::vec3 p;
+        titan::vec3 e;
+        titan::vec3 s = {1.0f, 1.0f, 1.0f};
+        titan::quat q;
+        titan::mat4 T;
 
         TransformComp() = default;
         TransformComp(const TransformComp&) = default;
-        TransformComp(const float* p, const float* e, const float* s, const float* q) 
+        TransformComp(titan::vec3 p, titan::vec3 e, titan::vec3 s, titan::quat q) 
+            :p(p), e(e), s(s), q(q)
         {
-            std::copy(p, p+3, this->p); 
-            std::copy(e, e+3, this->e); 
-            std::copy(s, s+3, this->s); 
-            std::copy(q, s+4, this->q); 
+
         }
 
-        inline float* GetTransform(const RotType& type = RotType::Euler) 
+        inline titan::mat4 GetTransform(const RotType& type = RotType::Euler) 
         {
-            float T_[16]; float R[16];
-            Math::Transcale(T_, p, s);
+            titan::mat4 R;
             switch(type) {
-                case(RotType::Quaternion) : Math::Quat2T(R, q);  break;
-                case(RotType::Euler)      : Math::Euler2T(R, e); break;
+                case(RotType::Quaternion) : R = q.Quat2T();  break;
+                case(RotType::Euler)      : R = titan::Euler2T(this->e); break;
             }
-            Math::Matmul4(T, T_, R);
-            return T;
+
+            return titan::Transcale(this->p, this->s) * R;
         }
     };
 

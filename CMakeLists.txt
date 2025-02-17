@@ -78,6 +78,16 @@ include_directories(${PROJECT_NAME}
 	vendor/imgui/backends
 	vendor/glad/include
 	vendor/entt/include
+
+	vendor/titan/include
+    vendor/titan/include/titan
+    vendor/titan/include/titan/utils
+    vendor/titan/include/titan/basics
+    vendor/titan/include/titan/linalg
+    vendor/titan/include/titan/calculus
+    vendor/titan/include/titan/graphics
+    vendor/titan/include/titan/optimization
+    vendor/titan/include/titan/statistics
 )
 
 if (POLICY CMP0072)

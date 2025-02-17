@@ -3,6 +3,7 @@
 
 #include "Math.h"
 #include "Timestep.h"
+#include "titan.hpp"
 
 namespace Skynet
 {  
@@ -15,38 +16,40 @@ namespace Skynet
         inline void SetMass(const float mass) { this->mass = mass; }
         void SetInertialTensor(int x, int y, int z);
 
-        float* GetTransform();
+        inline titan::mat4 GetTransform() {
+            return titan::Transcale(x, s) * titan::Euler2T(omega);
+        }
 
-        inline float* GetLinearVelocity() { return vel; }
-        inline float* GetAngularVelocity() { return omega; }
+        inline titan::vec3& GetLinearVelocity() { return vel; }
+        inline titan::vec3& GetAngularVelocity() { return omega; }
 
     public:
 
         /* Constant quantities */ 
-        float mass        = 0.0f;
-        float Ibody[9]    = {0.0f};
-        float Ibodyinv[9] = {0.0f};
+        titan::real mass = 0.0f;
+        titan::mat3 Ibody;
+        titan::mat3 Ibodyinv;
 
         /* State variables */ 
-        float x[3] = {0.0f};
-        float R[9] = {0.0f};
-        float P[3] = {0.0f};
-        float L[3] = {0.0f};
+        titan::vec3 x;
+        titan::mat3 R;
+        titan::vec3 P;
+        titan::vec3 L;
 
         /* Visualize component */
-        float s[3] = {1.0f, 1.0f, 1.0f};
-        float T[9] = {0.0f};
+        titan::vec3 s = {1.0f, 1.0f, 1.0f};
+        titan::mat4 T;
 
         /* Derived quantities */
-        float Iinv[9]  = {0.0f};
-        float vel[3]   = {0.0f};
-        float omega[3] = {0.0f};
+        titan::mat3 Iinv;
+        titan::vec3 vel;
+        titan::vec3 omega;
 
         /* Computed quantities */ 
-        float force_ext[3] = {0.0f};
-        float force_int[3] = {0.0f};
-        float force[3]  = {0.0f};
-        float torque[3] = {0.0f};
+        titan::vec3 force_ext;
+        titan::vec3 force_int;
+        titan::vec3 force;
+        titan::vec3 torque;
     };
 
 } // namespace Skynet

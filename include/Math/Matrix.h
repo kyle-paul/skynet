@@ -12,6 +12,7 @@ namespace Skynet
         void Matmul(float* res, float* mat1, float* mat2, int m, int n, int q);
         void Matmul3(float* res, float* mat1, float* mat2);
         void Matmul4(float* res, float* mat1, float* mat2);
+        void Matmul4(float* res, const float* m1, const float* m2);
 
         void Invert(float* mat, int n);
         void Invert3(float* res, float* mat);

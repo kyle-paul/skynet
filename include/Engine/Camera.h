@@ -2,6 +2,7 @@
 #define SKYNET_CAMERA_H
 
 #include "Math.h"
+#include "titan/titan.hpp"
 
 namespace Skynet
 {
@@ -15,9 +16,9 @@ namespace Skynet
         void UpdateProjection();
         void UpdateProjView();
 
-        inline float* GetView() { return V; }
-        inline float* GetProjection() { return P; }
-        inline float* GetProjView() { return C; }
+        inline titan::mat4& GetView() { return V; }
+        inline titan::mat4& GetProjection() { return P; }
+        inline titan::mat4& GetProjView() { return C; }
 
     private:
         float fov    = 45.0f;
@@ -25,13 +26,13 @@ namespace Skynet
         float znear  = 0.1f;
         float zfar   = 100.0f;
 
-        float p[3]   = {0.0f, 0.0f, 6.0f};
-        float e[3]   = {0.0f, 0.0f, 0.0f};
-        float q[4]   = {1.0f, 0.0f, 0.0f, 0.0f};
+        titan::vec3 p = titan::vec3(0.0f, 0.0f, 6.0f);
+        titan::vec3 e;
+        titan::quat q;
 
-        float V[16];
-        float P[16];
-        float C[16];
+        titan::mat4 V;
+        titan::mat4 P;
+        titan::mat4 C;
 
         friend class Scene;
     };

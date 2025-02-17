@@ -90,8 +90,8 @@ namespace Skynet
 
         {
             shader->Bind();
-            shader->SetMat4("projview", camera->GetProjView());
-            shader->SetFloat3("viewPos", camera->p);
+            shader->SetMat4("projview", camera->GetProjView().raw());
+            shader->SetFloat3("viewPos", camera->p.raw());
             shader->SetFloat3("light", light);
 
             auto view = bodies.view<RigidBodyComp, MeshComp, TextureComp>();
@@ -102,7 +102,7 @@ namespace Skynet
                 auto& texture_comp = view.get<TextureComp>(entity);
 
                 shader->SetFloat4("color", texture_comp.color);
-                shader->SetMat4("model", rigid_comp.body.GetTransform());
+                shader->SetMat4("model", rigid_comp.body.GetTransform().raw());
                 Renderer::Draw(mesh_comp.mesh->GetVA());
             }
 
@@ -111,7 +111,7 @@ namespace Skynet
 
         {
             vecshad->Bind();
-            vecshad->SetMat4("projview", camera->GetProjView());
+            vecshad->SetMat4("projview", camera->GetProjView().raw());
 
             auto view = vectors.view<VectorComp>();
             for (auto entity : view)
@@ -151,13 +151,13 @@ namespace Skynet
             return;
 
         auto& c = bodies.get<RigidBodyComp>(selectedEntityID);
-        float* T = c.body.GetTransform();
+        titan::mat4 T = c.body.GetTransform();
 
-        ImGuizmo::Manipulate(camera->GetView(), camera->GetProjection(), 
-                 (ImGuizmo::OPERATION)typeGuizmo, ImGuizmo::LOCAL, T);
+        ImGuizmo::Manipulate(camera->GetView().raw(), camera->GetProjection().raw(), 
+                            (ImGuizmo::OPERATION)typeGuizmo, ImGuizmo::LOCAL, T.raw());
         
         if (state == SceneState::Edit && ImGuizmo::IsUsing) {
-            Math::Decompose(T, c.body.x, c.body.s, c.body.omega);
+            titan::Decompose(T, c.body.x, c.body.s, c.body.omega);
         }
     }
 

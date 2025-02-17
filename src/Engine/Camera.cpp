@@ -12,20 +12,19 @@ namespace Skynet
 
     void Camera::UpdateView() 
     {
-        Math::Euler2T(V, e, p);
+        this->V = titan::Translate(p) * titan::Euler2T(e);
     }
 
     void Camera::UpdateProjection() 
     {
-        Math::Perspective(P, fov, aspect, znear, zfar);
+        this->P = titan::Perspective(fov, aspect, znear, zfar);
     }
 
     void Camera::UpdateProjView() 
     {
         this->UpdateProjection();
         this->UpdateView();
-
-        Math::Matmul4(C, P, V);
+        this->C = P * V;
     }
 
 } // namespace Skynet

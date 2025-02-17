@@ -12,65 +12,80 @@ namespace Skynet
         this->config.y = y;
     }
 
-    void Guizmo::DrawPositiveLine(const ImVec2 &center, const ImVec2 &axis, const ImU32 &color, const float radius, const float thickness, const char* text, const bool selected) {
+    void Guizmo::DrawPositiveLine(const ImVec2 &center, const ImVec2 &axis, const ImU32 &color, const float radius, const float thickness, const char* text, const bool selected)
+    {
         const auto lineEndPositive = ImVec2{ center.x + axis.x, center.y + axis.y };
+        const auto textPosX = ImVec2{ static_cast<float>(floor(lineEndPositive.x - 3.0f)), static_cast<float>(floor(lineEndPositive.y - 6.0f)) };
 
         this->config.drawlist->AddLine(center, lineEndPositive, color, thickness);
         this->config.drawlist->AddCircleFilled(lineEndPositive, radius, color);
-        const auto textPosX = ImVec2{ static_cast<float>(floor(lineEndPositive.x - 3.0f)), static_cast<float>(floor(lineEndPositive.y - 6.0f)) };
-        if (selected) {
+
+        if (selected) 
+        {
             this->config.drawlist->AddCircle(lineEndPositive, radius, IM_COL32_WHITE, 0, 1.1f);
             this->config.drawlist->AddText(textPosX, IM_COL32_WHITE, text);
         }
         else this->config.drawlist->AddText(textPosX, IM_COL32_BLACK, text);
     }
 
-    void Guizmo::DrawNegativeLine(const ImVec2 &center, const ImVec2 &axis, const ImU32 &color, const float radius, const bool selected) {
+    void Guizmo::DrawNegativeLine(const ImVec2 &center, const ImVec2 &axis, const ImU32 &color, const float radius, const bool selected) 
+    {
         const auto end = ImVec2{ center.x - axis.x, center.y - axis.y };
         this->config.drawlist->AddCircleFilled(end, radius, color);
         if (selected) this->config.drawlist->AddCircle(end, radius, IM_COL32_WHITE, 0, 1.1f);        
     }
 
-    void Guizmo::BuildViewMatrix(float* view, ImVec3 const &pos, ImVec3 const &right, ImVec3 const &up, ImVec3 const &forward) {
-        view[0]  = right[0];
-        view[4]  = right[1];
-        view[8]  = right[2];
-        view[12] = (-pos[0] * right[0] + -pos[1] * right[1] + -pos[2] * right[2]);
+    void Guizmo::BuildViewMatrix(titan::mat4& view, ImVec3 const& pos, ImVec3 const& right, ImVec3 const& up, ImVec3 const& forward) 
+    {
+        view(0,0) = right[0];
+        view(1,0) = right[1];
+        view(2,0) = right[2];
+        view(3,0) = (-pos[0] * right[0] + -pos[1] * right[1] + -pos[2] * right[2]);
 
-        view[1]  = up[0];
-        view[5]  = up[1];
-        view[9]  = up[2];
-        view[13] = (-pos[0] * up[0] + -pos[1] * up[1] + -pos[2] * up[2]);
+        view(0,1) = up[0];
+        view(1,1) = up[1];
+        view(2,1) = up[2];
+        view(3,1) = (-pos[0] * up[0] + -pos[1] * up[1] + -pos[2] * up[2]);
 
-        view[2]  = forward[0];
-        view[6]  = forward[1];
-        view[10] = forward[2];
-        view[14] = (-pos[0] * forward[0] + -pos[1] * forward[1] + -pos[2] * forward[2]);
+        view(0,2) = forward[0];
+        view(1,2) = forward[1];
+        view(2,2) = forward[2];
+        view(3,2) = (-pos[0] * forward[0] + -pos[1] * forward[1] + -pos[2] * forward[2]);
         
-        view[3]  = 0;
-        view[7]  = 0;
-        view[11] = 0;
-        view[15] = 1;
+        view(0,3) = 0;
+        view(1,3) = 0;
+        view(2,3) = 0;
+        view(3,3) = 1;
     }
 
-    bool Guizmo::Render(float* view, float* projection, const float distance) {
+    bool Guizmo::Render(titan::mat4& view, titan::mat4& projection, const float distance) 
+    {
         const float size = this->config.size;
         const float hSize = size * 0.5f;
-        const auto center = ImVec2{ this->config.x + hSize, this->config.y + hSize };
+        const auto center = ImVec2{this->config.x + hSize, this->config.y + hSize};
 
-        float viewproj[16];
-        Math::Matmul4( viewproj, projection, view);
+        titan::mat4 projview = projection * view;
 
-        { viewproj[1] *= -1; viewproj[5] *= -1; viewproj[9] *= -1; viewproj[13] *= -1; }
         {
-            const float aspectRatio = projection[5] / projection[0];
-            viewproj[0] *= aspectRatio; viewproj[8] *= aspectRatio;
+            projview(1,0) *= -1;
+            projview(1,1) *= -1;
+            projview(1,2) *= -1;
+            projview(1,3) *= -1;
         }
-        const float axisLength = size * config.axisLengthScale;
 
-        const ImVec4 xAxis = Math::MulMatVec4(viewproj, ImVec4{ config.axisLengthScale * 18, 0, 0, 0 });
-        const ImVec4 yAxis = Math::MulMatVec4(viewproj, ImVec4{ 0, config.axisLengthScale * 18, 0, 0 });
-        const ImVec4 zAxis = Math::MulMatVec4(viewproj, ImVec4{ 0, 0, config.axisLengthScale * 18, 0 });
+        {
+            float aspect = projection(1,1) / projection(0,0);
+            projview(0,0) *= aspect; 
+            projview(0,2) *= aspect;
+        }
+        
+        const titan::vec4 x_axis = projview * titan::vec4(config.axisLengthScale * 18, 0, 0, 0);
+        const titan::vec4 y_axis = projview * titan::vec4(0, config.axisLengthScale * 18, 0, 0);
+        const titan::vec4 z_axis = projview * titan::vec4(0, 0, config.axisLengthScale * 18, 0);        
+
+        const ImVec4 xAxis(x_axis[0], x_axis[1], x_axis[2], x_axis[3]);
+        const ImVec4 yAxis(y_axis[0], y_axis[1], y_axis[2], y_axis[3]);
+        const ImVec4 zAxis(z_axis[0], z_axis[1], z_axis[2], z_axis[3]);
 
         const bool interactive = distance > 0.0f;
         const ImVec2 mousePos = ImGui::GetIO().MousePos;
@@ -91,8 +106,10 @@ namespace Skynet
 
         // find selection, front to back
         int selection = -1;
-        for (auto it = pairs.crbegin(); it != pairs.crend() && selection == -1 && interactive; ++it) {
-            switch (it->first) {
+        for (auto it = pairs.crbegin(); it != pairs.crend() && selection == -1 && interactive; ++it) 
+        {
+            switch (it->first) 
+            {
             case 0: // +x axis
                 if (this->checkInsideCircle(ImVec2{ center.x + xAxis.x, center.y + xAxis.y }, positiveRadius, mousePos)) selection = 0;
                 break;
@@ -117,8 +134,10 @@ namespace Skynet
 
         // draw back first
         const float lineThickness = size * config.lineThicknessScale;
-        for (const auto& [fst, snd] : pairs) {
-            switch (fst) {
+        for (const auto& [fst, snd] : pairs) 
+        {
+            switch (fst) 
+            {
                 case 0: // +x axis
                     this->DrawPositiveLine(center, ImVec2{ xAxis.x, xAxis.y }, xPositiveCloser ? config.xCircleFrontColor : config.xCircleBackColor, positiveRadius, lineThickness, "X", selection == 0);
                     continue;
@@ -141,10 +160,11 @@ namespace Skynet
             }
         }
 
-        if (selection != -1 && ImGui::IsMouseClicked(ImGuiPopupFlags_MouseButtonLeft)) {
+        if (selection != -1 && ImGui::IsMouseClicked(ImGuiPopupFlags_MouseButtonLeft)) 
+        {
+            titan::mat4 model = view.inverse();
 
-            float model[16]; Math::Invert4(view, model);
-            const ImVec3 pivotPos = ImVec3{ &model[12] } + ImVec3{ &model[8] } * distance;
+            const ImVec3 pivotPos = ImVec3{ &model(0,3) } + ImVec3{ &model(0,2) } * distance;
 
             if (selection == 0) this->BuildViewMatrix(view, pivotPos + ImVec3{ distance, 0, 0 }, ImVec3{ 0, 0, -1},  ImVec3{ 0, 1, 0 },  ImVec3{ 1, 0, 0 });  // +x axis
             if (selection == 1) this->BuildViewMatrix(view, pivotPos + ImVec3{ 0, distance, 0 }, ImVec3{ 1, 0, 0 },  ImVec3{ 0, 0, -1 }, ImVec3{ 0, 1, 0 });  // +y axis

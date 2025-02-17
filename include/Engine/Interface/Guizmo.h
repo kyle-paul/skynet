@@ -3,6 +3,7 @@
 
 #include "System.h"
 #include "Math.h"
+#include "titan.hpp"
 #include "imgui.h"
 
 namespace Skynet
@@ -48,7 +49,7 @@ namespace Skynet
 
     public:
         void Update(ImDrawList* drawlist, float x, float y);
-        bool Render(float* view, float* projection, const float distance = 0.0f);
+        bool Render(titan::mat4& view, titan::mat4& projection, const float distance = 0.0f);
 
     private:
         inline bool checkInsideCircle(const ImVec2 center, const float radius, const ImVec2 point)  {
@@ -57,7 +58,7 @@ namespace Skynet
 
         void DrawPositiveLine(const ImVec2 &center, const ImVec2 &axis, const ImU32 &color, const float radius, const float thickness, const char* text, const bool selected);
         void DrawNegativeLine(const ImVec2 &center, const ImVec2 &axis, const ImU32 &color, const float radius, const bool selected);
-        void BuildViewMatrix(float* view, ImVec3 const &pos, ImVec3 const &right, ImVec3 const &up, ImVec3 const &forward);
+        void BuildViewMatrix(titan::mat4& view, ImVec3 const &pos, ImVec3 const &right, ImVec3 const &up, ImVec3 const &forward);
 
     private:
         Config config;
