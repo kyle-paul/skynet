@@ -30,6 +30,7 @@ add_executable(${PROJECT_NAME}
 	src/Engine/Entity/Mesh.cpp
 	src/Engine/Entity/Vector.cpp
 	src/Engine/Entity/RigidBody.cpp
+	src/Engine/Entity/GenEntity.cpp
 
 	src/Engine/Solver/ODE.cpp
 
@@ -39,6 +40,7 @@ add_executable(${PROJECT_NAME}
 	src/Engine/Interface/Guizmo.cpp
 	src/Engine/Interface/ImGuizmo.cpp
 	src/Engine/Interface/FileDialog.cpp
+	src/Engine/Interface/ContentBrowser.cpp
 
 	src/Platform/Window/WindowGLFW.cpp
 	src/Platform/Window/InputGLFW.cpp

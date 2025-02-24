@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "Renderer.h"
 #include "ImGuizmo.h"
+#include "GenEntity.h"
 #include "ODE.h"
 
 namespace Skynet
@@ -68,6 +69,20 @@ namespace Skynet
         ImGuizmo::SetOrthographic(false);
 		ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
         this->EditGuizmo();
+
+        /* Drag and drop browser content */ 
+        if (ImGui::BeginDragDropTarget())
+        {
+            const ImGuiPayload *object_payload = ImGui::AcceptDragDropPayload("OBJECT_ITEM");
+        
+            if (object_payload != nullptr && object_payload->Data != nullptr)
+            {
+            std::string path(static_cast<const char*>(object_payload->Data), object_payload->DataSize - 1);
+            Entity::GenerateEntity(bodies, path.substr(path.find_last_of("/\\") + 1), path);
+            }
+
+            ImGui::EndDragDropTarget();
+        }
         
         ImGui::End();
         ImGui::PopStyleVar();

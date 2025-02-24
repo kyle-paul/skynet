@@ -150,7 +150,7 @@ namespace Skynet
     {
         BVHNode* node = nullptr;
         list<Vector> lines;
-        int maxDepth = 6;
+        int maxDepth = 1;
 
         BVHComp() = default;
         BVHComp(const ref<Mesh>& mesh) {
@@ -215,7 +215,7 @@ namespace Skynet
 
         TagComp() = default;
         TagComp(const TagComp&) = default;
-        TagComp(const std::string &tag) : tag(tag) { }
+        TagComp(const std::string& tag) : tag(tag) { }
     };
 
 } // namespace Skynet

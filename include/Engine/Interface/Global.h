@@ -6,6 +6,7 @@
 #include "Data.h"
 #include "Texture.h"
 #include "Serializer.h"
+#include "ContentBrowser.h"
 
 namespace Skynet
 {
@@ -37,10 +38,8 @@ namespace Skynet
         ref<Texture2D> iconPlay;
         ref<Texture2D> iconEdit;
 
-        float dir[3]   = {0.2f, 0.4f, -0.3f};
-        float pos[3]   = {0.5f, 0.5f, 0.5f};
-        float force[3];
-        
+        ContentBrowser browser;
+
         bool dockspace = true;
     };
 

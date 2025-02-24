@@ -5,7 +5,7 @@
 #include "imgui_internal.h"
 
 #include "FileDialog.h"
-
+#include "GenEntity.h"
 
 namespace Skynet
 {
@@ -87,6 +87,7 @@ namespace Skynet
         this->RenderObjectSetting();
         this->RenderToolBar();
         this->RenderExperiment();
+        this->browser.OnRender();
     }
 
     void Global::RenderMenubar()
@@ -410,14 +411,8 @@ namespace Skynet
         
         if (ImGui::Button("Collision on plane")) 
         {
-            entt::entity body = scene->bodies.create();
-            scene->bodies.emplace<MeshComp>(body, Object::Mesh, "../assets/mesh/objects/dragon8K.obj", Loader::Assimp);
-            scene->bodies.emplace<TagComp>(body, "dragon");
-            scene->bodies.emplace<TextureComp>(body);
-            scene->bodies.emplace<RigidBodyComp>(body, BodyType::Dynamic, 0.5f);
-            scene->bodies.emplace<BVHComp>(body, scene->bodies.get<MeshComp>(body).mesh);
-            scene->bodies.get<MeshComp>(body).mesh->InitGL();
-
+            Entity::GenerateEntity(scene->bodies, "dragon", "../assets/mesh/objects/dragon8K.obj");
+            
             entt::entity ground = scene->bodies.create();
             scene->bodies.emplace<MeshComp>(ground, Object::Cube, 6.0f, 0.01f, 6.0f);
             scene->bodies.emplace<TagComp>(ground, "ground");
