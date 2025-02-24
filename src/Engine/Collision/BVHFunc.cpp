@@ -5,14 +5,6 @@ namespace Skynet
 {
     namespace BVH
     {
-        std::vector<std::pair<int, int>> edges =
-        {
-            {0, 1}, {1, 3}, {3, 2}, {2, 0},
-            {4, 5}, {5, 7}, {7, 6}, {6, 4},
-            {0, 4}, {1, 5}, {3, 7}, {2, 6}
-        };
-
-
         void FitCovariance(float* points, float& n, OBB* box) 
         {
             /* Step 1: Compute centroid */
@@ -80,27 +72,8 @@ namespace Skynet
         }
 
 
-        void DrawNodes(entt::registry& vectors, BVHNode* node, int depth, int maxDepth)
-        {
-            if (node == nullptr || depth >= maxDepth) return;
-
-            list<titan::vec3> corners = node->box.GetCorners();
-
-            for (auto& [s, e] :  edges)
-            {
-                entt::entity vector = vectors.create();
-                vectors.emplace<VectorComp>(vector, corners[s].raw(), corners[e].raw());
-            }
-
-            DrawNodes(vectors, node->childA, depth + 1, maxDepth);
-            DrawNodes(vectors, node->childB, depth + 1, maxDepth);
-        }
-
-
         void BuildHierarchyTree(BVHNode*& node, const ref<Mesh>& mesh)
         {
-            ASSERT(mesh != nullptr, "Mesh does not exist to perform BVH");
-            
             node = new BVHNode();
             node->box = AABB();
 
@@ -121,7 +94,7 @@ namespace Skynet
 
         void HierarchySplit(BVHNode*& parent, int depth, int maxDepth)
         {
-            if (depth >= maxDepth) return;
+            if (parent == nullptr || depth >= maxDepth) return;
 
             titan::vec3 size = parent->box.GetSize();
             int axis = size[0] > std::max(size[1], size[2]) ? 0 : size[1] > size[2] ? 1 : 2;
@@ -142,6 +115,17 @@ namespace Skynet
 
             HierarchySplit(parent->childA, depth + 1, maxDepth);
             HierarchySplit(parent->childB, depth + 1, maxDepth);
+        }
+
+        void UpdateBoundingBox(BVHNode*& parent, int depth, int maxDepth, const titan::mat4& T)
+        {
+            if (parent == nullptr || depth >= maxDepth) return;
+
+            parent->box.min = T * parent->box.min;
+            parent->box.max = T * parent->box.max;
+
+            UpdateBoundingBox(parent->childA, depth + 1, maxDepth, T);
+            UpdateBoundingBox(parent->childB, depth + 1, maxDepth, T);
         }
 
     } // namespace BVH

@@ -10,11 +10,11 @@ namespace Skynet
     {
         void FitCovariance(float* points, float& n, OBB* box);
 
-        void DrawNodes(entt::registry& vectors, BVHNode* node, int depth, int maxDepth);
-
         void BuildHierarchyTree(BVHNode*& node, const ref<Mesh>& mesh);
 
         void HierarchySplit(BVHNode*& parent, int depth, int maxDepth);
+
+        void UpdateBoundingBox(BVHNode*& parent, int depth, int maxDepth, const titan::mat4& T);
 
     } // namespace BVH
 

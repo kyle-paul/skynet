@@ -48,6 +48,7 @@ namespace Skynet
         ref<Camera> camera;
         ref<Shader> shader;
         ref<Shader> vecshad;
+        ref<Shader> boxshad;
         ref<Guizmo> guizmo;
         ref<Frame> frame;
 

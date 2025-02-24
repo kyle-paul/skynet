@@ -9,6 +9,7 @@
 #include "BVHData.h"
 #include "BVHFunc.h"
 #include "Titan.hpp"
+#include "Renderer.h"
 
 namespace Skynet
 {
@@ -138,15 +139,64 @@ namespace Skynet
         }
     };
 
+    static std::vector<std::pair<int, int>> edges =
+    {
+        {0, 1}, {1, 3}, {3, 2}, {2, 0},
+        {4, 5}, {5, 7}, {7, 6}, {6, 4},
+        {0, 4}, {1, 5}, {3, 7}, {2, 6}
+    };
+
     struct BVHComp
     {
-        BVHNode* node;
-        int maxDepth = 5;
+        BVHNode* node = nullptr;
+        list<Vector> lines;
+        int maxDepth = 6;
 
         BVHComp() = default;
         BVHComp(const ref<Mesh>& mesh) {
+            compute(mesh);
+        }
+
+        void compute(const ref<Mesh>& mesh)
+        {
+            if (node) {
+                delete node;
+                node = nullptr;
+            }
+
+            lines.clear();
+
             BVH::BuildHierarchyTree(node, mesh);
             BVH::HierarchySplit(node, 0, maxDepth);
+            this->DrawNodes(node, 0);
+        }
+
+        void UpdateBVH(const titan::mat4& T)
+        {
+            BVH::UpdateBoundingBox(node, 0, maxDepth, T);
+        }
+
+        void DrawNodes(BVHNode* node, int depth)
+        {
+            if (node == nullptr || depth >= maxDepth) return;
+
+            list<titan::vec3> corners = node->box.GetCorners();
+
+            for (auto& [start, end] : edges)
+            {
+                Vector line;
+                line.Submit(corners[start].raw(), corners[end].raw());
+                line.InitGL();
+                lines.push_back(line);
+            }
+
+            DrawNodes(node->childA, depth + 1);
+            DrawNodes(node->childB, depth + 1);
+        }
+
+        void Render() {
+            for (Vector& line : lines) 
+                Renderer::DrawLine(line.GetVA());
         }
     };
 

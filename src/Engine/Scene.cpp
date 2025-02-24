@@ -26,6 +26,7 @@ namespace Skynet
         guizmo = cref<Guizmo>();
         shader = cref<Shader>("scene", "../assets/glsl/scene.glsl");
         vecshad = cref<Shader>("vector", "../assets/glsl/vector.glsl");
+        boxshad = cref<Shader>("box", "../assets/glsl/bvh.glsl");
     };
 
     void Scene::OnDetach()
@@ -94,16 +95,26 @@ namespace Skynet
             shader->SetFloat3("viewPos", camera->p.raw());
             shader->SetFloat3("light", light);
 
-            auto view = bodies.view<RigidBodyComp, MeshComp, TextureComp>();
+            auto view = bodies.view<RigidBodyComp, MeshComp, BVHComp, TextureComp>();
             for (auto entity : view)
             {
                 auto& rigid_comp   = view.get<RigidBodyComp>(entity);
                 auto& mesh_comp    = view.get<MeshComp>(entity);
                 auto& texture_comp = view.get<TextureComp>(entity);
+                auto& bvh_comp     = view.get<BVHComp>(entity);
+
+                rigid_comp.body.UpdateTransform();
+                bvh_comp.UpdateBVH(rigid_comp.body.GetTransform());
 
                 shader->SetFloat4("color", texture_comp.color);
                 shader->SetMat4("model", rigid_comp.body.GetTransform().raw());
                 Renderer::Draw(mesh_comp.mesh->GetVA());
+
+                boxshad->Bind();
+                boxshad->SetMat4("projview", camera->GetProjView().raw());
+                boxshad->SetMat4("transform", rigid_comp.body.GetTransform().raw());
+                bvh_comp.Render();
+                boxshad->Unbind();
             }
 
             shader->Unbind();

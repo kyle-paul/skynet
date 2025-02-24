@@ -333,6 +333,24 @@ namespace Skynet
             ImGui::Separator();
         }
 
+        if (scene->bodies.has<BVHComp>(entityID))
+        {
+            ImGui::PushFont(io.Fonts->Fonts[1]);
+            ImGui::Text("Collision component");
+            ImGui::PopFont();
+
+            auto& bvh_comp = scene->bodies.get<BVHComp>(entityID);
+
+            ImGui::DragInt("Tree depth", &bvh_comp.maxDepth);
+
+            if (ImGui::Button("Compute BVH"))
+            {
+                bvh_comp.compute(scene->bodies.get<MeshComp>(entityID).mesh);
+            }
+
+            ImGui::Separator();
+        }
+
 
         ImGui::PopStyleVar(2);
     }
@@ -394,13 +412,11 @@ namespace Skynet
         {
             entt::entity body = scene->bodies.create();
             scene->bodies.emplace<MeshComp>(body, Object::Mesh, "../assets/mesh/objects/dragon8K.obj", Loader::Assimp);
-            scene->bodies.emplace<TagComp>(body, "bottle");
+            scene->bodies.emplace<TagComp>(body, "dragon");
             scene->bodies.emplace<TextureComp>(body);
             scene->bodies.emplace<RigidBodyComp>(body, BodyType::Dynamic, 0.5f);
             scene->bodies.emplace<BVHComp>(body, scene->bodies.get<MeshComp>(body).mesh);
             scene->bodies.get<MeshComp>(body).mesh->InitGL();
-
-            BVH::DrawNodes(scene->vectors, scene->bodies.get<BVHComp>(body).node, 0, 5);
 
             entt::entity ground = scene->bodies.create();
             scene->bodies.emplace<MeshComp>(ground, Object::Cube, 6.0f, 0.01f, 6.0f);

@@ -16,9 +16,11 @@ namespace Skynet
         inline void SetMass(const float mass) { this->mass = mass; }
         void SetInertialTensor(int x, int y, int z);
 
-        inline titan::mat4 GetTransform() {
-            return titan::Transcale(x, s) * titan::Euler2T(omega);
+        void UpdateTransform() {
+            T = titan::Transcale(x, s) * titan::Euler2T(omega);
         }
+
+        inline titan::mat4 GetTransform() const { return T; }
 
         inline titan::vec3& GetLinearVelocity() { return vel; }
         inline titan::vec3& GetAngularVelocity() { return omega; }
