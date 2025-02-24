@@ -54,7 +54,7 @@ namespace Skynet
         body->vel = body->P * (1 / body->mass);
 
         /* Iinv = R * Ibody * R_T */ 
-        body->Iinv = body->R * body->Ibody * body->R.transpose();
+        body->Iinv = ToMat3(body->R) * body->Ibody * ToMat3(body->R).transpose();
 
         /* omega = Iinv * L */ 
         body->omega = body->Iinv * body->L;
@@ -118,8 +118,8 @@ namespace Skynet
         *ydot++ = body->vel[2];
 
         /* Compute angular velocity */ 
-        titan::mat3 Rdot = titan::Skew(body->omega) * body->R;
-        
+        titan::mat3 Rdot = titan::Skew(body->omega) * titan::ToMat3(body->R);
+
         for (int i = 0; i < 3; i++) 
             for (int j = 0; j < 3; j++)
                 *ydot++ = Rdot(i,j);

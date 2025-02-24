@@ -94,7 +94,7 @@ namespace Skynet
 
         void HierarchySplit(BVHNode*& parent, int depth, int maxDepth)
         {
-            if (parent == nullptr || depth >= maxDepth) return;
+            if (parent == nullptr || depth >= maxDepth || parent->triangles.size() == 1) return;
 
             titan::vec3 size = parent->box.GetSize();
             int axis = size[0] > std::max(size[1], size[2]) ? 0 : size[1] > size[2] ? 1 : 2;

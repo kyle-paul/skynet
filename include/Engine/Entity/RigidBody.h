@@ -17,7 +17,8 @@ namespace Skynet
         void SetInertialTensor(int x, int y, int z);
 
         void UpdateTransform() {
-            T = titan::Transcale(x, s) * titan::Euler2T(omega);
+            R = titan::Euler2T(e);
+            T = titan::Transcale(x, s) * R;
         }
 
         inline titan::mat4 GetTransform() const { return T; }
@@ -34,12 +35,13 @@ namespace Skynet
 
         /* State variables */ 
         titan::vec3 x;
-        titan::mat3 R;
+        titan::mat4 R;
         titan::vec3 P;
         titan::vec3 L;
 
         /* Visualize component */
         titan::vec3 s = {1.0f, 1.0f, 1.0f};
+        titan::vec3 e;
         titan::mat4 T;
 
         /* Derived quantities */

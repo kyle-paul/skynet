@@ -117,6 +117,11 @@ namespace Skynet
             if (childB) delete childB;
         }
 
+        bool IsLeaf()
+        {
+            return (!childA && !childB);
+        }
+
         AABB box;
         list<Triangle> triangles;
 

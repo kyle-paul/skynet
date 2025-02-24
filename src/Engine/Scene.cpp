@@ -106,9 +106,11 @@ namespace Skynet
                 rigid_comp.body.UpdateTransform();
                 bvh_comp.UpdateBVH(rigid_comp.body.GetTransform());
 
+                shader->Bind();
                 shader->SetFloat4("color", texture_comp.color);
                 shader->SetMat4("model", rigid_comp.body.GetTransform().raw());
                 Renderer::Draw(mesh_comp.mesh->GetVA());
+                shader->Unbind();
 
                 boxshad->Bind();
                 boxshad->SetMat4("projview", camera->GetProjView().raw());
@@ -168,7 +170,7 @@ namespace Skynet
                             (ImGuizmo::OPERATION)typeGuizmo, ImGuizmo::LOCAL, T.raw());
         
         if (state == SceneState::Edit && ImGuizmo::IsUsing) {
-            titan::Decompose(T, c.body.x, c.body.s, c.body.omega);
+            titan::Decompose(T, c.body.x, c.body.s, c.body.e);
         }
     }
 

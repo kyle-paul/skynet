@@ -328,7 +328,7 @@ namespace Skynet
             }
 
             DrawVec3Control("Position", c.body.x.raw());
-            DrawVec3Control("Omega", c.body.omega.raw());
+            DrawVec3Control("Rotation", c.body.e.raw());
             DrawVec3Control("Scale", c.body.s.raw());
             ImGui::Separator();
         }
@@ -423,6 +423,7 @@ namespace Skynet
             scene->bodies.emplace<TagComp>(ground, "ground");
             scene->bodies.emplace<TextureComp>(ground);
             scene->bodies.emplace<RigidBodyComp>(ground, BodyType::Static, 10.0f);
+            scene->bodies.emplace<BVHComp>(ground, scene->bodies.get<MeshComp>(ground).mesh);
             scene->bodies.get<MeshComp>(ground).mesh->InitGL();
         }
 
