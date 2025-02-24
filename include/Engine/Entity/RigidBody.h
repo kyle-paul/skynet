@@ -3,7 +3,7 @@
 
 #include "Math.h"
 #include "Timestep.h"
-#include "titan.hpp"
+#include "Titan.hpp"
 
 namespace Skynet
 {  

@@ -1,8 +1,5 @@
 #include "Global.h"
 #include "Component.h"
-#include "BVH.h"
-#include "OBB.h"
-#include "BoxGen.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -86,6 +83,7 @@ namespace Skynet
     void Global::OnRender()
     {        
         this->RenderMenubar();
+        this->RenderEnvironment();
         this->RenderObjectSetting();
         this->RenderToolBar();
         this->RenderExperiment();
@@ -162,6 +160,16 @@ namespace Skynet
             ImGuiFileDialog::Instance()->Close();
         }
 
+    }
+
+    void Global::RenderEnvironment()
+    {
+        ImGui::Begin("Camera setting");
+
+        DrawVec3Control("position", scene->camera->p.raw());
+        DrawVec3Control("rotation", scene->camera->e.raw());
+        
+        ImGui::End();
     }
 
     void Global::RenderObjectSetting()
@@ -345,7 +353,9 @@ namespace Skynet
         const auto& buttonActive = colors[ImGuiCol_ButtonActive];
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
 
-        ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoTitleBar);
+        ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | 
+                                           ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoTitleBar);
+        
         if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused()) ImGui::SetWindowCollapsed(false);
         else ImGui::SetWindowCollapsed(true);
 
@@ -383,14 +393,14 @@ namespace Skynet
         if (ImGui::Button("Collision on plane")) 
         {
             entt::entity body = scene->bodies.create();
-            scene->bodies.emplace<MeshComp>(body, Object::Mesh, "../assets/mesh/primitive/cube.obj", Loader::Assimp);
+            scene->bodies.emplace<MeshComp>(body, Object::Mesh, "../assets/mesh/objects/dragon8K.obj", Loader::Assimp);
             scene->bodies.emplace<TagComp>(body, "bottle");
             scene->bodies.emplace<TextureComp>(body);
             scene->bodies.emplace<RigidBodyComp>(body, BodyType::Dynamic, 0.5f);
+            scene->bodies.emplace<BVHComp>(body, scene->bodies.get<MeshComp>(body).mesh);
             scene->bodies.get<MeshComp>(body).mesh->InitGL();
 
-            // float* scale = scene->bodies.get<RigidBodyComp>(body).body.s;
-            // Math::DivVecS3(scale, scale, 3);
+            BVH::DrawNodes(scene->vectors, scene->bodies.get<BVHComp>(body).node, 0, 5);
 
             entt::entity ground = scene->bodies.create();
             scene->bodies.emplace<MeshComp>(ground, Object::Cube, 6.0f, 0.01f, 6.0f);
@@ -398,15 +408,6 @@ namespace Skynet
             scene->bodies.emplace<TextureComp>(ground);
             scene->bodies.emplace<RigidBodyComp>(ground, BodyType::Static, 10.0f);
             scene->bodies.get<MeshComp>(ground).mesh->InitGL();
-        }
-
-        if (ImGui::Button("Bounding Box"))
-        {
-            auto& mesh_comp = scene->bodies.get<MeshComp>((entt::entity)0);
-            BoundingBox box = BoundingBox();
-
-            // BVH::FitCovariance(mesh_comp.mesh->verts.data(), mesh_comp.mesh->num_verts, &box);
-            // BVH::GenerateBox(scene->vectors, &box);
         }
 
         ImGui::End();

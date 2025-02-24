@@ -39,7 +39,7 @@ namespace Skynet
     void OpenGLRenderer::DrawLine(ref<VertexArray>& va)
     {
         va->Bind();
-        glLineWidth(6.0f);
+        glLineWidth(1.0f);
         glDrawArrays(GL_LINES, 0, 6);
         glLineWidth(1.0f);
     }   

@@ -2,7 +2,7 @@
 #include "Data.h"
 #include "Math.h"
 #include "Component.h"
-#include "titan.hpp"
+#include "Titan.hpp"
 
 namespace Skynet
 {
@@ -14,9 +14,6 @@ namespace Skynet
         *y++ = body->x[2];
 
         /* Rotation component */ 
-        // for (int i=0; i<9; i++) 
-        //     *y++ = body->R[i];
-
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
                 *y++ = body->R(i,j);
@@ -158,13 +155,13 @@ namespace Skynet
 
         float y_mid[STATE_SIZE];
 
-        // Step 1: Compute the midpoint
+        /* Step 1: Compute the midpoint */
         Derivative(bodies, t, y, ydot);
         for (int i = 0; i < STATE_SIZE; ++i) {
             y_mid[i] = y[i] + 0.5f * dt * ydot[i];
         }
 
-        // Step 2: Compute final
+        /* Step 2: Compute final */
         Derivative(bodies, t + 0.5f * dt, y_mid, ydot);
         for (int i = 0; i < STATE_SIZE; ++i) {
             y[i] = y[i] + dt * ydot[i];
@@ -180,32 +177,31 @@ namespace Skynet
         float k1[STATE_SIZE], k2[STATE_SIZE], k3[STATE_SIZE], k4[STATE_SIZE];
         float y_temp[STATE_SIZE];
 
-        // Step 1: Compute k1
+        /* Step 1: Compute k1 */
         Derivative(bodies, t, y, k1);
         for (int i = 0; i < STATE_SIZE; ++i) {
             y_temp[i] = y[i] + (dt * 0.5f) * k1[i];
         }
 
-        // Step 2: Compute k2
+        /* Step 2: Compute k2 */
         Derivative(bodies, t + dt * 0.5f, y_temp, k2);
         for (int i = 0; i < STATE_SIZE; ++i) {
             y_temp[i] = y[i] + (dt * 0.5f) * k2[i];
         }
 
-        // Step 3: Compute k3
+        /* Step 3: Compute k3 */
         Derivative(bodies, t + dt * 0.5f, y_temp, k3);
         for (int i = 0; i < STATE_SIZE; ++i) {
             y_temp[i] = y[i] + dt * k3[i];
         }
 
-        // Step 4: Compute k4
+        /* Step 4: Compute k4 */
         Derivative(bodies, t + dt, y_temp, k4);
         for (int i = 0; i < STATE_SIZE; ++i) {
             y[i] = y[i] + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
         }
 
         ArrayToBodies(bodies, y);
-
     }
 
 } // namespace Skynet

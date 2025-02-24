@@ -1,6 +1,5 @@
 #include "RigidBody.h"
-#include "Math.h"
-#include "titan.hpp"
+#include "Titan.hpp"
 
 namespace Skynet
 {

@@ -100,15 +100,16 @@ namespace Skynet
         // Generate vertices
         for (int i = 0; i <= stacks; ++i) 
         {
-            float stackAngle = PI / 2.0f - i * stackStep; // from pi/2 to -pi/2
-            xy = radius * cosf(stackAngle);  // r * cos(phi)
-            y = radius * sinf(stackAngle);   // r * sin(phi)
+            float stackAngle = PI / 2.0f - i * stackStep;
+            xy = radius * cosf(stackAngle);
+            y = radius * sinf(stackAngle);
 
-            for (int j = 0; j <= sectors; ++j) {
-                float sectorAngle = j * sectorStep; // from 0 to 2pi
+            for (int j = 0; j <= sectors; ++j) 
+            {
+                float sectorAngle = j * sectorStep;
 
-                x = xy * cosf(sectorAngle); // r * cos(phi) * cos(theta)
-                z = xy * sinf(sectorAngle); // r * cos(phi) * sin(theta)
+                x = xy * cosf(sectorAngle);
+                z = xy * sinf(sectorAngle);
 
                 nx = x / radius;
                 ny = y / radius;
@@ -222,11 +223,12 @@ namespace Skynet
                         faces.push_back(std::stoi(parts[0]) - 1);
                     }
                 }
+
             }
         }
     }
 
-    void Mesh::AssRead(const std::string & path) 
+    void Mesh::AssRead(const std::string & path)
     {
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(path,
@@ -236,9 +238,6 @@ namespace Skynet
         {
             ERROR("Failed to load mesh: {0}", importer.GetErrorString());
         }
-
-        // Initialize min and max points
-    
 
         for (size_t i = 0; i < scene->mNumMeshes; ++i) 
         {
@@ -255,15 +254,6 @@ namespace Skynet
                 verts.push_back(x);
                 verts.push_back(y);
                 verts.push_back(z);
-
-                // Update bounding box
-                // min_point[0] = std::min(min_point[0], x);
-                // min_point[1] = std::min(min_point[1], y);
-                // min_point[2] = std::min(min_point[2], z);
-
-                // max_point[0] = std::max(max_point[0], x);
-                // max_point[1] = std::max(max_point[1], y);
-                // max_point[2] = std::max(max_point[2], z);
 
                 // Vertex normals
                 verts.push_back(mesh->mNormals[j].x);
@@ -314,16 +304,16 @@ namespace Skynet
 
     void Mesh::Info() 
     {
-        for (int i=0; i<verts.size(); i++) 
+        for (int i=0; i < verts.size(); i++) 
         {
             std::cout << verts[i] << ' ';
-            if ((i+1) % 8==0) std::cout << '\n';
+            if ((i + 1) % 8 == 0) std::cout << '\n';
         }
 
         for (int i=0; i < faces.size(); i++) 
         {
             std::cout << faces[i] << ' ';
-            if ((i+1) % 3==0)  std::cout << '\n';
+            if ((i + 1) % 3 == 0)  std::cout << '\n';
         }
     }
 

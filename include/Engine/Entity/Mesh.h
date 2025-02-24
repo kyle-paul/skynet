@@ -4,6 +4,7 @@
 #include "Data.h"
 #include "System.h"
 #include "Buffer.h"
+#include "Titan.hpp"
 
 namespace Skynet
 {
@@ -12,6 +13,28 @@ namespace Skynet
     faces for whatever objects. No texture, color holder,
     no rendering function here.
     */
+
+    struct Triangle
+    {
+        titan::vec3 points[3];
+        titan::vec3 GetCenter() {
+            return (points[0] + points[1] + points[2]) * (1.0f / 3.0f);
+        }
+
+        Triangle() = default;
+        Triangle(titan::vec3 p1, titan::vec3 p2, titan::vec3 p3) {
+            points[0] = p1;
+            points[1] = p2;
+            points[2] = p3;
+        }
+
+        void Log() {
+            points[0].log();
+            points[1].log();
+            points[2].log();
+            std::cout << '\n';
+        }
+    };
 
     class Mesh
     {
@@ -40,8 +63,9 @@ namespace Skynet
 
     public:
         float num_verts;
-        std::vector<float> verts;
-        std::vector<uint32_t> faces;
+        
+        list<float> verts;
+        list<uint32_t> faces;
 
         ref<VertexArray>  va;
         ref<VertexBuffer> vb;

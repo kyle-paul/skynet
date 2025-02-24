@@ -2,8 +2,7 @@
 #define SKYNET_GUIZMO_H
 
 #include "System.h"
-#include "Math.h"
-#include "titan.hpp"
+#include "Titan.hpp"
 #include "imgui.h"
 
 namespace Skynet
@@ -30,7 +29,8 @@ namespace Skynet
         ImU32 hoverCircleColor = IM_COL32(100, 100, 100, 130);
     };
 
-    struct ImVec3 {
+    struct ImVec3 
+    {
         ImVec3(const float x, const float y, const float z) : vec{ x, y, z } {}
         explicit ImVec3(const float* const data) : vec{ data[0], data[1], data[2] } {}
         float operator[](const int idx) const { return vec[idx]; }

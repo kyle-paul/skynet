@@ -20,6 +20,7 @@ namespace Skynet
 
     private:
         void RenderMenubar();
+        void RenderEnvironment();
         void RenderObjectSetting();
         void RenderToolBar();
         void RenderExperiment();

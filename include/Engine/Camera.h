@@ -2,7 +2,7 @@
 #define SKYNET_CAMERA_H
 
 #include "Math.h"
-#include "titan/titan.hpp"
+#include "Titan.hpp"
 
 namespace Skynet
 {
@@ -24,7 +24,7 @@ namespace Skynet
         float fov    = 45.0f;
         float aspect = 1500.0f / 900.0f;
         float znear  = 0.1f;
-        float zfar   = 100.0f;
+        float zfar   = 600.0f;
 
         titan::vec3 p = titan::vec3(0.0f, 0.0f, 6.0f);
         titan::vec3 e;
@@ -35,6 +35,7 @@ namespace Skynet
         titan::mat4 C;
 
         friend class Scene;
+        friend class Global;
     };
 
 } // namespace Skynet

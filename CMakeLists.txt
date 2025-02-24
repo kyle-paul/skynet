@@ -32,6 +32,8 @@ add_executable(${PROJECT_NAME}
 	src/Engine/Entity/RigidBody.cpp
 
 	src/Engine/Solver/ODE.cpp
+
+	src/Engine/Collision/BVHFunc.cpp
 	
 	src/Engine/Interface/Global.cpp
 	src/Engine/Interface/Guizmo.cpp

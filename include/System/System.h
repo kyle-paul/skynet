@@ -71,6 +71,9 @@ namespace Skynet
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
 
+    template<typename T>
+    using list = std::vector<T>;
+
     using byte = unsigned char;
 }
 

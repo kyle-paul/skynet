@@ -6,7 +6,9 @@
 #include "Mesh.h"
 #include "Vector.h"
 #include "RigidBody.h"
-#include "titan.hpp"
+#include "BVHData.h"
+#include "BVHFunc.h"
+#include "Titan.hpp"
 
 namespace Skynet
 {
@@ -136,6 +138,18 @@ namespace Skynet
         }
     };
 
+    struct BVHComp
+    {
+        BVHNode* node;
+        int maxDepth = 5;
+
+        BVHComp() = default;
+        BVHComp(const ref<Mesh>& mesh) {
+            BVH::BuildHierarchyTree(node, mesh);
+            BVH::HierarchySplit(node, 0, maxDepth);
+        }
+    };
+
     struct TextureComp
     {
         float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -158,5 +172,3 @@ namespace Skynet
 
 
 #endif // SKYNET_COMPONENT_H
-
-
