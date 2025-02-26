@@ -20,9 +20,9 @@ namespace Skynet
         static void Derivative(entt::registry& bodies, float t, float* y, float* ydot);
         static void DydtStateArray(RigidBody* body, float* ydot);
 
-        static void EulerStep(entt::registry& bodies, float t, float dt, float* y, float* ydot);
-        static void Midpoint(entt::registry& bodies, float t, float dt, float* y, float* ydot);
-        static void RungeKutta(entt::registry& bodies, float t, float dt, float* y, float* ydot);
+        static void EulerStep(entt::registry& bodies, float t, float dt);
+        static void Midpoint(entt::registry& bodies, float t, float dt);
+        static void RungeKutta(entt::registry& bodies, float t, float dt);
     };
 
 } // namespace Skynet

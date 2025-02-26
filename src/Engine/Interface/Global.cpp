@@ -165,10 +165,22 @@ namespace Skynet
 
     void Global::RenderEnvironment()
     {
-        ImGui::Begin("Camera setting");
+        ImGuiIO &io = ImGui::GetIO();
+        ImGui::Begin("Setting");
 
+        ImGui::PushFont(io.Fonts->Fonts[1]);
+        ImGui::Text("Camera control");
+        ImGui::PopFont();
         DrawVec3Control("position", scene->camera->p.raw());
         DrawVec3Control("rotation", scene->camera->e.raw());
+        ImGui::Separator();
+
+        ImGui::PushFont(io.Fonts->Fonts[1]);
+        ImGui::Text("Spring-damper system");
+        ImGui::PopFont();
+        ImGui::DragFloat("Spring coef", &scene->k);
+        ImGui::DragFloat("Damping coef", &scene->b);
+        ImGui::Separator();
         
         ImGui::End();
     }
@@ -200,6 +212,7 @@ namespace Skynet
                         scene->bodies.emplace<TagComp>(body, "cube");
                         scene->bodies.emplace<TextureComp>(body);
                         scene->bodies.emplace<RigidBodyComp>(body, BodyType::Dynamic, 0.5f);
+                        scene->bodies.emplace<BVHComp>(body, scene->bodies.get<MeshComp>(body).mesh);
                         scene->bodies.get<MeshComp>(body).mesh->InitGL();
                     }
 
@@ -210,6 +223,7 @@ namespace Skynet
                         scene->bodies.emplace<TagComp>(body, "sphere");
                         scene->bodies.emplace<TextureComp>(body);
                         scene->bodies.emplace<RigidBodyComp>(body, BodyType::Dynamic, 0.5f);
+                        scene->bodies.emplace<BVHComp>(body, scene->bodies.get<MeshComp>(body).mesh);
                         scene->bodies.get<MeshComp>(body).mesh->InitGL();
                     }
 
@@ -342,13 +356,18 @@ namespace Skynet
 
             auto& bvh_comp = scene->bodies.get<BVHComp>(entityID);
 
-            ImGui::DragInt("Tree depth", &bvh_comp.maxDepth);
+            ImGui::Text("Tree depth");
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(100.0f);
+            ImGui::InputInt("##TreeDepth", &bvh_comp.maxDepth);
 
+            ImGui::SameLine();
             if (ImGui::Button("Compute BVH"))
             {
                 bvh_comp.compute(scene->bodies.get<MeshComp>(entityID).mesh);
             }
 
+            ImGui::ColorEdit4("BVH Color", bvh_comp.color.raw());
             ImGui::Separator();
         }
 
@@ -404,23 +423,7 @@ namespace Skynet
     {
         ImGui::Begin("Scenario Experiemnt");
 
-        ImGui::Text("Spring-damper system");
-
-        ImGui::DragFloat("Spring coef", &scene->k);
-        ImGui::DragFloat("Damping coef", &scene->b);
         
-        if (ImGui::Button("Collision on plane")) 
-        {
-            Entity::GenerateEntity(scene->bodies, "dragon", "../assets/mesh/objects/dragon8K.obj");
-            
-            entt::entity ground = scene->bodies.create();
-            scene->bodies.emplace<MeshComp>(ground, Object::Cube, 6.0f, 0.01f, 6.0f);
-            scene->bodies.emplace<TagComp>(ground, "ground");
-            scene->bodies.emplace<TextureComp>(ground);
-            scene->bodies.emplace<RigidBodyComp>(ground, BodyType::Static, 10.0f);
-            scene->bodies.emplace<BVHComp>(ground, scene->bodies.get<MeshComp>(ground).mesh);
-            scene->bodies.get<MeshComp>(ground).mesh->InitGL();
-        }
 
         ImGui::End();
     }   

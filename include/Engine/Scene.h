@@ -56,11 +56,8 @@ namespace Skynet
         entt::registry bodies;
         entt::registry vectors;
 
-        float y[1 * STATE_SIZE];
-        float ydot[1 * STATE_SIZE];
-
-        float k = 16.0f;
-        float b = 9.0f;
+        float k = 180.0f;
+        float b = 60.0f;
 
         float light[3] = { -10.0f, -10.0f, 10.0f };
         float background[4] = {0.15f, 0.15f, 0.15f, 1.0f};

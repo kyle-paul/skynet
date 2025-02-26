@@ -28,6 +28,15 @@ namespace Skynet
         shader = cref<Shader>("scene", "../assets/glsl/scene.glsl");
         vecshad = cref<Shader>("vector", "../assets/glsl/vector.glsl");
         boxshad = cref<Shader>("box", "../assets/glsl/bvh.glsl");
+
+        /* Default ground */
+        entt::entity ground = bodies.create();
+        bodies.emplace<MeshComp>(ground, Object::Cube, 3.0f, 0.01f, 3.0f);
+        bodies.emplace<TagComp>(ground, "ground");
+        bodies.emplace<TextureComp>(ground);
+        bodies.emplace<RigidBodyComp>(ground, BodyType::Static, 100.0f);
+        bodies.emplace<BVHComp>(ground, bodies.get<MeshComp>(ground).mesh);
+        bodies.get<MeshComp>(ground).mesh->InitGL();
     };
 
     void Scene::OnDetach()
@@ -77,8 +86,8 @@ namespace Skynet
         
             if (object_payload != nullptr && object_payload->Data != nullptr)
             {
-            std::string path(static_cast<const char*>(object_payload->Data), object_payload->DataSize - 1);
-            Entity::GenerateEntity(bodies, path.substr(path.find_last_of("/\\") + 1), path);
+                std::string path(static_cast<const char*>(object_payload->Data), object_payload->DataSize - 1);
+                Entity::GenerateEntity(bodies, path.substr(path.find_last_of("/\\") + 1), path);
             }
 
             ImGui::EndDragDropTarget();
@@ -119,7 +128,6 @@ namespace Skynet
                 auto& bvh_comp     = view.get<BVHComp>(entity);
 
                 rigid_comp.body.UpdateTransform();
-                bvh_comp.UpdateBVH(rigid_comp.body.GetTransform());
 
                 shader->Bind();
                 shader->SetFloat4("color", texture_comp.color);
@@ -130,7 +138,7 @@ namespace Skynet
                 boxshad->Bind();
                 boxshad->SetMat4("projview", camera->GetProjView().raw());
                 boxshad->SetMat4("transform", rigid_comp.body.GetTransform().raw());
-                bvh_comp.Render();
+                bvh_comp.Render(boxshad);
                 boxshad->Unbind();
             }
 
@@ -156,21 +164,11 @@ namespace Skynet
 
     void Scene::UpdatePhysics(Timestep* ts)
     {
-        ODE::EulerStep(bodies, 0, ts->GetSeconds(), this->y, this->ydot);
+        /* Simulation integration */
+        ODE::EulerStep(bodies, 0, ts->GetSeconds());
 
-        // Check collision
-        entt::entity cube = (entt::entity)0;
-        entt::entity ground = (entt::entity)1;
-
-        auto& cube_body = bodies.get<RigidBodyComp>(cube).body;
-        auto& plane_body = bodies.get<RigidBodyComp>(ground).body;
-
-        if (cube_body.x[1] < plane_body.x[1])
-        {
-            float depth = cube_body.x[1] - plane_body.x[1];
-            cube_body.force_int[1] = -k * depth - b * cube_body.vel[1];
-        }
-        else cube_body.force_int[1] = 0.0f;
+        /* Check collision */
+        BVH::CheckCollision(bodies, this->k, this->b);
     }
 
     void Scene::EditGuizmo()

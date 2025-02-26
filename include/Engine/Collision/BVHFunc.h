@@ -14,7 +14,7 @@ namespace Skynet
 
         void HierarchySplit(BVHNode*& parent, int depth, int maxDepth);
 
-        void UpdateBoundingBox(BVHNode*& parent, int depth, int maxDepth, const titan::mat4& T);
+        void CheckCollision(entt::registry& bodies, float& k, float& b);
 
     } // namespace BVH
 

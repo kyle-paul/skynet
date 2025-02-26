@@ -98,6 +98,7 @@ namespace Skynet
 
     void ODE::Derivative(entt::registry& bodies, float t, float* y, float* ydot)
     {
+        int i = 0;
         auto view = bodies.view<RigidBodyComp>();
         for (auto entity : view)
         {
@@ -105,7 +106,7 @@ namespace Skynet
             if (rb.type == BodyType::Dynamic) 
             {
                 ComputeForceTorque(t, &rb.body);
-                DydtStateArray(&rb.body, ydot);
+                DydtStateArray(&rb.body, ydot + STATE_SIZE * i++);
             }   
         }
     }
@@ -135,13 +136,17 @@ namespace Skynet
         *ydot++ = body->torque[2];
     }
 
-    void ODE::EulerStep(entt::registry& bodies, float t, float dt, float* y, float* ydot)
+    void ODE::EulerStep(entt::registry& bodies, float t, float dt)
     {
+        int n = (bodies.size() - 1);
+        float y[n * STATE_SIZE];
+        float ydot[n * STATE_SIZE];
+
         BodiesToArray(bodies, y);
         
         Derivative(bodies, t, y, ydot);
 
-        for (int i = 0; i < STATE_SIZE; ++i) 
+        for (int i = 0; i < n * STATE_SIZE; ++i) 
         {
             y[i] += dt * ydot[i];
         }
@@ -149,55 +154,63 @@ namespace Skynet
         ArrayToBodies(bodies, y);
     }
 
-    void ODE::Midpoint(entt::registry& bodies, float t, float dt, float* y, float* ydot)
+    void ODE::Midpoint(entt::registry& bodies, float t, float dt)
     {
+        int n = (bodies.size() - 1);
+        float y[n * STATE_SIZE];
+        float ydot[n * STATE_SIZE];
+
         BodiesToArray(bodies, y);
 
         float y_mid[STATE_SIZE];
 
         /* Step 1: Compute the midpoint */
         Derivative(bodies, t, y, ydot);
-        for (int i = 0; i < STATE_SIZE; ++i) {
+        for (int i = 0; i < n; ++i) {
             y_mid[i] = y[i] + 0.5f * dt * ydot[i];
         }
 
         /* Step 2: Compute final */
         Derivative(bodies, t + 0.5f * dt, y_mid, ydot);
-        for (int i = 0; i < STATE_SIZE; ++i) {
+        for (int i = 0; i < n; ++i) {
             y[i] = y[i] + dt * ydot[i];
         }
 
         ArrayToBodies(bodies, y);
     }
 
-    void ODE::RungeKutta(entt::registry& bodies, float t, float dt, float* y, float* ydot)
+    void ODE::RungeKutta(entt::registry& bodies, float t, float dt)
     {
+        int n = (bodies.size() - 1);
+        float y[n * STATE_SIZE];
+        float ydot[n * STATE_SIZE];
+        
         BodiesToArray(bodies, y);
 
-        float k1[STATE_SIZE], k2[STATE_SIZE], k3[STATE_SIZE], k4[STATE_SIZE];
-        float y_temp[STATE_SIZE];
+        float k1[n], k2[n], k3[n], k4[n];
+        float y_temp[n];
 
         /* Step 1: Compute k1 */
         Derivative(bodies, t, y, k1);
-        for (int i = 0; i < STATE_SIZE; ++i) {
+        for (int i = 0; i < n; ++i) {
             y_temp[i] = y[i] + (dt * 0.5f) * k1[i];
         }
 
         /* Step 2: Compute k2 */
         Derivative(bodies, t + dt * 0.5f, y_temp, k2);
-        for (int i = 0; i < STATE_SIZE; ++i) {
+        for (int i = 0; i < n; ++i) {
             y_temp[i] = y[i] + (dt * 0.5f) * k2[i];
         }
 
         /* Step 3: Compute k3 */
         Derivative(bodies, t + dt * 0.5f, y_temp, k3);
-        for (int i = 0; i < STATE_SIZE; ++i) {
+        for (int i = 0; i < n; ++i) {
             y_temp[i] = y[i] + dt * k3[i];
         }
 
         /* Step 4: Compute k4 */
         Derivative(bodies, t + dt, y_temp, k4);
-        for (int i = 0; i < STATE_SIZE; ++i) {
+        for (int i = 0; i < n; ++i) {
             y[i] = y[i] + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
         }
 

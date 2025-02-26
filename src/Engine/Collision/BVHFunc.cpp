@@ -117,15 +117,50 @@ namespace Skynet
             HierarchySplit(parent->childB, depth + 1, maxDepth);
         }
 
-        void UpdateBoundingBox(BVHNode*& parent, int depth, int maxDepth, const titan::mat4& T)
+        bool IsCollision(titan::vec3& min1, titan::vec3& max1, titan::vec3& min2, titan::vec3& max2)
         {
-            if (parent == nullptr || depth >= maxDepth) return;
+            return (min1[0] <= max2[0] && max1[0] >= min2[0]) &&
+                   (min1[1] <= max2[1] && max1[1] >= min2[1]) &&
+                   (min1[2] <= max2[2] && max1[2] >= min2[2]);
+        }
 
-            parent->box.min = T * parent->box.min;
-            parent->box.max = T * parent->box.max;
+        void CheckCollision(entt::registry& bodies, float& k, float& b)
+        {
+            size_t n = bodies.size();
 
-            UpdateBoundingBox(parent->childA, depth + 1, maxDepth, T);
-            UpdateBoundingBox(parent->childB, depth + 1, maxDepth, T);
+            for (int i = 1; i < n; i++)
+            {
+                auto& bvhA  = bodies.get<BVHComp>((entt::entity)i);
+                auto& bodyA = bodies.get<RigidBodyComp>((entt::entity)i).body;
+
+                titan::vec3 min1 = bvhA.node->box.GetTransMin(bodyA.GetTransform());
+                titan::vec3 max1 = bvhA.node->box.GetTransMax(bodyA.GetTransform());
+
+                /* Check collision with other (broad phase later) */ 
+                for (int j = i + 1; j < n; j++)
+                {
+                    auto& bvhB  = bodies.get<BVHComp>((entt::entity)j);
+                    auto& bodyB = bodies.get<RigidBodyComp>((entt::entity)j).body;
+
+                    titan::vec3 min2 = bvhA.node->box.GetTransMin(bodyB.GetTransform());
+                    titan::vec3 max2 = bvhA.node->box.GetTransMax(bodyB.GetTransform());
+
+                    if (IsCollision(min1, max1, min2, max2))
+                    {
+                        INFO("Collision");
+                    }
+                }
+
+                /* Check collision with default ground */ 
+                auto& ground = bodies.get<BVHComp>((entt::entity)0).node->box;
+
+                if (min1[1] < ground.max[1])
+                {
+                    float depth = min1[1] - ground.max[1];
+                    bodyA.force_int[1] = -k * depth - b * bodyA.vel[1] + bodyA.mass * 9.81;
+                }
+                else bodyA.force_int[1] = 0.0f;
+            }
         }
 
     } // namespace BVH

@@ -150,7 +150,9 @@ namespace Skynet
     {
         BVHNode* node = nullptr;
         list<Vector> lines;
+
         int maxDepth = 1;
+        titan::vec4 color = {1.0f, 0.0f, 0.0f, 1.0f};
 
         BVHComp() = default;
         BVHComp(const ref<Mesh>& mesh) {
@@ -171,11 +173,6 @@ namespace Skynet
             this->DrawNodes(node, 0);
         }
 
-        void UpdateBVH(const titan::mat4& T)
-        {
-            BVH::UpdateBoundingBox(node, 0, maxDepth, T);
-        }
-
         void DrawNodes(BVHNode* node, int depth)
         {
             if (node == nullptr || depth >= maxDepth) return;
@@ -194,9 +191,12 @@ namespace Skynet
             DrawNodes(node->childB, depth + 1);
         }
 
-        void Render() {
+        void Render(const ref<Shader>& shad) {
             for (Vector& line : lines) 
+            {
+                shad->SetFloat4("color", color.raw());
                 Renderer::DrawLine(line.GetVA());
+            }
         }
     };
 

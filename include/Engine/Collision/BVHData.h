@@ -66,12 +66,22 @@ namespace Skynet
             return corners;
         }
 
-        titan::vec3 GetCenter() const
+        inline titan::vec3 GetTransMax(const titan::mat4& T) const
+        {
+            return T * this->max;
+        }
+
+        inline titan::vec3 GetTransMin(const titan::mat4& T) const
+        {
+            return T * this->min;
+        }
+
+        inline titan::vec3 GetCenter() const
         {
             return (this->min + this->max) * 0.5f;
         }
 
-        titan::vec3 GetSize() const
+        inline titan::vec3 GetSize() const
         {
             return titan::vec3(max[0] - min[0], max[1] - min[1], max[2] - min[2]);
         }
@@ -127,6 +137,11 @@ namespace Skynet
 
         BVHNode* childA = nullptr;
         BVHNode* childB = nullptr;
+    };
+
+    struct Contact
+    {
+        
     };
 
 } // namespace Skynet
