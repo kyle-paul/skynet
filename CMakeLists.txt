@@ -35,6 +35,7 @@ add_executable(${PROJECT_NAME}
 	src/Engine/Solver/ODE.cpp
 
 	src/Engine/Collision/BVHFunc.cpp
+	src/Engine/Collision/Contact.cpp
 	
 	src/Engine/Interface/Global.cpp
 	src/Engine/Interface/Guizmo.cpp

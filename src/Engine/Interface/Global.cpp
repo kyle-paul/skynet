@@ -423,8 +423,6 @@ namespace Skynet
     {
         ImGui::Begin("Scenario Experiemnt");
 
-        
-
         ImGui::End();
     }   
 

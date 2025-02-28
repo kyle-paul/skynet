@@ -138,7 +138,7 @@ namespace Skynet
 
     void ODE::EulerStep(entt::registry& bodies, float t, float dt)
     {
-        int n = (bodies.size() - 1);
+        int n = bodies.size() - 1;
         float y[n * STATE_SIZE];
         float ydot[n * STATE_SIZE];
 

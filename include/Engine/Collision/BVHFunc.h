@@ -14,6 +14,8 @@ namespace Skynet
 
         void HierarchySplit(BVHNode*& parent, int depth, int maxDepth);
 
+        bool IsCollision(titan::vec3& min1, titan::vec3& max1, titan::vec3& min2, titan::vec3& max2);
+
         void CheckCollision(entt::registry& bodies, float& k, float& b);
 
     } // namespace BVH

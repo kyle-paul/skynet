@@ -1,5 +1,6 @@
 #include "BVHFunc.h"
 #include "Component.h"
+#include "Contact.h"
 
 namespace Skynet
 {
@@ -142,12 +143,13 @@ namespace Skynet
                     auto& bvhB  = bodies.get<BVHComp>((entt::entity)j);
                     auto& bodyB = bodies.get<RigidBodyComp>((entt::entity)j).body;
 
-                    titan::vec3 min2 = bvhA.node->box.GetTransMin(bodyB.GetTransform());
-                    titan::vec3 max2 = bvhA.node->box.GetTransMax(bodyB.GetTransform());
+                    titan::vec3 min2 = bvhB.node->box.GetTransMin(bodyB.GetTransform());
+                    titan::vec3 max2 = bvhB.node->box.GetTransMax(bodyB.GetTransform());
 
                     if (IsCollision(min1, max1, min2, max2))
                     {
                         INFO("Collision");
+                        Contact::ComputeContact(bvhA.node->box, bvhB.node->box, bodyA, bodyB);
                     }
                 }
 

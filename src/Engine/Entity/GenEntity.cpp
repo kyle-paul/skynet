@@ -17,7 +17,7 @@ namespace Skynet
             
         } // namespace Entity
 
-    } // namespace Entity
+    } // namespace Skynet
     
 
 } // namespace Skynet

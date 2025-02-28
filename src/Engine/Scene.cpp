@@ -5,6 +5,7 @@
 #include "Renderer.h"
 #include "ImGuizmo.h"
 #include "GenEntity.h"
+#include "Contact.h"
 #include "ODE.h"
 
 namespace Skynet
@@ -100,6 +101,29 @@ namespace Skynet
     void Scene::OnUpdate(Timestep* ts)
     {
         this->UpdateVisualize();
+        
+        /* Check contact */
+        // if (bodies.size() == 3)
+        // {
+        //     auto& boxA  = bodies.get<BVHComp>((entt::entity)1).node->box;
+        //     auto& bodyA = bodies.get<RigidBodyComp>((entt::entity)1).body;
+
+        //     titan::vec3 minA = boxA.GetTransMin(bodyA.GetTransform());
+        //     titan::vec3 maxA = boxA.GetTransMax(bodyA.GetTransform());
+
+        //     auto& boxB  = bodies.get<BVHComp>((entt::entity)2).node->box;
+        //     auto& bodyB = bodies.get<RigidBodyComp>((entt::entity)2).body;
+
+        //     titan::vec3 minB = boxA.GetTransMin(bodyB.GetTransform());
+        //     titan::vec3 maxB = boxA.GetTransMax(bodyB.GetTransform());
+
+        //     if(BVH::IsCollision(minA, maxA, minB, maxB))
+        //     {
+        //         INFO("Collision");
+        //         Contact::ComputeContact(boxA, boxB, bodyA, bodyB);
+        //     }
+        // }
+
         if (this->state == SceneState::Play) 
             this->UpdatePhysics(ts);
     };

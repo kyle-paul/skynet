@@ -50,7 +50,7 @@ namespace Skynet
         AABB() { } 
         ~AABB() { }
 
-        inline list<titan::vec3> GetCorners() const 
+        inline list<titan::vec3> GetCorners() const
         {
             list<titan::vec3> corners(8);
 
@@ -79,6 +79,11 @@ namespace Skynet
         inline titan::vec3 GetCenter() const
         {
             return (this->min + this->max) * 0.5f;
+        }
+
+        inline titan::vec3 GetHalfExtent() const
+        {
+            return (this->max - this->min) * 0.5;
         }
 
         inline titan::vec3 GetSize() const
@@ -121,7 +126,7 @@ namespace Skynet
     class BVHNode
     {
     public:
-        BVHNode() { }
+        BVHNode() {}
         ~BVHNode() {
             if (childA) delete childA;
             if (childB) delete childB;
@@ -137,11 +142,6 @@ namespace Skynet
 
         BVHNode* childA = nullptr;
         BVHNode* childB = nullptr;
-    };
-
-    struct Contact
-    {
-        
     };
 
 } // namespace Skynet
