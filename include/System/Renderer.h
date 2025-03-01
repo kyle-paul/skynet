@@ -30,6 +30,7 @@ namespace Skynet
         static void ClearBufferBit();
         static void Draw(ref<VertexArray>& va);
         static void DrawLine(ref<VertexArray>& va);
+        static void DrawPoint(ref<VertexArray>& va);
 
     private:
         APIBackends backend = APIBackends::OpenGL;

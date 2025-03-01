@@ -6,6 +6,7 @@ uniform mat4 projview;
 void main() 
 {
     gl_Position = projview * vec4(a_position, 1.0);
+    gl_PointSize = 10.0;
 }
 
 #type fragment

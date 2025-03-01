@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include "Math.h"
 #include "Input.h"
 #include "Component.h"
 #include "Renderer.h"
@@ -11,12 +10,12 @@
 namespace Skynet
 {
 
-    Scene::Scene() 
+    Scene::Scene()
     {
         
     }
     
-    Scene::~Scene() 
+    Scene::~Scene()
     {
 
     }
@@ -103,26 +102,16 @@ namespace Skynet
         this->UpdateVisualize();
         
         /* Check contact */
-        // if (bodies.size() == 3)
-        // {
-        //     auto& boxA  = bodies.get<BVHComp>((entt::entity)1).node->box;
-        //     auto& bodyA = bodies.get<RigidBodyComp>((entt::entity)1).body;
+        if (bodies.size() == 3)
+        {
+            auto& boxA  = bodies.get<BVHComp>((entt::entity)1).node->box;
+            auto& bodyA = bodies.get<RigidBodyComp>((entt::entity)1).body;
 
-        //     titan::vec3 minA = boxA.GetTransMin(bodyA.GetTransform());
-        //     titan::vec3 maxA = boxA.GetTransMax(bodyA.GetTransform());
+            auto& boxB  = bodies.get<BVHComp>((entt::entity)2).node->box;
+            auto& bodyB = bodies.get<RigidBodyComp>((entt::entity)2).body;
 
-        //     auto& boxB  = bodies.get<BVHComp>((entt::entity)2).node->box;
-        //     auto& bodyB = bodies.get<RigidBodyComp>((entt::entity)2).body;
-
-        //     titan::vec3 minB = boxA.GetTransMin(bodyB.GetTransform());
-        //     titan::vec3 maxB = boxA.GetTransMax(bodyB.GetTransform());
-
-        //     if(BVH::IsCollision(minA, maxA, minB, maxB))
-        //     {
-        //         INFO("Collision");
-        //         Contact::ComputeContact(boxA, boxB, bodyA, bodyB);
-        //     }
-        // }
+            Contact::ComputeContact(points, boxA, boxB, bodyA, bodyB);
+        }
 
         if (this->state == SceneState::Play) 
             this->UpdatePhysics(ts);
@@ -134,17 +123,17 @@ namespace Skynet
 
         frame->Bind();
             
-        Renderer::SetClearColor(background);
+        Renderer::SetClearColor(background.raw());
         Renderer::ClearBufferBit();
 
         {
             shader->Bind();
             shader->SetMat4("projview", camera->GetProjView().raw());
             shader->SetFloat3("viewPos", camera->p.raw());
-            shader->SetFloat3("light", light);
+            shader->SetFloat3("light", light.raw());
 
             auto view = bodies.view<RigidBodyComp, MeshComp, BVHComp, TextureComp>();
-            for (auto entity : view)
+            for (auto& entity : view)
             {
                 auto& rigid_comp   = view.get<RigidBodyComp>(entity);
                 auto& mesh_comp    = view.get<MeshComp>(entity);
@@ -173,11 +162,18 @@ namespace Skynet
             vecshad->Bind();
             vecshad->SetMat4("projview", camera->GetProjView().raw());
 
-            auto view = vectors.view<VectorComp>();
-            for (auto entity : view)
+            auto view1 = vectors.view<VectorComp>();
+            for (auto& entity : view1)
             {
-                auto& vector_comp = view.get<VectorComp>(entity);
+                auto& vector_comp = view1.get<VectorComp>(entity);
                 Renderer::DrawLine(vector_comp.vector.GetVA());
+            }
+
+            auto view2 = points.view<PointComp>();
+            for (auto& entity : view2)
+            {
+                auto& point_comp = view2.get<PointComp>(entity);
+                Renderer::DrawPoint(point_comp.point.GetVA());
             }
 
             vecshad->Unbind();

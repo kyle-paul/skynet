@@ -100,7 +100,7 @@ namespace Skynet
 			bodyB.omega = bodyB.Iinv * bodyB.L;	
 		}
 
-		void ComputeContact(AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
+		void SAT(AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
 		{
 			titan::vec3 axes[15];
 
@@ -173,6 +173,30 @@ namespace Skynet
 		    }
 
 			ApplyImpulse(bodyA, bodyB, contact);
+		}
+
+		void GJK(entt::registry& points, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
+		{	
+			list<titan::vec3> cornersA = bodyA.GetTransform() * boxA.GetCorners();
+			list<titan::vec3> cornersB = bodyB.GetTransform() * boxB.GetCorners();
+
+			for (titan::vec3& cA : cornersA)
+			{
+				for (titan::vec3& cB : cornersB)
+				{
+					titan::vec3 point = cA - cB;
+
+					entt::entity p = points.create();
+					points.emplace<PointComp>(p, point);
+				}
+			}
+		}
+
+		void ComputeContact(entt::registry& points, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
+		{
+			points.clear();
+		
+			GJK(points, boxA, boxB, bodyA, bodyB);
 		}
 
 	} // namespace Contact

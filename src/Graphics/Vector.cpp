@@ -1,5 +1,4 @@
-#include "Entity/Vector.h"
-#include "Math.h"
+#include "Vector.h"
 
 namespace Skynet
 {
@@ -17,8 +16,12 @@ namespace Skynet
 
     void Vector::Submit(float* start, float* end)
     {
-        Math::Copy3(this->verts, start);
-        Math::Copy3(this->verts + 3, end);
+        verts[0] = start[0];
+        verts[1] = start[1];
+        verts[2] = start[2];
+        verts[3] = end[0];
+        verts[4] = end[1];
+        verts[5] = end[2];
     }
 
     void Vector::InitGL()

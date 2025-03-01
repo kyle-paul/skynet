@@ -149,7 +149,7 @@ namespace Skynet
                     if (IsCollision(min1, max1, min2, max2))
                     {
                         INFO("Collision");
-                        Contact::ComputeContact(bvhA.node->box, bvhB.node->box, bodyA, bodyB);
+                        // Contact::ComputeContact(bvhA.node->box, bvhB.node->box, bodyA, bodyB);
                     }
                 }
 

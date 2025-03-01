@@ -1,7 +1,6 @@
 #ifndef SKYNET_CAMERA_H
 #define SKYNET_CAMERA_H
 
-#include "Math.h"
 #include "Titan.hpp"
 
 namespace Skynet

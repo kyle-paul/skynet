@@ -1,7 +1,6 @@
 #ifndef SKYNET_RIGID_BODY_H
 #define SKYNET_RIGID_BODY_H
 
-#include "Math.h"
 #include "Timestep.h"
 #include "Titan.hpp"
 

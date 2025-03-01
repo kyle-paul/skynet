@@ -17,18 +17,14 @@ add_executable(${PROJECT_NAME}
 	src/Graphics/Shader.cpp
 	src/Graphics/Texture.cpp
 	src/Graphics/Frame.cpp
-	
-	src/Math/Graphics.cpp
-	src/Math/Vector.cpp
-	src/Math/Matrix.cpp
-	src/Math/Visualize.cpp
-	
+	src/Graphics/Vector.cpp
+	src/Graphics/Point.cpp
+
 	src/Engine/Scene.cpp
 	src/Engine/Camera.cpp
 	src/Engine/Serializer.cpp
 
 	src/Engine/Entity/Mesh.cpp
-	src/Engine/Entity/Vector.cpp
 	src/Engine/Entity/RigidBody.cpp
 	src/Engine/Entity/GenEntity.cpp
 

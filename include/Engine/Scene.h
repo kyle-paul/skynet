@@ -55,12 +55,13 @@ namespace Skynet
         entt::entity selectedEntityID = entt::null;
         entt::registry bodies;
         entt::registry vectors;
+        entt::registry points;
 
         float k = 180.0f;
         float b = 60.0f;
 
-        float light[3] = { -10.0f, -10.0f, 10.0f };
-        float background[4] = {0.15f, 0.15f, 0.15f, 1.0f};
+        titan::vec3 light = {-10.0f, -10.0f, 10.0f};
+        titan::vec4 background = {0.15f, 0.15f, 0.15f, 1.0f};
 
         friend class Global;
         friend class Serializer;

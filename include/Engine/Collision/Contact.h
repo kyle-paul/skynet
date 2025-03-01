@@ -17,7 +17,7 @@ namespace Skynet
 			titan::real depth;
 		};
 
-		void ComputeContact(AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB);
+		void ComputeContact(entt::registry& points, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB);
 
 	} // namespace Contact
 

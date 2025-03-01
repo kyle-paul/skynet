@@ -8,12 +8,6 @@
 
 namespace Skynet
 {
-    /*
-    This class only has one mission of generating verts, 
-    faces for whatever objects. No texture, color holder,
-    no rendering function here.
-    */
-
     struct Triangle
     {
         titan::vec3 points[3];
@@ -35,6 +29,12 @@ namespace Skynet
             std::cout << '\n';
         }
     };
+
+     /*
+    This class only has one mission of generating verts, 
+    faces for whatever objects. No texture, color holder,
+    no rendering function here.
+    */
 
     class Mesh
     {

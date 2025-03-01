@@ -44,4 +44,9 @@ namespace Skynet
         OpenGLRenderer::DrawLine(va);
     }
 
+    void Renderer::DrawPoint(ref<VertexArray>& va)
+    {
+        OpenGLRenderer::DrawPoint(va);
+    }
+
 } // namespace Skynet

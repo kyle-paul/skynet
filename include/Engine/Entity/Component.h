@@ -5,6 +5,7 @@
 #include "System.h"
 #include "Mesh.h"
 #include "Vector.h"
+#include "Point.h"
 #include "RigidBody.h"
 #include "BVHData.h"
 #include "BVHFunc.h"
@@ -133,9 +134,21 @@ namespace Skynet
 
         VectorComp() = default;
         VectorComp(const VectorComp&) = default;
-        VectorComp(float* start, float* end) { 
-            vector.Submit(start, end);
+        VectorComp(titan::vec3 start, titan::vec3 end) { 
+            vector.Submit(start.raw(), end.raw());
             vector.InitGL();
+        }
+    };
+
+    struct PointComp
+    {
+        Point point;
+
+        PointComp() = default;
+        PointComp(const PointComp&) = default;
+        PointComp(titan::vec3 p) { 
+            point.Submit(p.raw());
+            point.InitGL();
         }
     };
 

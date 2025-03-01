@@ -3,6 +3,7 @@
 
 #include "System.h"
 #include "Buffer.h"
+#include "Titan.hpp"
 
 namespace Skynet
 {

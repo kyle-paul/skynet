@@ -8,6 +8,7 @@ namespace Skynet
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_PROGRAM_POINT_SIZE);
     }
 
     void OpenGLRenderer::Shutdown()
@@ -40,8 +41,13 @@ namespace Skynet
     {
         va->Bind();
         glLineWidth(1.0f);
-        glDrawArrays(GL_LINES, 0, 6);
-        glLineWidth(1.0f);
+        glDrawArrays(GL_LINES, 0, 2);
     }   
+
+    void OpenGLRenderer::DrawPoint(ref<VertexArray>& va)
+    {
+        va->Bind();
+        glDrawArrays(GL_POINTS, 0, 1);
+    }
 
 } // namespace Skynet

@@ -176,6 +176,12 @@ namespace Skynet
         ImGui::Separator();
 
         ImGui::PushFont(io.Fonts->Fonts[1]);
+        ImGui::Text("Light control");
+        ImGui::PopFont();
+        DrawVec3Control("light pos", scene->light.raw());
+        ImGui::Separator();
+
+        ImGui::PushFont(io.Fonts->Fonts[1]);
         ImGui::Text("Spring-damper system");
         ImGui::PopFont();
         ImGui::DragFloat("Spring coef", &scene->k);
