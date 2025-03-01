@@ -39,6 +39,11 @@ namespace Skynet
         OpenGLRenderer::Draw(va);
     }
 
+    void Renderer::Draw(ref<VertexArray>& va, int count)
+    {
+        OpenGLRenderer::Draw(va, count);
+    }
+
     void Renderer::DrawLine(ref<VertexArray>& va)
     {
         OpenGLRenderer::DrawLine(va);

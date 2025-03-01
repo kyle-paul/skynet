@@ -37,6 +37,12 @@ namespace Skynet
         glDrawElements(GL_TRIANGLES, va->GetIB()->GetCount(), GL_UNSIGNED_INT, nullptr);
     }
 
+    void OpenGLRenderer::Draw(ref<VertexArray>& va, int count)
+    {
+        va->Bind();
+        glDrawArrays(GL_TRIANGLES, 0, count);
+    }
+
     void OpenGLRenderer::DrawLine(ref<VertexArray>& va)
     {
         va->Bind();

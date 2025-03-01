@@ -17,6 +17,7 @@ namespace Skynet
         static void SetClearColor(float* color);
         static void ClearBufferBit();
         static void Draw(ref<VertexArray>& va);
+        static void Draw(ref<VertexArray>& va, int count);
         static void DrawLine(ref<VertexArray>& va);
         static void DrawPoint(ref<VertexArray>& va);
     };

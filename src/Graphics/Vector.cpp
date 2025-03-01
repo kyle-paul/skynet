@@ -2,18 +2,6 @@
 
 namespace Skynet
 {
-
-    Vector::Vector()
-    {
-
-    }
-
-    Vector::~Vector()
-    {
-
-    }
-
-
     void Vector::Submit(float* start, float* end)
     {
         verts[0] = start[0];

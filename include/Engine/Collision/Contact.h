@@ -3,6 +3,7 @@
 
 #include "Titan.hpp"
 #include "BVHData.h"
+#include "Component.h"
 #include "entt.hpp"
 
 namespace Skynet
@@ -17,7 +18,7 @@ namespace Skynet
 			titan::real depth;
 		};
 
-		void ComputeContact(entt::registry& points, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB);
+		void ComputeContact(PointCloud& cloud, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB);
 
 	} // namespace Contact
 

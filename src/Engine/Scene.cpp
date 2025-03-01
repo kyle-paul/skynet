@@ -37,6 +37,10 @@ namespace Skynet
         bodies.emplace<RigidBodyComp>(ground, BodyType::Static, 100.0f);
         bodies.emplace<BVHComp>(ground, bodies.get<MeshComp>(ground).mesh);
         bodies.get<MeshComp>(ground).mesh->InitGL();
+
+        /* Minkowski point clouds */
+        entt::entity pc = points.create();
+        points.emplace<PointCloud>(pc);
     };
 
     void Scene::OnDetach()
@@ -66,7 +70,7 @@ namespace Skynet
         }
 
         /* Render viewport on texture */
-        ImGui::Image((ImTextureID)(intptr_t)frame->GetColor(), 
+        ImGui::Image((ImTextureID)(intptr_t)frame->GetColor(),
         ImVec2(frame->GetWidth(), frame->GetHeight()), ImVec2(0, 1), ImVec2(1, 0));
 
         /* Global guizmo */
@@ -110,7 +114,7 @@ namespace Skynet
             auto& boxB  = bodies.get<BVHComp>((entt::entity)2).node->box;
             auto& bodyB = bodies.get<RigidBodyComp>((entt::entity)2).body;
 
-            Contact::ComputeContact(points, boxA, boxB, bodyA, bodyB);
+            Contact::ComputeContact(points.get<PointCloud>((entt::entity)0), boxA, boxB, bodyA, bodyB);
         }
 
         if (this->state == SceneState::Play) 
@@ -169,11 +173,11 @@ namespace Skynet
                 Renderer::DrawLine(vector_comp.vector.GetVA());
             }
 
-            auto view2 = points.view<PointComp>();
+            auto view2 = points.view<PointCloud>();
             for (auto& entity : view2)
             {
-                auto& point_comp = view2.get<PointComp>(entity);
-                Renderer::DrawPoint(point_comp.point.GetVA());
+                auto& point_comp = view2.get<PointCloud>(entity);
+                point_comp.Render();
             }
 
             vecshad->Unbind();

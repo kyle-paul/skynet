@@ -1,5 +1,5 @@
 #include "Contact.h"
-#include "Component.h"
+#include "GJKSolver.h"
 
 namespace Skynet
 {
@@ -175,28 +175,11 @@ namespace Skynet
 			ApplyImpulse(bodyA, bodyB, contact);
 		}
 
-		void GJK(entt::registry& points, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
-		{	
-			list<titan::vec3> cornersA = bodyA.GetTransform() * boxA.GetCorners();
-			list<titan::vec3> cornersB = bodyB.GetTransform() * boxB.GetCorners();
-
-			for (titan::vec3& cA : cornersA)
-			{
-				for (titan::vec3& cB : cornersB)
-				{
-					titan::vec3 point = cA - cB;
-
-					entt::entity p = points.create();
-					points.emplace<PointComp>(p, point);
-				}
-			}
-		}
-
-		void ComputeContact(entt::registry& points, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
+		void ComputeContact(PointCloud& cloud, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
 		{
-			points.clear();
-		
-			GJK(points, boxA, boxB, bodyA, bodyB);
+			cloud.Clear();
+			cloud.Add(titan::vec3(0.0f, 0.0f, 0.0f));
+			SimpleSolverGJK(cloud, boxA, boxB, bodyA, bodyB);
 		}
 
 	} // namespace Contact

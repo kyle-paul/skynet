@@ -2,15 +2,9 @@
 
 namespace Skynet
 {
-
-    Point::Point()
+    Point::Point(titan::vec3& p)
     {
-
-    }
-
-    Point::~Point()
-    {
-        
+        this->Submit(p.raw());
     }
 
     void Point::Submit(float* p)
@@ -18,6 +12,8 @@ namespace Skynet
         verts[0] = p[0];
         verts[1] = p[1];
         verts[2] = p[2];
+
+        this->InitGL();
     }
 
     void Point::InitGL()

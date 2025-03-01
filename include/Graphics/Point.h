@@ -10,8 +10,9 @@ namespace Skynet
     class Point
     {
     public:
-        Point();
-        ~Point();
+        Point() = default;
+        Point(titan::vec3& p);
+        ~Point() = default;
 
         void Submit(float* p);
         void InitGL();
@@ -22,7 +23,7 @@ namespace Skynet
         ref<VertexArray> va;
         ref<VertexBuffer> vb;
 
-        float verts[6] = {0.0f, 0.0f, 0.0f};
+        float verts[3];
     };
 
 } // namespace Skynet

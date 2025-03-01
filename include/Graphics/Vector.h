@@ -11,8 +11,8 @@ namespace Skynet
     class Vector
     {
     public:
-        Vector();
-        ~Vector();
+        Vector() = default;
+        ~Vector() = default;
 
         void Submit(float* start, float* end);
         void InitGL();

@@ -13,7 +13,6 @@ enum class APIBackends
 
 namespace Skynet 
 {
-
     /* 
     This class with static functions act as 
     router to different rendering backends 
@@ -29,6 +28,7 @@ namespace Skynet
         static void SetClearColor(float* color);
         static void ClearBufferBit();
         static void Draw(ref<VertexArray>& va);
+        static void Draw(ref<VertexArray>& va, int count);
         static void DrawLine(ref<VertexArray>& va);
         static void DrawPoint(ref<VertexArray>& va);
 

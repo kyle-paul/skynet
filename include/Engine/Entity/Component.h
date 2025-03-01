@@ -148,7 +148,37 @@ namespace Skynet
         PointComp(const PointComp&) = default;
         PointComp(titan::vec3 p) { 
             point.Submit(p.raw());
-            point.InitGL();
+        }
+    };
+
+    struct PointCloud
+    {
+        list<Point> points;
+
+        PointCloud() = default;
+        PointCloud(const PointCloud&) = default;
+
+        void Clear() {
+            points.clear(); 
+        }
+
+        int Length() {
+            return points.size();
+        }
+
+        void Add(titan::vec3 point) {
+            points.push_back(Point(point));
+        }
+
+        void Pop() {
+            points.pop_back();
+        }
+
+        void Render() {
+            for (auto& p : points)
+            {
+                Renderer::DrawPoint(p.GetVA());
+            }
         }
     };
 

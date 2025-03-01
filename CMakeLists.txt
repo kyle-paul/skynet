@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME}
 
 	src/Engine/Collision/BVHFunc.cpp
 	src/Engine/Collision/Contact.cpp
+	src/Engine/Collision/GJKSolver.cpp
 	
 	src/Engine/Interface/Global.cpp
 	src/Engine/Interface/Guizmo.cpp
