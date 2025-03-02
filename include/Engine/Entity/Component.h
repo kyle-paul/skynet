@@ -54,19 +54,14 @@ namespace Skynet
         TransformComp() = default;
         TransformComp(const TransformComp&) = default;
         TransformComp(titan::vec3 p, titan::vec3 e, titan::vec3 s, titan::quat q) 
-            :p(p), e(e), s(s), q(q)
-        {
+            :p(p), e(e), s(s), q(q)  { }
 
-        }
-
-        inline titan::mat4 GetTransform(const RotType& type = RotType::Euler) 
-        {
+        inline titan::mat4 GetTransform(const RotType& type = RotType::Euler) {
             titan::mat4 R;
             switch(type) {
                 case(RotType::Quaternion) : R = q.Quat2T();  break;
                 case(RotType::Euler)      : R = titan::Euler2T(this->e); break;
             }
-
             return titan::Transcale(this->p, this->s) * R;
         }
     };
@@ -154,12 +149,14 @@ namespace Skynet
     struct PointCloud
     {
         list<Point> points;
+        list<Vector> lines;
 
         PointCloud() = default;
         PointCloud(const PointCloud&) = default;
 
         void Clear() {
-            points.clear(); 
+            points.clear();
+            lines.clear();
         }
 
         int Length() {
@@ -170,14 +167,23 @@ namespace Skynet
             points.push_back(Point(point));
         }
 
+        void MakeLines() {
+            for (int i=1; i<points.size(); i++)
+                for (int j=i+1; j<points.size(); j++)
+                    lines.push_back(Vector(points[i].GetPoint(), 
+                                           points[j].GetPoint()));
+        }
+
         void Pop() {
             points.pop_back();
         }
 
         void Render() {
-            for (auto& p : points)
-            {
+            for (auto& p : points) {
                 Renderer::DrawPoint(p.GetVA());
+            }
+            for (auto& v : lines) {
+                Renderer::DrawLine(v.GetVA());
             }
         }
     };
@@ -216,18 +222,14 @@ namespace Skynet
             this->DrawNodes(node, 0);
         }
 
-        void DrawNodes(BVHNode* node, int depth)
-        {
+        void DrawNodes(BVHNode* node, int depth) {
+
             if (node == nullptr || depth >= maxDepth) return;
 
             list<titan::vec3> corners = node->box.GetCorners();
 
-            for (auto& [start, end] : edges)
-            {
-                Vector line;
-                line.Submit(corners[start].raw(), corners[end].raw());
-                line.InitGL();
-                lines.push_back(line);
+            for (auto& [start, end] : edges) {
+                lines.push_back(Vector(corners[start],  corners[end]));
             }
 
             DrawNodes(node->childA, depth + 1);
@@ -235,8 +237,7 @@ namespace Skynet
         }
 
         void Render(const ref<Shader>& shad) {
-            for (Vector& line : lines) 
-            {
+            for (Vector& line : lines) {
                 shad->SetFloat4("color", color.raw());
                 Renderer::DrawLine(line.GetVA());
             }

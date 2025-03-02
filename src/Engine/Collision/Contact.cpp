@@ -179,7 +179,11 @@ namespace Skynet
 		{
 			cloud.Clear();
 			cloud.Add(titan::vec3(0.0f, 0.0f, 0.0f));
-			SimpleSolverGJK(cloud, boxA, boxB, bodyA, bodyB);
+			if (SimpleSolverGJK(cloud, boxA, boxB, bodyA, bodyB)) {
+				INFO("True");
+				cloud.MakeLines();
+			}
+			else INFO("False")
 		}
 
 	} // namespace Contact

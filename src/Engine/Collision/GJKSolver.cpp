@@ -53,7 +53,7 @@ namespace Skynet
         {
             cloud.Pop();
             simplex->count = 2;
-            direction = ABperp;
+            direction = AB ^ AO ^ AB;
         }
         else if (ACperp * AO > 0)
         {
@@ -61,18 +61,20 @@ namespace Skynet
             simplex->count = 2;
             direction = AC ^ AO ^ AC;
         }
+        
+        direction = ABC * AO > 0 ? ABC : -ABC;
     }
 
     bool SolveSimplexTetrahedron(PointCloud& cloud, Simplex* simplex, titan::vec3& direction)
     {
-       titan::vec3 AB = simplex->B - simplex->A;
-       titan::vec3 AC = simplex->C - simplex->A;
-       titan::vec3 AD = simplex->D - simplex->A;
-       titan::vec3 AO = -simplex->A;
+        titan::vec3 AB = simplex->B - simplex->A;
+        titan::vec3 AC = simplex->C - simplex->A;
+        titan::vec3 AD = simplex->D - simplex->A;
+        titan::vec3 AO = -simplex->A;
 
-       titan::vec3 ABC = AB ^ AC;
-       titan::vec3 ACD = AC ^ AD;
-       titan::vec3 ADB = AD ^ AB;
+        titan::vec3 ABC = AB ^ AC;
+        titan::vec3 ACD = AC ^ AD;
+        titan::vec3 ADB = AD ^ AB;
 
         if (ABC * AO > 0)
         {
@@ -113,9 +115,10 @@ namespace Skynet
         int count = 1;
         bool collide = false;
 
-        for (int i=0; i<20; i++) // max iteration if two objects do not collide
+        for (int i=0; i < 20; i++) // max iteration if two objects do not collide
         {
             simplex.count++;
+
             simplex.D = simplex.C;
             simplex.C = simplex.B;
             simplex.B = simplex.A;

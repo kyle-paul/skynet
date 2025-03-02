@@ -10,14 +10,17 @@ namespace Skynet
     class Point
     {
     public:
-        Point() = default;
         Point(titan::vec3& p);
+        Point() = default;
         ~Point() = default;
 
         void Submit(float* p);
         void InitGL();
         
         inline ref<VertexArray>& GetVA() { return va; }
+        inline titan::vec3 GetPoint() const {
+            return titan::vec3(verts);
+        }
 
     private:
         ref<VertexArray> va;

@@ -7,10 +7,11 @@
 
 namespace Skynet
 {
-    
     class Vector
     {
     public:
+        Vector(titan::vec3 start, titan::vec3 end);
+        Vector(float* start, float* end);
         Vector() = default;
         ~Vector() = default;
 
