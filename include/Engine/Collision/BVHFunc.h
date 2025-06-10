@@ -12,7 +12,7 @@ namespace Skynet
 
         void BuildHierarchyTree(BVHNode*& node, const ref<Mesh>& mesh);
 
-        void HierarchySplit(BVHNode*& parent, int depth, int maxDepth);
+        void HierarchySplit(BVHNode*& parent, int depth, int maxDepth, const ref<Mesh>& mesh);
 
         bool IsCollision(titan::vec3& min1, titan::vec3& max1, titan::vec3& min2, titan::vec3& max2);
 

@@ -72,45 +72,38 @@ namespace Skynet
             box->halfExtents = (maxBound - minBound) * 0.5f;
         }
 
-
-        void BuildHierarchyTree(BVHNode*& node, const ref<Mesh>& mesh) {
-            node = new BVHNode();
-            node->box = AABB();
-
-            for (int i = 0; i < (int)mesh->faces.size(); i += 3) {
-                Triangle tri;
-
-                for (int j = 0; j < 3; j++) {
-                    uint32_t idx = mesh->faces[i + j];
-                    tri.points[j] = titan::vec3(mesh->verts[idx * 8 + 0], mesh->verts[idx * 8 + 1], mesh->verts[idx * 8 + 2]);
-                }
-                
-                node->box.Expand(tri);
-                node->triangles.push_back(tri);
+        void BuildHierarchyTree(BVHNode*& root, const ref<Mesh>& mesh) {
+            root = new BVHNode();
+            root->box = AABB();
+            mesh->StoreTriangles();
+            auto& triangles = mesh->triangles; 
+            for(size_t i = 0; i < triangles.size(); i++) {
+                root->box.Expand(triangles[i]);
+                root->triangles.push_back(i);
             }
         }
 
-        void HierarchySplit(BVHNode*& parent, int depth, int maxDepth) {
-            if (parent == nullptr || depth >= maxDepth || parent->triangles.size() == 1) return;
+        void HierarchySplit(BVHNode*& node, int depth, int maxDepth, const ref<Mesh>& mesh) {
+            if (node == nullptr || depth >= maxDepth || node->triangles.size() == 1) return;
 
-            titan::vec3 size = parent->box.GetSize();
+            titan::vec3 size = node->box.GetSize();
             int axis = size[0] > std::max(size[1], size[2]) ? 0 : size[1] > size[2] ? 1 : 2;
-            float pos = parent->box.GetCenter()[axis]; 
+            float pos = node->box.GetCenter()[axis]; 
 
-            parent->childA = new BVHNode();
-            parent->childB = new BVHNode();
+            node->childA = new BVHNode();
+            node->childB = new BVHNode();
 
-            for(Triangle& tri : parent->triangles) {
-                titan::vec3 center = tri.GetCenter();
+            for(auto& index : node->triangles) {
+                titan::vec3 center = mesh->triangles[index].GetCenter();
                 bool inA = center[axis] < pos;
 
-                BVHNode* child = inA ? parent->childA : parent->childB;
-                child->triangles.push_back(tri);
-                child->box.Expand(tri);
+                BVHNode* child = inA ? node->childA : node->childB;
+                child->triangles.push_back(index);
+                child->box.Expand(mesh->triangles[index]);
             }
 
-            HierarchySplit(parent->childA, depth + 1, maxDepth);
-            HierarchySplit(parent->childB, depth + 1, maxDepth);
+            HierarchySplit(node->childA, depth + 1, maxDepth, mesh);
+            HierarchySplit(node->childB, depth + 1, maxDepth, mesh);
         }
 
         bool IsCollision(titan::vec3& min1, titan::vec3& max1, titan::vec3& min2, titan::vec3& max2) {

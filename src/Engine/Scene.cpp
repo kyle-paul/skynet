@@ -152,15 +152,13 @@ namespace Skynet
             vecshad->SetMat4("projview", camera->GetProjView().raw());
 
             auto view1 = vectors.view<VectorComp>();
-            for (auto& entity : view1)
-            {
+            for (auto& entity : view1) {
                 auto& vector_comp = view1.get<VectorComp>(entity);
                 Renderer::DrawLine(vector_comp.vector.GetVA());
             }
 
             auto view2 = points.view<PointCloud>();
-            for (auto& entity : view2)
-            {
+            for (auto& entity : view2) {
                 auto& point_comp = view2.get<PointCloud>(entity);
                 point_comp.Render();
             }
@@ -171,8 +169,7 @@ namespace Skynet
         frame->Unbind();
     }
 
-    void Scene::UpdatePhysics(Timestep* ts)
-    {
+    void Scene::UpdatePhysics(Timestep* ts) {
         /* Simulation integration */
         ODE::EulerStep(bodies, 0, ts->GetSeconds());
 
@@ -180,8 +177,7 @@ namespace Skynet
         BVH::CheckCollision(bodies, this->k, this->b);
     }
 
-    void Scene::EditGuizmo()
-    {
+    void Scene::EditGuizmo() {
         if (selectedEntityID == entt::null) return;
 
         auto& c = bodies.get<RigidBodyComp>(selectedEntityID);

@@ -185,7 +185,7 @@ namespace Skynet
             lines.clear();
 
             BVH::BuildHierarchyTree(root, mesh);
-            BVH::HierarchySplit(root, 0, maxDepth);
+            BVH::HierarchySplit(root, 0, maxDepth, mesh);
             this->DrawNodes(root, 0);
         }
 

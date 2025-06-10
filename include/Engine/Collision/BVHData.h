@@ -99,7 +99,7 @@ namespace Skynet
 
     struct BVHNode {
         AABB box;
-        list<Triangle> triangles;
+        list<uint32_t> triangles;
         BVHNode* childA = nullptr;
         BVHNode* childB = nullptr;
 
@@ -108,7 +108,6 @@ namespace Skynet
             if (childA) delete childA;
             if (childB) delete childB;
         }
-
 
         inline bool IsLeaf() {
             return (!childA && !childB);

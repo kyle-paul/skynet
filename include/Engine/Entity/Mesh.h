@@ -52,6 +52,7 @@ namespace Skynet
         void GenMesh(const std::string& path, const Loader& loader);
         void GenCube(float halfx, float halfy, float halfz);
         void GenSphere(float radius, int sectors=32, int stacks=32);
+        void StoreTriangles();
 
     private:
         /* util functions */
@@ -66,6 +67,7 @@ namespace Skynet
         
         list<float> verts;
         list<uint32_t> faces;
+        list<Triangle> triangles;
 
         ref<VertexArray>  va;
         ref<VertexBuffer> vb;

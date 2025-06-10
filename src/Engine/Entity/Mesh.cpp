@@ -242,6 +242,20 @@ namespace Skynet
         }
     }
 
+    void Mesh::StoreTriangles() {
+        size_t numFacesIndices = faces.size() - 1;
+        size_t idx = 0;
+        triangles.resize(numFacesIndices / 3 + 1);
+
+        for(size_t i = 0; i < numFacesIndices; i += 3) {
+            Triangle& tri = triangles[idx++];
+            for(size_t j = 0; j < 3; j++) {
+                size_t t = faces[i + j];
+                tri.points[j] = titan::vec3(verts[t*8 + 0], verts[t*8 + 1], verts[t*8 + 2]);
+            }
+        }
+    }
+
     std::vector<std::string> Mesh::Split(
         const std::string& line, const std::string& del, 
         std::vector<std::string>& res) 
