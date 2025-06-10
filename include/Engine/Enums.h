@@ -1,5 +1,5 @@
-#ifndef SKYNET_ENUMS_H
-#define SKYNET_ENUMS_H
+#ifndef SKYNET_ENGINE_ENUMS_H
+#define SKYNET_ENGINE_ENUMS_H
 
 #include "System.h"
 
@@ -71,4 +71,4 @@ namespace Skynet
 
 } // namespace Skynet
 
-#endif // SKYNET_ENUMS_H
+#endif // SKYNET_ENGINE_ENUMS_H

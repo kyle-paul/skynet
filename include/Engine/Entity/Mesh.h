@@ -1,5 +1,5 @@
-#ifndef SKYNET_MESH_H
-#define SKYNET_MESH_H
+#ifndef SKYNET_ENGINE_ENTITY_MESH_H
+#define SKYNET_ENGINE_ENTITY_MESH_H
 
 #include "Data.h"
 #include "System.h"
@@ -30,7 +30,7 @@ namespace Skynet
         }
     };
 
-     /*
+    /*
     This class only has one mission of generating verts, 
     faces for whatever objects. No texture, color holder,
     no rendering function here.
@@ -76,4 +76,4 @@ namespace Skynet
 } // namespace Skynet
 
 
-#endif // SKYNET_MESH_H
+#endif // SKYNET_ENGINE_ENTITY_MESH_H

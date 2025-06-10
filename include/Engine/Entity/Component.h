@@ -1,5 +1,5 @@
-#ifndef SKYNET_COMPONENT_H
-#define SKYNET_COMPONENT_H
+#ifndef SKYNET_ENGINE_ENTITY_COMPONENT_H
+#define SKYNET_ENGINE_ENTITY_COMPONENT_H
 
 #include "Data.h"
 #include "System.h"
@@ -15,8 +15,7 @@
 namespace Skynet
 {
 
-    struct LinkTransformComp
-    {
+    struct LinkTransformComp {
         titan::vec3 p_local;
         titan::quat q_local;
 
@@ -43,8 +42,7 @@ namespace Skynet
         inline titan::mat4& GetWorldTransform() { return T; }
     };
 
-    struct TransformComp
-    {
+    struct TransformComp {
         titan::vec3 p;
         titan::vec3 e;
         titan::vec3 s = {1.0f, 1.0f, 1.0f};
@@ -66,8 +64,7 @@ namespace Skynet
         }
     };
 
-    struct RigidBodyComp
-    {
+    struct RigidBodyComp {
         RigidBody body;
         BodyType type;
 
@@ -80,8 +77,7 @@ namespace Skynet
         }
     };
 
-    struct MeshComp
-    {
+    struct MeshComp {
         ref<Mesh> mesh = cref<Mesh>();
         Object type;
 
@@ -89,44 +85,30 @@ namespace Skynet
         MeshComp(const MeshComp&) = default;
 
         template<typename... Args>
-        MeshComp(const Object& type, Args&&... args) : type(type)
-        {
-            switch(type)
-            {
-                case(Object::Mesh):
-                    if constexpr (sizeof...(Args) == 2) {
-                        mesh->GenMesh(std::forward<Args>(args)...);
-                    } else {
-                        ASSERT(false, "Invalid number of arguments for Mesh");
-                    }
+        MeshComp(const Object& type, Args&&... args) : type(type) {
+            switch(type) {
+                case(Object::Mesh): 
+                    if constexpr (sizeof...(Args) == 2) mesh->GenMesh(std::forward<Args>(args)...);
+                    else ASSERT(false, "Invalid number of arguments for Mesh");
                     break;
 
                 case(Object::Cube):
-                    if constexpr (sizeof...(Args) == 3) {
-                        mesh->GenCube(std::forward<Args>(args)...);
-                    } else {
-                        ASSERT(false, "Invalid number of arguments for Cube");
-                    }
+                    if constexpr (sizeof...(Args) == 3) mesh->GenCube(std::forward<Args>(args)...);
+                    else ASSERT(false, "Invalid number of arguments for Cube");
                     break;
 
                 case(Object::Sphere):
-                    if constexpr (sizeof...(Args) == 1) {
-                        mesh->GenSphere(std::forward<Args>(args)...);
-                    } else {
-                        ASSERT(false, "Invalid number of arguments for Sphere");
-                    }
+                    if constexpr (sizeof...(Args) == 1) mesh->GenSphere(std::forward<Args>(args)...);
+                    else ASSERT(false, "Invalid number of arguments for Sphere");
                     break;
 
-                default:
-                    ASSERT(false, "Invalid object type");
+                default: ASSERT(false, "Invalid object type");
             }
         }
     };
 
-    struct VectorComp
-    {
+    struct VectorComp {
         Vector vector;
-
         VectorComp() = default;
         VectorComp(const VectorComp&) = default;
         VectorComp(titan::vec3 start, titan::vec3 end) { 
@@ -135,10 +117,8 @@ namespace Skynet
         }
     };
 
-    struct PointComp
-    {
+    struct PointComp {
         Point point;
-
         PointComp() = default;
         PointComp(const PointComp&) = default;
         PointComp(titan::vec3 p) { 
@@ -146,86 +126,71 @@ namespace Skynet
         }
     };
 
-    struct PointCloud
-    {
+    struct PointCloud {
         list<Point> points;
         list<Vector> lines;
 
         PointCloud() = default;
         PointCloud(const PointCloud&) = default;
 
-        void Clear() {
+        inline void Clear() {
             points.clear();
             lines.clear();
         }
 
-        int Length() {
-            return points.size();
+        inline int Length() {
+            return (int)points.size();
         }
 
-        void Add(titan::vec3 point) {
+        inline void Add(titan::vec3 point) {
             points.push_back(Point(point));
         }
 
-        void MakeLines() {
+        inline void MakeLines() {
             for (int i=1; i<points.size(); i++)
                 for (int j=i+1; j<points.size(); j++)
                     lines.push_back(Vector(points[i].GetPoint(), 
                                            points[j].GetPoint()));
         }
 
-        void Pop() {
+        inline void Pop() {
             points.pop_back();
         }
 
-        void Render() {
-            for (auto& p : points) {
-                Renderer::DrawPoint(p.GetVA());
-            }
-            for (auto& v : lines) {
-                Renderer::DrawLine(v.GetVA());
-            }
+        inline void Render() {
+            for (auto& p : points) Renderer::DrawPoint(p.GetVA());
+            for (auto& v : lines) Renderer::DrawLine(v.GetVA());
         }
     };
 
-    static std::vector<std::pair<int, int>> edges =
-    {
+    static std::vector<std::pair<int, int>> edges = {
         {0, 1}, {1, 3}, {3, 2}, {2, 0},
         {4, 5}, {5, 7}, {7, 6}, {6, 4},
         {0, 4}, {1, 5}, {3, 7}, {2, 6}
     };
 
-    struct BVHComp
-    {
-        BVHNode* node = nullptr;
-        list<Vector> lines;
-
+    struct BVHComp {
         int maxDepth = 1;
+        BVHNode* root = nullptr;
+        list<Vector> lines;
         titan::vec4 color = {1.0f, 0.0f, 0.0f, 1.0f};
 
         BVHComp() = default;
         BVHComp(const ref<Mesh>& mesh) {
-            compute(mesh);
+            Compute(mesh);
         }
 
-        void compute(const ref<Mesh>& mesh)
-        {
-            if (node) {
-                delete node;
-                node = nullptr;
-            }
-
+        inline void Compute(const ref<Mesh>& mesh) {
+            if (root) delete root;
             lines.clear();
 
-            BVH::BuildHierarchyTree(node, mesh);
-            BVH::HierarchySplit(node, 0, maxDepth);
-            this->DrawNodes(node, 0);
+            BVH::BuildHierarchyTree(root, mesh);
+            BVH::HierarchySplit(root, 0, maxDepth);
+            this->DrawNodes(root, 0);
         }
 
-        void DrawNodes(BVHNode* node, int depth) {
-
-            if (node == nullptr || depth >= maxDepth) return;
-
+        inline void DrawNodes(BVHNode* node, int depth) {
+            if (!node || depth >= maxDepth) return;
             list<titan::vec3> corners = node->box.GetCorners();
 
             for (auto& [start, end] : edges) {
@@ -236,7 +201,7 @@ namespace Skynet
             DrawNodes(node->childB, depth + 1);
         }
 
-        void Render(const ref<Shader>& shad) {
+        inline void Render(const ref<Shader>& shad) {
             for (Vector& line : lines) {
                 shad->SetFloat4("color", color.raw());
                 Renderer::DrawLine(line.GetVA());
@@ -244,19 +209,15 @@ namespace Skynet
         }
     };
 
-    struct TextureComp
-    {
+    struct TextureComp {
         float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-
         TextureComp() = default;
         TextureComp(const TextureComp&) = default;
         TextureComp(const float* c) { std::copy(c, c + 4, this->color); }
     };
 
-    struct TagComp
-    {
+    struct TagComp {
         std::string tag;
-
         TagComp() = default;
         TagComp(const TagComp&) = default;
         TagComp(const std::string& tag) : tag(tag) { }
@@ -265,4 +226,4 @@ namespace Skynet
 } // namespace Skynet
 
 
-#endif // SKYNET_COMPONENT_H
+#endif // SKYNET_ENGINE_ENTITY_COMPONENT_H

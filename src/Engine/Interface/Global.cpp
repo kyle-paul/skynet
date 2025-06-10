@@ -9,8 +9,7 @@
 
 namespace Skynet
 {
-    static void DrawVec3Control(const std::string& label, float* values, float reset = 0.0f, float speed = 0.1f, float width = 120.0f)
-    {
+    static void DrawVec3Control(const std::string& label, float* values, float reset = 0.0f, float speed = 0.1f, float width = 120.0f) {
         ImGuiIO &io = ImGui::GetIO();
         auto boldFont = io.Fonts->Fonts[1];
 
@@ -67,21 +66,15 @@ namespace Skynet
     }
 
 
-    Global::Global(Scene* scene) : scene(scene)
-    {
+    Global::Global(Scene* scene) : scene(scene) {
         serializer.SetScene(scene);
-
         iconPlay = cref<Texture2D>("../assets/gui/icons/play_button.png");
         iconEdit = cref<Texture2D>("../assets/gui/icons/stop_button.png");
     }
 
-    Global::~Global()
-    {
-        
-    }
+    Global::~Global() { }
 
-    void Global::OnRender()
-    {        
+    void Global::OnRender() {        
         this->RenderMenubar();
         this->RenderEnvironment();
         this->RenderObjectSetting();
@@ -90,53 +83,43 @@ namespace Skynet
         this->browser.OnRender();
     }
 
-    void Global::RenderMenubar()
-    {
-        if (ImGui::BeginMenuBar()) 
-        {
-            if (ImGui::BeginMenu("File")) 
-            {
-                if (ImGui::MenuItem("Open file", "Ctrl+O")) 
-                {
+    void Global::RenderMenubar() {
+        if (ImGui::BeginMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Open file", "Ctrl+O")) {
                     IGFD::FileDialogConfig config; config.path = ".";
                     ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose file", ".xml", config);
                     action = Action::OpenFile;
                 }
 
-                if (ImGui::MenuItem("Open scene", "Ctrl+L")) 
-                {
+                if (ImGui::MenuItem("Open scene", "Ctrl+L")) {
                     IGFD::FileDialogConfig config; config.path = ".";
                     ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose a directory", ".skynet", config);
                     action = Action::OpenScene;
                 }
 
-                if (ImGui::MenuItem("Save scene", "Ctrl+S")) 
-                {
+                if (ImGui::MenuItem("Save scene", "Ctrl+S")) {
                     IGFD::FileDialogConfig config; config.path = ".";
                     ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose a directory", ".skynet", config);
                     action = Action::SaveScene;
                 }
 
-                if (ImGui::MenuItem("Clear scene", "Ctrl+L")) 
-                {
+                if (ImGui::MenuItem("Clear scene", "Ctrl+L")) {
 
                 }
 
-                if (ImGui::MenuItem("Exit")) 
-                {
+                if (ImGui::MenuItem("Exit")) {
 
                 }
 
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu("Edit")) 
-            {    
+            if (ImGui::BeginMenu("Edit")) {
                 ImGui::EndMenu();   
             }
 
-            if (ImGui::BeginMenu("Help")) 
-            {
+            if (ImGui::BeginMenu("Help")) {
                 ImGui::MenuItem("Tutorials");
                 ImGui::MenuItem("Documentation");
                 ImGui::MenuItem("About");
@@ -146,10 +129,8 @@ namespace Skynet
         }
 
         // Open Dialog
-        if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) 
-        {
-            if (ImGuiFileDialog::Instance()->IsOk()) 
-            {
+        if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
+            if (ImGuiFileDialog::Instance()->IsOk()) {
                 std::string path = ImGuiFileDialog::Instance()->GetFilePathName();
                 std::string ext = path.substr(path.find_last_of('.') + 1);
 
@@ -160,11 +141,9 @@ namespace Skynet
             }
             ImGuiFileDialog::Instance()->Close();
         }
-
     }
 
-    void Global::RenderEnvironment()
-    {
+    void Global::RenderEnvironment() {
         ImGuiIO &io = ImGui::GetIO();
         ImGui::Begin("Setting");
 
@@ -197,22 +176,17 @@ namespace Skynet
         {
             ImGui::Begin("Object Hierarchy");
 
-            scene->bodies.each([&](auto entityID)
-            {
+            scene->bodies.each([&](auto entityID) {
                 this->DrawEntityNode(entityID);
             });
 
-            if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) 
-            {
+            if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {
                 scene->selectedEntityID = entt::null;
             }
 
-            if (ImGui::BeginPopupContextWindow(0, 1)) 
-            {
-                if (ImGui::BeginMenu("Create shape")) 
-                {
-                    if (ImGui::MenuItem("cube")) 
-                    {
+            if (ImGui::BeginPopupContextWindow(0, 1)) {
+                if (ImGui::BeginMenu("Create shape")) {
+                    if (ImGui::MenuItem("cube")) {
                         entt::entity body = scene->bodies.create();
                         scene->bodies.emplace<MeshComp>(body, Object::Cube, 0.5f, 0.5f, 0.5f);
                         scene->bodies.emplace<TagComp>(body, "cube");
@@ -222,8 +196,7 @@ namespace Skynet
                         scene->bodies.get<MeshComp>(body).mesh->InitGL();
                     }
 
-                    if (ImGui::MenuItem("sphere")) 
-                    {
+                    if (ImGui::MenuItem("sphere")) {
                         entt::entity body = scene->bodies.create();
                         scene->bodies.emplace<MeshComp>(body, Object::Sphere, 0.5f);
                         scene->bodies.emplace<TagComp>(body, "sphere");
@@ -239,37 +212,24 @@ namespace Skynet
                     ImGui::EndMenu();
                 }
 
-                if (ImGui::MenuItem("Create camera")) 
-                {
-
-                }
-
-                if (ImGui::MenuItem("Create light")) 
-                {
-
-                }
+                if (ImGui::MenuItem("Create camera")) { }
+                if (ImGui::MenuItem("Create light")) { }
                 ImGui::EndPopup();
             }
-
             ImGui::End();
         }
-
 
         /* Properties panel */
         {
             ImGui::Begin("Properties");
-
-            if (scene->selectedEntityID != entt::null)
-            {
-                this->DisplayProperties(scene->selectedEntityID);
+            if (scene->selectedEntityID != entt::null) {
+                this->DisplayProperties(scene->selectedEntityID);                
             }
-
             ImGui::End();
         }
     }
 
-    void Global::DrawEntityNode(entt::entity entityID)
-    {
+    void Global::DrawEntityNode(entt::entity entityID) {
         auto& tc = scene->bodies.get<TagComp>(entityID);
         ImGui::Text("%s", tc.tag.c_str());
 
@@ -277,52 +237,41 @@ namespace Skynet
         flags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entityID, flags, "%s", tc.tag.c_str());
-
         if (ImGui::IsItemClicked()) scene->selectedEntityID = entityID;
-
-        if (opened)
-        {
-            ImGui::TreePop();
-        } 
+        if (opened) ImGui::TreePop();
     }
 
-    void Global::DisplayProperties(entt::entity entityID)
-    {
+    void Global::DisplayProperties(entt::entity entityID) {
         ImGuiIO &io = ImGui::GetIO();
     
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(9.0f, 9.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(9.0f, 9.0f));
         
-        if (scene->bodies.has<TagComp>(entityID))
-        {
+        if (scene->bodies.has<TagComp>(entityID)) {
             auto& c = scene->bodies.get<TagComp>(entityID);
             char buffer[256];
 
             memset(buffer, 0, sizeof(buffer));
             strcpy(buffer, c.tag.c_str());
 
-            if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
-            {
+            if (ImGui::InputText("##Tag", buffer, sizeof(buffer))) {
                 c.tag = std::string(buffer);
             }
 
             ImGui::Separator();
         }
 
-        if (scene->bodies.has<TextureComp>(entityID))
-        {
+        if (scene->bodies.has<TextureComp>(entityID)) {
             ImGui::PushFont(io.Fonts->Fonts[1]);
             ImGui::Text("Texture component");
             ImGui::PopFont();
 
             auto& c = scene->bodies.get<TextureComp>(entityID);
             ImGui::ColorEdit4("Color", c.color);
-
             ImGui::Separator();
         }
 
-        if (scene->bodies.has<RigidBodyComp>(entityID))
-        {
+        if (scene->bodies.has<RigidBodyComp>(entityID)) {
             ImGui::PushFont(io.Fonts->Fonts[1]);
             ImGui::Text("Rigidbody component");
             ImGui::PopFont();
@@ -332,18 +281,14 @@ namespace Skynet
             const char* options[] = { "Static", "Dynamic" };
             const char* curString = BodyTypeToString(c.type).c_str();
 
-            if (ImGui::BeginCombo("Body Type", curString))
-            {
-                for (int n = 0; n < IM_ARRAYSIZE(options); n++)
-                {
+            if (ImGui::BeginCombo("Body Type", curString)) {
+                for (int n = 0; n < IM_ARRAYSIZE(options); n++) {
                     bool isSelected = (curString == options[n]);
-                    if (ImGui::Selectable(options[n], isSelected))
-                    {
+                    if (ImGui::Selectable(options[n], isSelected)) {
                         curString = options[n];
                         c.type = StringToBodyType(options[n]);
                     }
-                    if (isSelected)
-                        ImGui::SetItemDefaultFocus();
+                    if (isSelected) ImGui::SetItemDefaultFocus();
                 }
                 ImGui::EndCombo();
             }
@@ -354,8 +299,7 @@ namespace Skynet
             ImGui::Separator();
         }
 
-        if (scene->bodies.has<BVHComp>(entityID))
-        {
+        if (scene->bodies.has<BVHComp>(entityID)) {
             ImGui::PushFont(io.Fonts->Fonts[1]);
             ImGui::Text("Collision component");
             ImGui::PopFont();
@@ -368,9 +312,8 @@ namespace Skynet
             ImGui::InputInt("##TreeDepth", &bvh_comp.maxDepth);
 
             ImGui::SameLine();
-            if (ImGui::Button("Compute BVH"))
-            {
-                bvh_comp.compute(scene->bodies.get<MeshComp>(entityID).mesh);
+            if (ImGui::Button("Compute BVH")) {
+                bvh_comp.Compute(scene->bodies.get<MeshComp>(entityID).mesh);
             }
 
             ImGui::ColorEdit4("BVH Color", bvh_comp.color.raw());
@@ -381,8 +324,7 @@ namespace Skynet
         ImGui::PopStyleVar(2);
     }
 
-    void Global::RenderToolBar()
-    {
+    void Global::RenderToolBar() {
         ref<Texture2D> icon = scene->state == SceneState::Edit ? iconPlay : iconEdit;
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -410,14 +352,8 @@ namespace Skynet
                               (ImTextureID)(uintptr_t)(icon->GetTextureID()), 
                               ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1))) 
         {
-            if (scene->state == SceneState::Edit) 
-            {
-                scene->state = SceneState::Play;
-            }
-            else if (scene->state == SceneState::Play) 
-            {
-                scene->state = SceneState::Edit;
-            }
+            if (scene->state == SceneState::Edit) scene->state = SceneState::Play;
+            else if (scene->state == SceneState::Play) scene->state = SceneState::Edit;
         }
 
         ImGui::PopStyleVar(2);
@@ -425,10 +361,8 @@ namespace Skynet
         ImGui::End();
     }
 
-    void Global::RenderExperiment()
-    {
+    void Global::RenderExperiment() {
         ImGui::Begin("Scenario Experiemnt");
-
         ImGui::End();
     }   
 

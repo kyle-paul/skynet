@@ -12,18 +12,15 @@ namespace Skynet
 		ERROR("GLFW Error ({}): {}", code, description);
 	}
 
-    WindowGLFW::WindowGLFW(const WindowProps& props) 
-    {
+    WindowGLFW::WindowGLFW(const WindowProps& props) {
         this->Init(props);
     }
 
-	WindowGLFW::~WindowGLFW() 
-	{
+	WindowGLFW::~WindowGLFW() {
 		this->Shutdown();
 	}
 
-    void WindowGLFW::Init(const WindowProps& props)
-    {
+    void WindowGLFW::Init(const WindowProps& props) {
         config.title  = props.title;
 		config.width  = props.width;
 		config.height = props.height;
@@ -47,8 +44,7 @@ namespace Skynet
 		this->SetVSync(true);
 
 		// Resize window callback
-		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
-		{
+		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height) {
 			WindowConfig &t_windowConfig = *(WindowConfig*)glfwGetWindowUserPointer(window);
 			WindowResizeEvent event(width, height);
 			t_windowConfig.callback(event);
@@ -57,32 +53,29 @@ namespace Skynet
 		});
 
 		/* Close window callback */
-		glfwSetWindowCloseCallback(window, [](GLFWwindow* window){
+		glfwSetWindowCloseCallback(window, [](GLFWwindow* window) {
 			WindowConfig &t_windowConfig = *(WindowConfig*)glfwGetWindowUserPointer(window);
 			WindowCloseEvent event;
 			t_windowConfig.callback(event);
 		});
 
 		/* Key callback */
-		glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
+		glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
 			WindowConfig &t_windowConfig = *(WindowConfig*)glfwGetWindowUserPointer(window);
 			switch(action) {
-				case GLFW_PRESS:
-				{
+				case GLFW_PRESS: {
 					KeyPressedEvent event(key, 0);
 					t_windowConfig.callback(event);
 					break;
 				}
 					
-				case GLFW_RELEASE:
-				{
+				case GLFW_RELEASE: {
 					KeyReleasedEvent event(key);
 					t_windowConfig.callback(event);
 					break;
 				}
 					
-				case GLFW_REPEAT: 
-				{
+				case GLFW_REPEAT: {
 					KeyPressedEvent event(key, 1);
 					t_windowConfig.callback(event);
 					break;
@@ -94,14 +87,12 @@ namespace Skynet
 		glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods){
 			WindowConfig &t_windowConfig = *(WindowConfig*)glfwGetWindowUserPointer(window);
 			switch(action) {
-				case GLFW_PRESS:
-				{
+				case GLFW_PRESS: {
 					MouseButtonPressedEvent event(button);
 					t_windowConfig.callback(event);
 					break;
 				}
-				case GLFW_RELEASE:
-				{
+				case GLFW_RELEASE: {
 					MouseButtonReleasedEvent event(button);
 					t_windowConfig.callback(event);
 					break;
@@ -110,14 +101,14 @@ namespace Skynet
 		});
 
 		/* Mouse scroll callback */
-		glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset){
+		glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
 			WindowConfig &t_windowConfig = *(WindowConfig*)glfwGetWindowUserPointer(window);
 			MouseScrolledEvent event((float)xoffset, (float)yoffset);
 			t_windowConfig.callback(event);
 		});
 
 		/* Cursor callback */
-		glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos){
+		glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos) {
 			WindowConfig &t_windowConfig = *(WindowConfig*)glfwGetWindowUserPointer(window);
 			MouseMovedEvent event(xpos, ypos);
 			t_windowConfig.callback(event);
@@ -136,11 +127,8 @@ namespace Skynet
 	}
 
 	void WindowGLFW::SetVSync(bool enabled) {
-		if (enabled)
-			glfwSwapInterval(1);
-		else
-			glfwSwapInterval(0);
-
+		if (enabled) glfwSwapInterval(1);
+		else glfwSwapInterval(0);
 		config.vsync = enabled;
 	}
 

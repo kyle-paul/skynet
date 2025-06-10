@@ -10,18 +10,15 @@
 namespace Skynet
 {
 
-    Scene::Scene()
-    {
+    Scene::Scene() {
         
     }
     
-    Scene::~Scene()
-    {
+    Scene::~Scene() {
 
     }
 
-    void Scene::OnAttach()
-    {
+    void Scene::OnAttach() {
         frame = cref<Frame>();
         camera = cref<Camera>();
         guizmo = cref<Guizmo>();
@@ -43,13 +40,11 @@ namespace Skynet
         points.emplace<PointCloud>(pc);
     };
 
-    void Scene::OnDetach()
-    {
+    void Scene::OnDetach() {
 
     };
 
-    void Scene::OnRender()
-    {
+    void Scene::OnRender() {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
         ImGui::Begin("Viewport");
 
@@ -57,13 +52,11 @@ namespace Skynet
         ImVec2 viewportPos = ImGui::GetCursorScreenPos();
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
-        if (viewportSize.x > 0 && viewportSize.y > 0) 
-        {
+        if (viewportSize.x > 0 && viewportSize.y > 0)  {
             uint32_t width = (uint32_t)viewportSize.x;
             uint32_t height = (uint32_t)viewportSize.y;
 
-            if (frame->GetWidth() != width || frame->GetHeight() != height) 
-            {
+            if (frame->GetWidth() != width || frame->GetHeight() != height) {
                 frame->Resize(width, height);
                 camera->aspect = viewportSize.x / viewportSize.y;
             }
@@ -84,12 +77,10 @@ namespace Skynet
         this->EditGuizmo();
 
         /* Drag and drop browser content */ 
-        if (ImGui::BeginDragDropTarget())
-        {
+        if (ImGui::BeginDragDropTarget()) {
             const ImGuiPayload *object_payload = ImGui::AcceptDragDropPayload("OBJECT_ITEM");
         
-            if (object_payload != nullptr && object_payload->Data != nullptr)
-            {
+            if (object_payload != nullptr && object_payload->Data != nullptr) {
                 std::string path(static_cast<const char*>(object_payload->Data), object_payload->DataSize - 1);
                 Entity::GenerateEntity(bodies, path.substr(path.find_last_of("/\\") + 1), path);
             }
@@ -101,30 +92,25 @@ namespace Skynet
         ImGui::PopStyleVar();
     };
 
-    void Scene::OnUpdate(Timestep* ts)
-    {
+    void Scene::OnUpdate(Timestep* ts) {
         this->UpdateVisualize();
         
         /* Check contact */
-        if (bodies.size() == 3)
-        {
-            auto& boxA  = bodies.get<BVHComp>((entt::entity)1).node->box;
+        if (bodies.size() == 3) {
+            auto& boxA  = bodies.get<BVHComp>((entt::entity)1).root->box;
             auto& bodyA = bodies.get<RigidBodyComp>((entt::entity)1).body;
 
-            auto& boxB  = bodies.get<BVHComp>((entt::entity)2).node->box;
+            auto& boxB  = bodies.get<BVHComp>((entt::entity)2).root->box;
             auto& bodyB = bodies.get<RigidBodyComp>((entt::entity)2).body;
 
             Contact::ComputeContact(points.get<PointCloud>((entt::entity)0), boxA, boxB, bodyA, bodyB);
         }
 
-        if (this->state == SceneState::Play) 
-            this->UpdatePhysics(ts);
+        if (this->state == SceneState::Play) this->UpdatePhysics(ts);
     };
 
-    void Scene::UpdateVisualize()
-    {
+    void Scene::UpdateVisualize() {
         camera->UpdateProjView();
-
         frame->Bind();
             
         Renderer::SetClearColor(background.raw());
@@ -137,8 +123,7 @@ namespace Skynet
             shader->SetFloat3("light", light.raw());
 
             auto view = bodies.view<RigidBodyComp, MeshComp, BVHComp, TextureComp>();
-            for (auto& entity : view)
-            {
+            for (auto& entity : view) {
                 auto& rigid_comp   = view.get<RigidBodyComp>(entity);
                 auto& mesh_comp    = view.get<MeshComp>(entity);
                 auto& texture_comp = view.get<TextureComp>(entity);
@@ -197,8 +182,7 @@ namespace Skynet
 
     void Scene::EditGuizmo()
     {
-        if (selectedEntityID == entt::null) 
-            return;
+        if (selectedEntityID == entt::null) return;
 
         auto& c = bodies.get<RigidBodyComp>(selectedEntityID);
         titan::mat4 T = c.body.GetTransform();
@@ -206,13 +190,11 @@ namespace Skynet
         ImGuizmo::Manipulate(camera->GetView().raw(), camera->GetProjection().raw(), 
                             (ImGuizmo::OPERATION)typeGuizmo, ImGuizmo::LOCAL, T.raw());
         
-        if (state == SceneState::Edit && ImGuizmo::IsUsing) {
+        if (state == SceneState::Edit && ImGuizmo::IsUsing)
             titan::Decompose(T, c.body.x, c.body.s, c.body.e);
-        }
     }
 
-    void Scene::OnEvent(Event& event)
-    {
+    void Scene::OnEvent(Event& event) {
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(Scene::OnKeyPressed));
         dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(Scene::OnMouseMoveEvent));
@@ -220,57 +202,42 @@ namespace Skynet
         dispatcher.Dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FUNCTION(Scene::OnMouseReleasedEvent));
     };
 
-    bool Scene::OnKeyPressed(KeyPressedEvent& event)
-    {
+    bool Scene::OnKeyPressed(KeyPressedEvent& event) {
         if (event.IsRepeat()) return false;
-
-        switch(event.GetKeyCode())
-        {
+        switch(event.GetKeyCode()) {
             case(Key::T) : typeGuizmo = ImGuizmo::OPERATION::TRANSLATE; break;
             case(Key::R) : typeGuizmo = ImGuizmo::OPERATION::ROTATE; break;
             case(Key::S) : typeGuizmo = ImGuizmo::OPERATION::SCALE; break;
             case(Key::Q) : typeGuizmo = 0; break;
         }
-
         return true;
     }
 
-    bool Scene::OnMouseMoveEvent(MouseMovedEvent& event)
-    {
-        if (Input::IsKeyPressed(Key::LeftShift) && Input::IsMouseButtonPressed(Mouse::ButtonLeft))
-        {
+    bool Scene::OnMouseMoveEvent(MouseMovedEvent& event) {
+        if (Input::IsKeyPressed(Key::LeftShift) && Input::IsMouseButtonPressed(Mouse::ButtonLeft)) {
             auto [xpos, ypos] = Input::GetMousePos();
-
-            if (firstLeft)
-            {
+            if (firstLeft) {
                 lastx = xpos;
                 lasty = ypos;
-
                 firstLeft = false;
             }
             
             camera->e[1] += 0.01f * (xpos - lastx);
             camera->e[0] += 0.01f * (ypos - lasty);
-
             lastx = xpos;
             lasty = ypos;
         }
 
-        else if (Input::IsKeyPressed(Key::LeftShift) && Input::IsMouseButtonPressed(Mouse::ButtonRight))
-        {
+        else if (Input::IsKeyPressed(Key::LeftShift) && Input::IsMouseButtonPressed(Mouse::ButtonRight)) {
             auto [xpos, ypos] = Input::GetMousePos();
-
-            if (firstRight)
-            {
+            if (firstRight) {
                 lastx = xpos;
                 lasty = ypos;
-
                 firstRight = false;
             }
 
             camera->p[0] -= 0.01f * (xpos - lastx);
             camera->p[1] += 0.01f * (ypos - lasty);
-
             lastx = xpos;
             lasty = ypos;
         }
@@ -278,14 +245,12 @@ namespace Skynet
         return true;
     }
 
-    bool Scene::OnMouseScrollEvent(MouseScrolledEvent& event)
-    {
+    bool Scene::OnMouseScrollEvent(MouseScrolledEvent& event) {
         camera->p[2] += -0.1f * event.GetYOffset();
         return true;
     }
 
-    bool Scene::OnMouseReleasedEvent(MouseButtonReleasedEvent& event)
-    {
+    bool Scene::OnMouseReleasedEvent(MouseButtonReleasedEvent& event) {
         firstLeft = true;
         firstRight = true;
         return true;

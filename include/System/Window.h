@@ -6,11 +6,9 @@
 
 namespace Skynet
 {
-    struct WindowProps
-	{
+    struct WindowProps {
 		uint32_t width;
 		uint32_t height;
-	
     	std::string title;
 
 		WindowProps(const std::string& title = "Physics-based Graphics Simulation",
@@ -23,14 +21,10 @@ namespace Skynet
 	};
 
     /* Interface window abstraction for cross platform*/
-    class Window
-    {
+    class Window {
 	public:
-	
         using EventCallbackFn = std::function<void(Event&)>;
-
         virtual ~Window() = default;
-
 		virtual void OnUpdate() = 0;
 
         virtual void SetEventCallback(const EventCallbackFn& callback) = 0;

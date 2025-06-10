@@ -5,9 +5,7 @@
 
 namespace Skynet
 {
-
-    class LayerStack
-    {
+    class LayerStack {
     public:
         LayerStack() = default;
         ~LayerStack();

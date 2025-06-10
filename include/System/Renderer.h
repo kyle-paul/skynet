@@ -4,8 +4,7 @@
 #include "System.h"
 #include "Buffer.h"
 
-enum class APIBackends
-{
+enum class APIBackends {
     OpenGL  = 0,
     Vulkan  = 1,
     DirectX = 2,
@@ -18,8 +17,7 @@ namespace Skynet
     router to different rendering backends 
     */
 
-    class Renderer
-    {
+    class Renderer {
     public:
         static void Init();
         static void Shutdown();

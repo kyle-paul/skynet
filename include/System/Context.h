@@ -3,8 +3,7 @@
 
 namespace Skynet 
 {
-    class Context 
-    {
+    class Context {
     public:
         virtual ~Context() = default;
         virtual void Init() = 0;

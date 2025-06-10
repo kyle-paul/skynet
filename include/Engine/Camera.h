@@ -1,12 +1,11 @@
-#ifndef SKYNET_CAMERA_H
-#define SKYNET_CAMERA_H
+#ifndef SKYNET_ENGINE_CAMERA_H
+#define SKYNET_ENGINE_CAMERA_H
 
 #include "Titan.hpp"
 
 namespace Skynet
 {
-    class Camera
-    {
+    class Camera {
     public:
         Camera();
         ~Camera();
@@ -40,4 +39,4 @@ namespace Skynet
 } // namespace Skynet
 
 
-#endif // SKYNET_CAMERA_H
+#endif // SKYNET_ENGINE_CAMERA_H

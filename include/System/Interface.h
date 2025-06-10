@@ -5,9 +5,7 @@
 
 namespace Skynet
 {
-    
-    class Interface : public Layer
-    {
+    class Interface : public Layer {
     public:
         Interface();
         ~Interface();

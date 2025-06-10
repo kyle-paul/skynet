@@ -2,8 +2,7 @@
 
 namespace Skynet
 {
-    class InputGLFW : public Input
-    {
+    class InputGLFW : public Input {
     protected:
         virtual bool IsKeyPressedImpl(uint16_t keycode) override;
         virtual bool IsMouseButtonPressedImpl(uint16_t button) override;

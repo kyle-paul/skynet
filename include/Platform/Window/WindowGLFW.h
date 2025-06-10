@@ -8,8 +8,7 @@
 
 namespace Skynet
 {
-    class WindowGLFW : public Window
-    {
+    class WindowGLFW : public Window {
     public:
         WindowGLFW(const WindowProps& props);
 		~WindowGLFW();
@@ -37,8 +36,7 @@ namespace Skynet
         GLFWwindow* window;
         Context* context;
 
-        struct WindowConfig
-		{
+        struct WindowConfig {
 			bool vsync;
 			std::string title;
 			uint32_t width, height;

@@ -2,8 +2,7 @@
 #include "Scene.h"
 #include "Global.h"
 
-int main(int argc, char** argv)  
-{
+int main(int argc, char** argv) {
     SUCCESS("Start application");
     auto app = Skynet::CreateApplication();
 

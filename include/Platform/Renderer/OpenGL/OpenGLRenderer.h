@@ -6,9 +6,7 @@
 
 namespace Skynet
 {
-
-    class OpenGLRenderer
-    {
+    class OpenGLRenderer {
     public:
         static void Init();
         static void Shutdown();

@@ -4,18 +4,15 @@
 namespace Skynet
 {
     
-    Frame::Frame() 
-    {
+    Frame::Frame() {
         this->Init();
     }
 
-    Frame::~Frame() 
-    {
+    Frame::~Frame() {
         glDeleteFramebuffers(1, &fbo);
     }
 
-    void Frame::Init() 
-    {
+    void Frame::Init() {
         glCreateFramebuffers(1, &fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -36,18 +33,15 @@ namespace Skynet
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void Frame::Bind() const 
-    {
+    void Frame::Bind() const {
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     }
 
-    void Frame::Unbind() const 
-    {
+    void Frame::Unbind() const {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void Frame::Resize(uint32_t &width, uint32_t &height) 
-    {
+    void Frame::Resize(uint32_t &width, uint32_t &height) {
         this->width = width;
         this->height = height;
 

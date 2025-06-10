@@ -1,0 +1,8 @@
+/home/paul/dev/graphics/libs/glfw-build/install/lib/libglfw3.a
+/home/paul/dev/graphics/libs/glfw-build/install/include/GLFW/glfw3native.h
+/home/paul/dev/graphics/libs/glfw-build/install/include/GLFW/glfw3.h
+/home/paul/dev/graphics/libs/glfw-build/install/lib/cmake/glfw3/glfw3Config.cmake
+/home/paul/dev/graphics/libs/glfw-build/install/lib/cmake/glfw3/glfw3ConfigVersion.cmake
+/home/paul/dev/graphics/libs/glfw-build/install/lib/cmake/glfw3/glfw3Targets.cmake
+/home/paul/dev/graphics/libs/glfw-build/install/lib/cmake/glfw3/glfw3Targets-noconfig.cmake
+/home/paul/dev/graphics/libs/glfw-build/install/lib/pkgconfig/glfw3.pc

@@ -17,8 +17,6 @@ add_executable(${PROJECT_NAME}
 	src/Graphics/Shader.cpp
 	src/Graphics/Texture.cpp
 	src/Graphics/Frame.cpp
-	src/Graphics/Vector.cpp
-	src/Graphics/Point.cpp
 
 	src/Engine/Scene.cpp
 	src/Engine/Camera.cpp
@@ -27,6 +25,8 @@ add_executable(${PROJECT_NAME}
 	src/Engine/Entity/Mesh.cpp
 	src/Engine/Entity/RigidBody.cpp
 	src/Engine/Entity/GenEntity.cpp
+	src/Engine/Entity/Vector.cpp
+	src/Engine/Entity/Point.cpp
 
 	src/Engine/Solver/ODE.cpp
 

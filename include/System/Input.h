@@ -5,8 +5,7 @@
 
 namespace Skynet 
 {
-    class Input
-    {
+    class Input {
     public:
         virtual ~Input() = default;
 

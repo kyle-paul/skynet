@@ -1,0 +1,7 @@
+/home/paul/dev/graphics/libs/tinyxml2-build/install/lib/libtinyxml2.a
+/home/paul/dev/graphics/libs/tinyxml2-build/install/lib/cmake/tinyxml2/tinyxml2-static-targets.cmake
+/home/paul/dev/graphics/libs/tinyxml2-build/install/lib/cmake/tinyxml2/tinyxml2-static-targets-noconfig.cmake
+/home/paul/dev/graphics/libs/tinyxml2-build/install/lib/cmake/tinyxml2/tinyxml2-config.cmake
+/home/paul/dev/graphics/libs/tinyxml2-build/install/lib/cmake/tinyxml2/tinyxml2-config-version.cmake
+/home/paul/dev/graphics/libs/tinyxml2-build/install/include/tinyxml2.h
+/home/paul/dev/graphics/libs/tinyxml2-build/install/lib/pkgconfig/tinyxml2.pc

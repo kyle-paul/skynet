@@ -3,7 +3,6 @@
 
 namespace Skynet
 {
-
     scope<Window> Window::Create(const WindowProps& props) {
         return cscope<WindowGLFW>(props);
     }

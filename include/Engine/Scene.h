@@ -1,5 +1,5 @@
-#ifndef SKYNET_SCENE_H
-#define SKYNET_SCENE_H
+#ifndef SKYNET_ENGINE_SCENE_H
+#define SKYNET_ENGINE_SCENE_H
 
 #include "System.h"
 #include "Data.h"
@@ -70,4 +70,4 @@ namespace Skynet
 } // namespace Skynet
 
 
-#endif // SKYNET_SCENE_H
+#endif // SKYNET_ENGINE_SCENE_H

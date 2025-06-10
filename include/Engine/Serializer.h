@@ -1,5 +1,5 @@
-#ifndef SKYNET_SERIALIZE_H
-#define SKYNET_SERIALIZE_H
+#ifndef SKYNET_ENGINE_SERIALIZE_H
+#define SKYNET_ENGINE_SERIALIZE_H
 
 #include "Scene.h"
 #include "yaml-cpp/yaml.h"
@@ -24,4 +24,4 @@ namespace Skynet
 } // namespace Skynet
 
 
-#endif // SKYNET_SERIALIZE_H
+#endif // SKYNET_ENGINE_SERIALIZE_H

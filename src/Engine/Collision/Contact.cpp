@@ -15,8 +15,7 @@ namespace Skynet
 
 			float r1 = 0.0f, r2 = 0.0f;
 			
-			for (int i = 0; i < 3; i++)
-			{
+			for (int i = 0; i < 3; i++) {
 				titan::vec4 cA = bodyA.R.col(i);
 				titan::vec4 cB = bodyB.R.col(i);
 
@@ -33,8 +32,7 @@ namespace Skynet
 			titan::vec3 center = box.GetCenter();
 			titan::vec3 half = box.GetHalfExtent();
 
-			for (int i = 0; i < 3; i++) 
-			{
+			for (int i = 0; i < 3; i++) {
 				titan::vec4 orientation = body.R.col(i);
 				float distance = (point - center) * titan::vec3(orientation);
 				if (std::abs(distance) > half[i]) return false;
@@ -97,22 +95,20 @@ namespace Skynet
 			bodyB.vel = bodyB.P * (1.0f / bodyB.mass);
 
 			bodyA.omega = bodyA.Iinv * bodyA.L;
-			bodyB.omega = bodyB.Iinv * bodyB.L;	
+			bodyB.omega = bodyB.Iinv * bodyB.L;
 		}
 
 		void SAT(AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
 		{
 			titan::vec3 axes[15];
 
-			titan::vec3 A_axes[3] =
-			{
+			titan::vec3 A_axes[3] = {
 				titan::vec3(bodyA.R(0,0), bodyA.R(1,0), bodyA.R(2,0)),
 				titan::vec3(bodyA.R(0,1), bodyA.R(1,1), bodyA.R(2,1)),
 				titan::vec3(bodyA.R(0,2), bodyA.R(1,2), bodyA.R(2,2))
 			};
 
-			titan::vec3 B_axes[3] = 
-			{
+			titan::vec3 B_axes[3] = {
 				titan::vec3(bodyB.R(0,0), bodyB.R(1,0), bodyB.R(2,0)),
 				titan::vec3(bodyB.R(0,1), bodyB.R(1,1), bodyB.R(2,1)),
 				titan::vec3(bodyB.R(0,2), bodyB.R(1,2), bodyB.R(2,2))
@@ -121,20 +117,16 @@ namespace Skynet
 			int count = 0;
 
 			/* Axes are face normals */
-			for (int i = 0; i < 3; i++) 
-			{
+			for (int i = 0; i < 3; i++) {
 		        axes[count++] = A_axes[i];
 		        axes[count++] = B_axes[i];
 		    }
 
 		    /* Axes are cross product of edges */
-		    for (int i=0; i < 3; i++) 
-		    {
-		    	for (int j=0; j < 3; j++)
-		    	{
+		    for (int i=0; i < 3; i++) {
+		    	for (int j=0; j < 3; j++) {
 		    		titan::vec3 axis = A_axes[i].cross(B_axes[j]);
-		    		if (axis.length() > 1e-6)
-		    		{
+		    		if (axis.length() > 1e-6) {
 		    			axes[count++] = axis.normalized();
 		    		}
 		    	}
@@ -144,15 +136,13 @@ namespace Skynet
 		    titan::real minDepth = FLT_MAX;
 		    titan::vec3 bestAxis;
 
-		    for (int i=0; i < count; i++)
-		    {
+		    for (int i=0; i < count; i++) {
 		    	titan::vec3 axis = axes[i];
 		    	titan::real depth = ComputeContactDepth(boxA, boxB, bodyA, bodyB, axis);
 		    	
 		    	if (depth < 0) return; // SAT found => no collision
 
-		    	if (depth < minDepth)
-		    	{
+		    	if (depth < minDepth) {
 		    		minDepth = depth;
 		    		bestAxis = axis;
 		    	}
@@ -165,8 +155,7 @@ namespace Skynet
 		    /* Get a set of intersection points */
 		    list<titan::vec3> points = GetInterSectionPoints(boxA, boxB, bodyA, bodyB);
 
-		    if (points.size() > 0)
-		    {
+		    if (points.size() > 0) {
 		    	titan::vec3 avg;
 		        for (const auto& p : points) avg = avg +  p;
 		        contact.point = avg * (1.0f / (float)points.size());

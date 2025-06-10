@@ -43,8 +43,7 @@ namespace Skynet
         size_t typeTokenLength = strlen(typeToken);
         size_t pos = source.find(typeToken, 0);
 
-        while (pos != std::string::npos)
-        {
+        while (pos != std::string::npos) {
             size_t eol = source.find_first_of("\r\n", pos);
             ASSERT(eol != std::string::npos, "Syntax error");
             

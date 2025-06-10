@@ -11,19 +11,15 @@
 
 namespace Skynet
 {
-
-    Interface::Interface()
-    {
+    Interface::Interface() {
 
     }
 
-    Interface::~Interface()
-    {
+    Interface::~Interface() {
 
     }
 
-    void Interface::OnAttach() 
-    {
+    void Interface::OnAttach() {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGui::StyleColorsDark();
@@ -48,30 +44,25 @@ namespace Skynet
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
     }
 
-    void Interface::OnDetach() 
-    {
+    void Interface::OnDetach() {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     } 
 
-    void Interface::OnUpdate(Timestep* ts) 
-    {
+    void Interface::OnUpdate(Timestep* ts) {
 
     }
 
-    void Interface::OnRender()
-    {
+    void Interface::OnRender() {
         
     }
 
-    void Interface::OnEvent(Event& event)
-    {
+    void Interface::OnEvent(Event& event) {
         
     }
 
-    void Interface::Begin()
-    {
+    void Interface::Begin() {
         /* Config IO display size */
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         Application &app = Application::GetApplication();
@@ -111,8 +102,7 @@ namespace Skynet
 
     }
 
-    void Interface::End()
-    {
+    void Interface::End() {
         ImGui::End(); // dockspace
 
         /* End rendering frame */
@@ -120,8 +110,7 @@ namespace Skynet
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
-    void Interface::Styling()
-    {
+    void Interface::Styling() {
         ImVec4* colors = ImGui::GetStyle().Colors;
         colors[ImGuiCol_Text]                  = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
         colors[ImGuiCol_TextDisabled]          = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);

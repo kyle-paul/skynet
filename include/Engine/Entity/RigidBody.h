@@ -1,13 +1,12 @@
-#ifndef SKYNET_RIGID_BODY_H
-#define SKYNET_RIGID_BODY_H
+#ifndef SKYNET_ENGINE_ENTITY_RIGIDBODY_H
+#define SKYNET_ENGINE_ENTITY_RIGIDBODY_H
 
 #include "Timestep.h"
 #include "Titan.hpp"
 
 namespace Skynet
 {  
-    class RigidBody
-    {
+    class RigidBody {
     public:
         RigidBody();
         ~RigidBody();
@@ -15,7 +14,7 @@ namespace Skynet
         inline void SetMass(const float mass) { this->mass = mass; }
         void SetInertialTensor(int x, int y, int z);
 
-        void UpdateTransform() {
+        inline void UpdateTransform() {
             R = titan::Euler2T(e);
             T = titan::Transcale(x, s) * R;
         }
@@ -27,7 +26,6 @@ namespace Skynet
         inline titan::vec3& GetAngularVelocity() { return omega; }
 
     public:
-
         /* Constant quantities */ 
         titan::real mass = 0.0f;
         titan::mat3 Ibody;
@@ -59,4 +57,4 @@ namespace Skynet
 } // namespace Skynet
 
 
-#endif // SKYNET_RIGID_BODY_H
+#endif // SKYNET_ENGINE_ENTITY_RIGIDBODY_H

@@ -1,5 +1,5 @@
-#ifndef SKYNET_ENTITY_GENENTITY_H
-#define SKYNET_ENTITY_GENENTITY_H
+#ifndef SKYNET_ENGINE_ENTITY_GENENTITY_H
+#define SKYNET_ENGINE_ENTITY_GENENTITY_H
 
 #include "System.h"
 #include "entt.hpp"
@@ -15,4 +15,4 @@ namespace Skynet
 } // namespace Skynet
 
 
-#endif // SKYNET_ENTITY_GENENTITY_H
+#endif // SKYNET_ENGINE_ENTITY_GENENTITY_H

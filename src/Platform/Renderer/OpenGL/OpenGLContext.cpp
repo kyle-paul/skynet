@@ -3,18 +3,15 @@
 
 namespace Skynet
 {
-    OpenGLContext::OpenGLContext(GLFWwindow* window) : window(window)
-    {
+    OpenGLContext::OpenGLContext(GLFWwindow* window) : window(window) {
         
     }
     
-    OpenGLContext::~OpenGLContext()
-    {
+    OpenGLContext::~OpenGLContext() {
 
     }
 
-    void OpenGLContext::Init()
-    {
+    void OpenGLContext::Init() {
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		ASSERT(status, "Failed to initialize GLAD with GLFW (OPENGL)");
 
@@ -28,12 +25,10 @@ namespace Skynet
                     reinterpret_cast<const char*>(device));
 
         /* Check if the vendor is NVIDIA */
-        if (vendor && strstr(reinterpret_cast<const char*>(vendor), "NVIDIA") != nullptr) 
-        {
+        if (vendor && strstr(reinterpret_cast<const char*>(vendor), "NVIDIA") != nullptr) {
             INFO("NVIDIA Graphics Card Detected");
         } 
-        else 
-        {
+        else {
             INFO("Using Default Intel Graphics Card");
         }
     }

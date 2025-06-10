@@ -10,8 +10,7 @@
 
 namespace Skynet
 {
-    class Application 
-    {
+    class Application {
     public:
         Application();
         ~Application();

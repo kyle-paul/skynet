@@ -7,9 +7,7 @@
 
 namespace Skynet
 {
-    class OpenGLContext : public Context
-
-    {
+    class OpenGLContext : public Context {
     public:
         OpenGLContext(GLFWwindow* window);
         ~OpenGLContext();

@@ -2,10 +2,8 @@
 
 namespace Skynet 
 {
-
     LayerStack::~LayerStack() {
-        for (Layer* layer : layers)
-		{
+        for (Layer* layer : layers) {
 			layer->OnDetach();
 			delete layer;
 		}
@@ -22,19 +20,16 @@ namespace Skynet
 
     void LayerStack::PopLayer(Layer* layer) {
         auto it = std::find(layers.begin(), layers.begin() + index, layer);
-		if (it != layers.begin() + index)
-		{
+		if (it != layers.begin() + index) {
 			layer->OnDetach();
 			layers.erase(it);
 			index--;
 		}
     }
 
-    void LayerStack::PopOverLayer(Layer* overlayer)
-	{
+    void LayerStack::PopOverLayer(Layer* overlayer) {
 		auto it = std::find(layers.begin() + index, layers.end(), overlayer);
-		if (it != layers.end())
-		{
+		if (it != layers.end()) {
 			overlayer->OnDetach();
 			layers.erase(it);
 		}
