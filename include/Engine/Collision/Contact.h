@@ -11,8 +11,7 @@ namespace Skynet
 
 	namespace Contact
 	{
-		struct Contact
-		{
+		struct Contact {
 			titan::vec3 point;
 			titan::vec3 normal;
 			titan::real depth;

@@ -5,8 +5,7 @@ namespace Skynet
 {
 	namespace Contact
 	{
-		titan::real ComputeContactDepth(const AABB& boxA, const AABB& boxB, const RigidBody& bodyA, const RigidBody& bodyB, const titan::vec3& axis)
-		{
+		titan::real ComputeContactDepth(const AABB& boxA, const AABB& boxB, const RigidBody& bodyA, const RigidBody& bodyB, const titan::vec3& axis) {
 			float centerA = boxA.GetCenter().dot(axis);
 			float centerB = boxB.GetCenter().dot(axis);
 
@@ -27,8 +26,7 @@ namespace Skynet
 			return (overlap > 0) ? overlap : -1.0f;
 		}
 
-		bool IsPointInsideOBB(const titan::vec3& point, const AABB& box, const RigidBody& body)
-		{
+		bool IsPointInsideOBB(const titan::vec3& point, const AABB& box, const RigidBody& body) {
 			titan::vec3 center = box.GetCenter();
 			titan::vec3 half = box.GetHalfExtent();
 
@@ -40,8 +38,7 @@ namespace Skynet
 			return true;
 		}
 
-		list<titan::vec3> GetInterSectionPoints(const AABB& boxA, const AABB& boxB, const RigidBody& bodyA, const RigidBody& bodyB)
-		{
+		list<titan::vec3> GetInterSectionPoints(const AABB& boxA, const AABB& boxB, const RigidBody& bodyA, const RigidBody& bodyB) {
 			list<titan::vec3> points;
 
 			list<titan::vec3> cornersA = boxA.GetCorners();
@@ -58,8 +55,7 @@ namespace Skynet
 			return points;
 		}
 
-		void ApplyImpulse(RigidBody& bodyA, RigidBody& bodyB, const Contact& contact)
-		{	
+		void ApplyImpulse(RigidBody& bodyA, RigidBody& bodyB, const Contact& contact) {	
 			/* Compute relative velocity - gap function */
 			titan::vec3 n = contact.normal;
 			titan::vec3 rA = contact.point - bodyA.x;
@@ -98,8 +94,7 @@ namespace Skynet
 			bodyB.omega = bodyB.Iinv * bodyB.L;
 		}
 
-		void SAT(AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
-		{
+		void SAT(AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB) {
 			titan::vec3 axes[15];
 
 			titan::vec3 A_axes[3] = {
@@ -164,8 +159,7 @@ namespace Skynet
 			ApplyImpulse(bodyA, bodyB, contact);
 		}
 
-		void ComputeContact(PointCloud& cloud, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB)
-		{
+		void ComputeContact(PointCloud& cloud, AABB& boxA, AABB& boxB, RigidBody& bodyA, RigidBody& bodyB) {
 			cloud.Clear();
 			cloud.Add(titan::vec3(0.0f, 0.0f, 0.0f));
 			if (SimpleSolverGJK(cloud, boxA, boxB, bodyA, bodyB)) {
